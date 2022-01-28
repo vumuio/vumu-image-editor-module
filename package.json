@@ -18,6 +18,7 @@
     "dist",
     "index.d.ts"
   ],
+  "types": "./index.d.ts",
   "scripts": {
     "test": "jest --forceExit --detectOpenHandles",
     "test:types": "tsc --project tests/types",

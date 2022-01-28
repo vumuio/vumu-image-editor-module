@@ -1,10 +1,7 @@
 // Type definitions for TOAST UI Image Editor v3.15.2
 // TypeScript Version: 3.2.2
-
-declare namespace tuiImageEditor {
-  type AngleType = number;
-
-  interface IThemeConfig {
+declare module 'vumu-image-editor' {
+  export interface IThemeConfig {
     'common.bi.image'?: string;
     'common.bisize.width'?: string;
     'common.bisize.height'?: string;
@@ -25,17 +22,23 @@ declare namespace tuiImageEditor {
     'downloadButton.fontFamily'?: string;
     'downloadButton.fontSize'?: string;
     'menu.normalIcon.path'?: string;
+    'menu.normalIcon.color'?: string;
     'menu.normalIcon.name'?: string;
     'menu.activeIcon.path'?: string;
+    'menu.activeIcon.color'?: string;
     'menu.activeIcon.name'?: string;
-    'menu.iconSize.width'?: string;
+    'menu.disabledIcon.color'?: string;
     'menu.iconSize.height'?: string;
+    'menu.hoverIcon.color'?: string;
+    'menu.iconSize.width'?: string;
     'submenu.backgroundColor'?: string;
     'submenu.partition.color'?: string;
     'submenu.normalIcon.path'?: string;
     'submenu.normalIcon.name'?: string;
+    'submenu.normalIcon.color'?: string;
     'submenu.activeIcon.path'?: string;
     'submenu.activeIcon.name'?: string;
+    'submenu.activeIcon.color'?: string;
     'submenu.iconSize.width'?: string;
     'submenu.iconSize.height'?: string;
     'submenu.normalLabel.color'?: string;
@@ -52,23 +55,25 @@ declare namespace tuiImageEditor {
     'range.value.fontSize'?: string;
     'range.value.border'?: string;
     'range.value.backgroundColor'?: string;
+    'range.disabledPointer.color'?: string;
+    'range.disabledBar.color'?: string;
+    'range.disabledSubbar.color'?: string;
     'range.title.color'?: string;
     'range.title.fontWeight'?: string;
     'colorpicker.button.border'?: string;
     'colorpicker.title.color'?: string;
   }
-
-  interface IIconInfo {
+  export interface IIconInfo {
     [propName: string]: string;
   }
 
-  interface IIconOptions {
+  export interface IIconOptions {
     fill?: string;
     left?: number;
     top?: number;
   }
 
-  interface IShapeOptions {
+  export interface IShapeOptions {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
@@ -81,7 +86,7 @@ declare namespace tuiImageEditor {
     isRegular?: boolean;
   }
 
-  interface IGenerateTextOptions {
+  export interface IGenerateTextOptions {
     styles?: ITextStyleConfig;
     position?: {
       x: number;
@@ -89,7 +94,7 @@ declare namespace tuiImageEditor {
     };
   }
 
-  interface ITextStyleConfig {
+  export interface ITextStyleConfig {
     fill?: string;
     fontFamily?: string;
     fontSize?: number;
@@ -99,31 +104,31 @@ declare namespace tuiImageEditor {
     textDecoration?: string;
   }
 
-  interface IRectConfig {
+  export interface IRectConfig {
     left: number;
     top: number;
     width: number;
     height: number;
   }
 
-  interface ICanvasSize {
+  export interface ICanvasSize {
     width: number;
     height: number;
   }
 
-  interface IBrushOptions {
+  export interface IBrushOptions {
     width: number;
     color: string;
   }
 
-  interface IPositionConfig {
+  export interface IPositionConfig {
     x: number;
     y: number;
     originX: string;
     originY: string;
   }
 
-  interface IToDataURLOptions {
+  export interface IToDataURLOptions {
     format?: string;
     quality?: number;
     multiplier?: number;
@@ -133,7 +138,7 @@ declare namespace tuiImageEditor {
     height?: number;
   }
 
-  interface IGraphicObjectProps {
+  export interface IGraphicObjectProps {
     id?: number;
     type?: string;
     text?: string;
@@ -154,7 +159,7 @@ declare namespace tuiImageEditor {
     [propName: string]: number | string | boolean | undefined;
   }
 
-  interface IIncludeUIOptions {
+  export interface IIncludeUIOptions {
     loadImage?: {
       path: string;
       name: string;
@@ -170,7 +175,7 @@ declare namespace tuiImageEditor {
     usageStatistics?: boolean;
   }
 
-  interface ISelectionStyleConfig {
+  export interface ISelectionStyleConfig {
     cornerStyle?: string;
     cornerSize?: number;
     cornerColor?: string;
@@ -181,7 +186,7 @@ declare namespace tuiImageEditor {
     rotatingPointOffset?: number;
   }
 
-  interface IObjectProps {
+  export interface IObjectProps {
     // icon, shape
     fill: string;
     height: number;
@@ -195,7 +200,7 @@ declare namespace tuiImageEditor {
     width: number;
   }
 
-  interface ITextObjectProps extends IObjectProps {
+  export interface ITextObjectProps extends IObjectProps {
     fontFamily: string;
     fontSize: string;
     fontStyle: string;
@@ -204,25 +209,25 @@ declare namespace tuiImageEditor {
     textDecoration: string;
   }
 
-  interface IFilterResolveObject {
+  export interface IFilterResolveObject {
     type: string;
     action: string;
   }
 
-  interface ICropResolveObject {
+  export interface ICropResolveObject {
     oldWidth: number;
     oldHeight: number;
     newWidth: number;
     newHeight: number;
   }
 
-  interface IFlipXYResolveObject {
+  export interface IFlipXYResolveObject {
     flipX: boolean;
     flipY: boolean;
     angle: AngleType;
   }
 
-  interface IOptions {
+  export interface IOptions {
     includeUI?: IIncludeUIOptions;
     cssMaxWidth?: number;
     cssMaxHeight?: number;
@@ -230,98 +235,100 @@ declare namespace tuiImageEditor {
     selectionStyle?: ISelectionStyleConfig;
   }
 
-  interface IUIDimension {
+  export interface IUIDimension {
     height?: string;
     width?: string;
   }
 
-  interface IImageDimension {
+  export interface IImageDimension {
     oldHeight?: number;
     oldWidth?: number;
     newHeight?: number;
     newWidth?: number;
   }
 
-  interface IEditorSize {
+  export interface IEditorSize {
     uiSize?: IUIDimension;
     imageSize?: IImageDimension;
   }
 
-  interface UI {
+  export interface UI {
     resizeEditor(dimension: IEditorSize): Promise<void>;
   }
 
-  class ImageEditor {
-    constructor(wrapper: string | Element, options: IOptions);
-    public ui: UI;
+  type AngleType = number;
+  namespace tuiImageEditor {
 
-    public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
-    public addImageObject(imgUrl: string): Promise<void>;
-    public addShape(type: string, options?: IShapeOptions): Promise<IObjectProps>;
-    public addText(text: string, options?: IGenerateTextOptions): Promise<ITextObjectProps>;
-    public applyFilter(
-      type: string,
-      options?: {
-        maskObjId: number;
-      },
-      isSilent?: boolean
-    ): Promise<IFilterResolveObject>;
-    public changeCursor(cursorType: string): void;
-    public changeIconColor(id: number, color: string): Promise<void>;
-    public changeSelectableAll(selectable: boolean): void;
-    public changeShape(id: number, options?: IShapeOptions, isSilent?: boolean): Promise<void>;
-    public changeText(id: number, text?: string): Promise<void>;
-    public changeTextStyle(
-      id: number,
-      styleObj: ITextStyleConfig,
-      isSilent?: boolean
-    ): Promise<void>;
-    public clearObjects(): Promise<void>;
-    public clearRedoStack(): void;
-    public clearUndoStack(): void;
-    public crop(rect: IRectConfig): Promise<ICropResolveObject>;
-    public deactivateAll(): void;
-    public destroy(): void;
-    public discardSelection(): void;
-    public flipX(): Promise<IFlipXYResolveObject>;
-    public flipY(): Promise<IFlipXYResolveObject>;
-    public getCanvasSize(): ICanvasSize;
-    public getCropzoneRect(): IRectConfig;
-    public getDrawingMode(): string;
-    public getImageName(): string;
-    public getObjectPosition(id: number, originX: string, originY: string): ICanvasSize;
-    public getObjectProperties(
-      id: number,
-      keys: string | string[] | IGraphicObjectProps
-    ): IGraphicObjectProps;
-    public hasFilter(type: string): boolean;
-    public isEmptyRedoStack(): boolean;
-    public isEmptyUndoStack(): boolean;
-    public loadImageFromFile(imgFile: File, imageName?: string): Promise<ICropResolveObject>;
-    public loadImageFromURL(url: string, imageName?: string): Promise<ICropResolveObject>;
-    public redo(): Promise<any>;
-    public registerIcons(infos: IIconInfo): void;
-    public removeActiveObject(): void;
-    public removeFilter(type?: string): Promise<IFilterResolveObject>;
-    public removeObject(id: number): Promise<void>;
-    public resetFlip(): Promise<IFlipXYResolveObject>;
-    public resizeCanvasDimension(dimension: ICanvasSize): Promise<void>;
-    public rotate(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
-    public setAngle(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
-    public setBrush(option: IBrushOptions): void;
-    public setCropzoneRect(mode?: number): void;
-    public setDrawingShape(type: string, options?: IShapeOptions): void;
-    public setObjectPosition(id: number, posInfo?: IPositionConfig): Promise<void>;
-    public setObjectProperties(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
-    public setObjectPropertiesQuietly(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
-    public startDrawingMode(mode: string, option?: { width?: number; color?: string }): boolean;
-    public stopDrawingMode(): void;
-    public toDataURL(options?: IToDataURLOptions): string;
-    public undo(): Promise<any>;
-    public on(eventName: string, handler: (...args: any[]) => void): void;
+    class ImageEditor {
+      constructor(wrapper: string | Element, options: IOptions);
+      public ui: UI;
+
+      public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
+      public addImageObject(imgUrl: string): Promise<void>;
+      public addShape(type: string, options?: IShapeOptions): Promise<IObjectProps>;
+      public addText(text: string, options?: IGenerateTextOptions): Promise<ITextObjectProps>;
+      public applyFilter(
+        type: string,
+        options?: {
+          maskObjId: number;
+        },
+        isSilent?: boolean
+      ): Promise<IFilterResolveObject>;
+      public changeCursor(cursorType: string): void;
+      public changeIconColor(id: number, color: string): Promise<void>;
+      public changeSelectableAll(selectable: boolean): void;
+      public changeShape(id: number, options?: IShapeOptions, isSilent?: boolean): Promise<void>;
+      public changeText(id: number, text?: string): Promise<void>;
+      public changeTextStyle(
+        id: number,
+        styleObj: ITextStyleConfig,
+        isSilent?: boolean
+      ): Promise<void>;
+      public clearObjects(): Promise<void>;
+      public clearRedoStack(): void;
+      public clearUndoStack(): void;
+      public crop(rect: IRectConfig): Promise<ICropResolveObject>;
+      public deactivateAll(): void;
+      public destroy(): void;
+      public discardSelection(): void;
+      public flipX(): Promise<IFlipXYResolveObject>;
+      public flipY(): Promise<IFlipXYResolveObject>;
+      public getCanvasSize(): ICanvasSize;
+      public getCropzoneRect(): IRectConfig;
+      public getDrawingMode(): string;
+      public getImageName(): string;
+      public getObjectPosition(id: number, originX: string, originY: string): ICanvasSize;
+      public getObjectProperties(
+        id: number,
+        keys: string | string[] | IGraphicObjectProps
+      ): IGraphicObjectProps;
+      public hasFilter(type: string): boolean;
+      public isEmptyRedoStack(): boolean;
+      public isEmptyUndoStack(): boolean;
+      public loadImageFromFile(imgFile: File, imageName?: string): Promise<ICropResolveObject>;
+      public loadImageFromURL(url: string, imageName?: string): Promise<ICropResolveObject>;
+      public redo(): Promise<any>;
+      public registerIcons(infos: IIconInfo): void;
+      public removeActiveObject(): void;
+      public removeFilter(type?: string): Promise<IFilterResolveObject>;
+      public removeObject(id: number): Promise<void>;
+      public resetFlip(): Promise<IFlipXYResolveObject>;
+      public resizeCanvasDimension(dimension: ICanvasSize): Promise<void>;
+      public rotate(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
+      public setAngle(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
+      public setBrush(option: IBrushOptions): void;
+      public setCropzoneRect(mode?: number): void;
+      public setDrawingShape(type: string, options?: IShapeOptions): void;
+      public setObjectPosition(id: number, posInfo?: IPositionConfig): Promise<void>;
+      public setObjectProperties(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
+      public setObjectPropertiesQuietly(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
+      public startDrawingMode(mode: string, option?: { width?: number; color?: string }): boolean;
+      public stopDrawingMode(): void;
+      public toDataURL(options?: IToDataURLOptions): string;
+      public undo(): Promise<any>;
+      public on(eventName: string, handler: (...args: any[]) => void): void;
+    }
   }
-}
 
-declare module 'tui-image-editor' {
-  export = tuiImageEditor.ImageEditor;
+  export default tuiImageEditor.ImageEditor;
 }
