@@ -32,44 +32,6 @@ export default ({
                         <li>Canvas</li>
                       </ul>
                       <div class="tui-image-editor-size-wrap">
-<!--                      <ul class="custom-buttons list-none flex flex-wrap">-->
-<!--                        <li>-->
-<!--                          <div class="holder flex flex-column">-->
-<!--                            <img src="../../../../img/image-icon.svg" alt="#" />-->
-<!--                            <span>add Image</span>-->
-<!--                          </div>-->
-<!--                        </li>-->
-<!--                        <li>-->
-<!--                          <div class="holder flex flex-column">-->
-<!--                            <img src="../../../../img/text-icon.svg" alt="#" />-->
-<!--                            <span>add Text</span>-->
-<!--                          </div>-->
-<!--                        </li>-->
-<!--                        <li>-->
-<!--                          <div class="holder flex flex-column">-->
-<!--                            <img src="../../../../img/website-icon.svg" alt="#" />-->
-<!--                            <span>add Website</span>-->
-<!--                          </div>-->
-<!--                        </li>-->
-<!--                        <li>-->
-<!--                          <div class="holder flex flex-column">-->
-<!--                            <img src="../../../../img/shape-icon.svg" alt="#" />-->
-<!--                            <span>add Shape</span>-->
-<!--                          </div>-->
-<!--                        </li>-->
-<!--                        <li>-->
-<!--                          <div class="holder flex flex-column">-->
-<!--                            <img src="../../../../img/map-icon.svg" alt="#" />-->
-<!--                            <span>add Map</span>-->
-<!--                          </div>-->
-<!--                        </li>-->
-<!--                        <li>-->
-<!--                          <div class="holder flex flex-column">-->
-<!--                            <img src="../../../../img/logo-icon.svg" alt="#" />-->
-<!--                            <span>add Logo</span>-->
-<!--                          </div>-->
-<!--                        </li>-->
-<!--                      </ul>-->
                       <div class="tui-image-editor-align-wrap">
                           <div class="tui-image-editor">
                             <input type="text" placeholder="Enter project title here..." class="project-title" />
