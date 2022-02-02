@@ -30,19 +30,11 @@
   padding: 0;
   list-style: none;
 }
-.page-container{
-  background: #FBFBFB;
-}
-.tui-image-editor-container .tui-image-editor-wrap .tui-image-editor-size-wrap .tui-image-editor-align-wrap {
-  width: 72%;
-  vertical-align: top;
-  position: relative;
-}
 .tui-image-editor-container .tui-image-editor {
-  width:700px !important;
-  height:430px !important;
-  left: -50px !important;
-  margin: 0 auto;
+  width: 700px !important;
+  height: 470px !important;
+  left: 0 !important;
+  margin: 0 0 80px;
 }
 .tui-image-editor-canvas-container {
   display: flex;
@@ -69,24 +61,11 @@ body{
   margin:0;
   font-family: 'Inter', Sans-Serif;
 }
-.tui-image-editor-container .tui-image-editor-main,
-.tui-image-editor-container .tui-image-editor-wrap{
-  padding-left: 125px;
-}
 .tui-image-editor-main-container{
   background:#fff !important;
 }
 .page-container {
   height: 100%;
-}
-.left-panel{
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  background: #f3f6f9;
-  width: 85px;
-  z-index: 1;
 }
 
 /*Homepage*/
@@ -134,7 +113,7 @@ body{
 }
 /*user dropdown ends*/
 #content {
-  padding: 0 40px 0 125px;
+  padding: 0 0 30px;
   overflow: hidden;
 }
 .section-header{
@@ -258,7 +237,7 @@ input.project-title {
   background: #F3F6F9;
   border: none;
   color: #BCBCBC;
-  font-size: 22px;
+  font-size: 20px;
   padding: 5px 10px;
   height: 37px;
   outline: none;
@@ -314,11 +293,59 @@ input.project-title::placeholder {
   display: block;
 }
 .save-button{
+  max-width: 700px;
   position: relative;
-  width:100%;
-  /*max-width:46vw;*/
-  bottom:-80px;
+  width: 100%;
 }
 .save-button button{
   cursor: pointer;
+}
+
+
+.tui-image-editor-main-container{
+  border:none !important;
+}
+ul.tui-image-editor-submenu-item {
+  border: 1px solid #e7eef9;
+  padding: 30px 0;
+  background: #fbf9f9;
+}
+.tui-image-editor-align-wrap{
+  text-align: left;
+}
+.tui-image-editor-controls {
+  top: 50% !important;
+  bottom: auto !important;
+  height: auto !important;
+  border: 1px solid #D6E2F3;
+  transform: translate(0, -50%);
+  -webkit-transform: translate(0, -50%);
+  min-height: 390px;
+  background: #fff !important;
+  right: 10px !important;
+  z-index: 100 !important;
+}
+.tui-image-editor-container{
+  max-width:1200px;
+  margin: 0 auto;
+  background:none;
+  overflow: inherit !important;
+}
+.save-button{
+  max-width: 700px;
+}
+.tui-image-editor-menu li.active {
+  background: #EEF4FF !important;
+  border-radius: 4px !important;
+}
+.tui-image-editor-container .tui-image-editor-main,
+.tui-image-editor-container .tui-image-editor-wrap{
+  position: static;
+}
+.tui-image-editor-header-buttons {
+  z-index: 500;
+  position: relative;
+}
+.ant-layout-content {
+  margin-top: -40px;
 }
