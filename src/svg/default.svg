@@ -235,6 +235,14 @@
     <circle cx="12" cy="12" r="4.5" stroke="inherit" fill="none"/>
     <path stroke="none" fill="inherit" d="M2 1h20a1 1 0 0 1 1 1v20a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 1v20h20V2H2z"/>
 </symbol>
+<symbol id="ic-image" viewBox="0 0 17 13" fill="none">
+    <path d="M13.2315 11.5759L3.23177 11.5043L5.75677 8.02226L7.40907 10.0341L9.93407 6.55215L13.2315 11.5759Z" fill="#6B7C94"/>
+    <rect x="0.807061" y="0.986666" width="15" height="13" transform="rotate(0.410389 0.807061 0.986666)" stroke="#6B7C94"/>
+</symbol>
+<symbol id="ic-image-load" viewBox="0 0 17 13" fill="none">
+    <path d="M13.2315 11.5759L3.23177 11.5043L5.75677 8.02226L7.40907 10.0341L9.93407 6.55215L13.2315 11.5759Z" fill="#6B7C94"/>
+    <rect x="0.807061" y="0.986666" width="15" height="13" transform="rotate(0.410389 0.807061 0.986666)" stroke="#6B7C94"/>
+</symbol>
 <symbol id="ic-redo" viewBox="0 0 24 24">
     <path d="M0 0h24v24H0z" opacity=".5" fill="none" stroke="none" />
     <path stroke="none" fill="inherit" d="M21 6H9a6 6 0 1 0 0 12h12v1H9A7 7 0 0 1 9 5h12v1z"/>

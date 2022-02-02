@@ -1696,6 +1696,15 @@ class ImageEditor {
   getCanvasSize() {
     return this._graphics.getCanvasSize();
   }
+  /**
+   * Get the canvas instance
+   * @returns {fabric.Canvas}
+   * @example
+   * var canvasSize = imageEditor.getCanvasInstance();
+   */
+  getCanvasInstance() {
+    return this._graphics;
+  }
 
   /**
    * Get object position by originX, originY

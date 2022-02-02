@@ -19,6 +19,7 @@ export default {
       rotate: this._rotateAction(),
       text: this._textAction(),
       mask: this._maskAction(),
+      image: this._imageAction(),
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
@@ -280,6 +281,27 @@ export default {
         applyFilter: () => {
           this.applyFilter('mask', {
             maskObjId: this.activeObjectId,
+          });
+        },
+      },
+      this._commonAction()
+    );
+  },
+
+  /**
+   * Image Action
+   * @returns {Object} actions for ui mask
+   * @private
+   */
+  _imageAction() {
+    return extend(
+      {
+        loadImageFromURL: (imgUrl, file) => {
+          return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+            this.addImageObject(imgUrl).then(() => {
+              URL.revokeObjectURL(file);
+            });
+            this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
           });
         },
       },
