@@ -30,10 +30,13 @@
   padding: 0;
   list-style: none;
 }
-.page-container{
-  background: #FBFBFB;
+.page-container {
+  background: #fbfbfb;
 }
-.tui-image-editor-container .tui-image-editor-wrap .tui-image-editor-size-wrap .tui-image-editor-align-wrap {
+.tui-image-editor-container
+  .tui-image-editor-wrap
+  .tui-image-editor-size-wrap
+  .tui-image-editor-align-wrap {
   width: 72%;
   vertical-align: top;
   position: relative;
@@ -298,7 +301,7 @@ input.project-title::placeholder {
   margin: 0 auto;
   display: block;
 }
-.save-button{
+.save-button {
   max-width: 700px;
   position: relative;
   width: 100%;
