@@ -258,7 +258,6 @@ declare module 'vumu-image-editor' {
 
   type AngleType = number;
   namespace tuiImageEditor {
-
     class ImageEditor {
       constructor(wrapper: string | Element, options: IOptions);
       public ui: UI;

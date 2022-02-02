@@ -22,9 +22,6 @@ export default ({
                   </div>
               </div>
               <div class="tui-image-editor-main">
-                  <div class="tui-image-editor-submenu">
-                      <div class="tui-image-editor-submenu-style" style="${submenuStyle}"></div>
-                  </div>
                   <div class="tui-image-editor-wrap">
                       <div class="tui-image-editor-size-wrap">
                       <div class="tui-image-editor-align-wrap">
@@ -38,6 +35,9 @@ export default ({
                         <button class="btn-primary">Save & Next</button>
                     </div>
                   </div>
+                    <div class="tui-image-editor-submenu">
+                        <div class="tui-image-editor-submenu-style" style="${submenuStyle}"></div>
+                    </div>
               </div>
             </div>
           </div>
