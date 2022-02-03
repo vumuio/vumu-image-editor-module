@@ -576,16 +576,6 @@ class Ui {
       element.addEventListener('click', this.eventHandler.download);
     });
   }
-  // mostFrontLayer() {
-  //   console.log('most layer console called');
-  //   // eslint-disable-next-line prefer-destructuring
-  //   const canvas = this.canvas;
-  //   const activeObj = canvas.getActiveObject();
-  //   activeObj && canvas.bringToFront(activeObj).discardActiveObject(activeObj).renderAll();
-  //   // snippet.forEach(this._buttonElements.frontFace, (element) => {
-  //   //   element.removeEventListener('click', this.eventHandler.frontFace);
-  //   // });
-  // }
   _removeDownloadEvent() {
     snippet.forEach(this._buttonElements.download, (element) => {
       element.removeEventListener('click', this.eventHandler.download);

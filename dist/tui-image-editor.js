@@ -47086,17 +47086,7 @@ var Ui = /*#__PURE__*/function () {
       external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.download, function (element) {
         element.addEventListener('click', _this7.eventHandler.download);
       });
-    } // mostFrontLayer() {
-    //   console.log('most layer console called');
-    //   // eslint-disable-next-line prefer-destructuring
-    //   const canvas = this.canvas;
-    //   const activeObj = canvas.getActiveObject();
-    //   activeObj && canvas.bringToFront(activeObj).discardActiveObject(activeObj).renderAll();
-    //   // snippet.forEach(this._buttonElements.frontFace, (element) => {
-    //   //   element.removeEventListener('click', this.eventHandler.frontFace);
-    //   // });
-    // }
-
+    }
   }, {
     key: "_removeDownloadEvent",
     value: function _removeDownloadEvent() {
