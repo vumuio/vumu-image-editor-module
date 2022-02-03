@@ -24,6 +24,7 @@ import Draw from '@/ui/draw';
 import Filter from '@/ui/filter';
 import History from '@/ui/history';
 import Locale from '@/ui/locale/locale';
+import graphics from '@/graphics';
 
 const SUB_UI_COMPONENT = {
   Shape,
@@ -382,6 +383,10 @@ class Ui {
     this._subMenuElement = selector('.tui-image-editor-submenu');
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+      bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
+      sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
+      sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
+      bringToFront: this._selectedElement.querySelectorAll('.tie-btn-bringToFront'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
     };
 
@@ -572,10 +577,25 @@ class Ui {
       element.addEventListener('click', this.eventHandler.download);
     });
   }
-
+  // mostFrontLayer() {
+  //   console.log('most layer console called');
+  //   // eslint-disable-next-line prefer-destructuring
+  //   const canvas = this.canvas;
+  //   const activeObj = canvas.getActiveObject();
+  //   activeObj && canvas.bringToFront(activeObj).discardActiveObject(activeObj).renderAll();
+  //   // snippet.forEach(this._buttonElements.frontFace, (element) => {
+  //   //   element.removeEventListener('click', this.eventHandler.frontFace);
+  //   // });
+  // }
   _removeDownloadEvent() {
     snippet.forEach(this._buttonElements.download, (element) => {
       element.removeEventListener('click', this.eventHandler.download);
+    });
+  }
+
+  _x() {
+    snippet.forEach(this._buttonElements.download, (element) => {
+      element.removeEventListener('click', this.eventHandler.customButton);
     });
   }
 
