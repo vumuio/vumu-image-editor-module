@@ -173,7 +173,7 @@ class ImageEditor {
     );
 
     this.mode = null;
-
+    this.fontFamily = 'Noto Sans';
     this.activeObjectId = null;
 
     /**
@@ -1703,7 +1703,7 @@ class ImageEditor {
    * var canvasSize = imageEditor.getCanvasInstance();
    */
   getCanvasInstance() {
-    return this._graphics;
+    return this._graphics.getCanvas();
   }
 
   /**

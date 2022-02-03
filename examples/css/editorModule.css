@@ -363,6 +363,7 @@ ul.tui-image-editor-submenu-item {
   width: 100%;
   padding: 0 0 50px;
 }
+
 .tui-image-editor-submenu {
   position: static !important;
   margin-left: auto !important;
@@ -374,4 +375,32 @@ ul.tui-image-editor-submenu-item {
 }
 .tui-image-editor-container.right .tui-image-editor-main-container {
   position: static !important;
+}
+.tie-font-family-select {
+  -o-appearance: none;
+  -ms-appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  padding: 7px 36px 7px 13px;
+  border: 1px solid #f2f2f2;
+  font-size: 14px;
+  color: #6b7c94;
+  text-overflow: ellipsis;
+}
+
+.tie-font-family-select:active,
+.tie-font-family-select:focus {
+  outline: none;
+}
+.tie-font-family-container {
+  position: relative;
+  background: #fff;
+}
+.tie-font-family-container svg {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
 }

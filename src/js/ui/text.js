@@ -28,6 +28,7 @@ class Text extends Submenu {
     this.align = 'tie-text-align-left';
     this._els = {
       textEffectButton: this.selector('.tie-text-effect-button'),
+      textFontFamly: this.selector('.tie-font-family-select'),
       textAlignButton: this.selector('.tie-text-align-button'),
       textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
         defaultColor: '#ffbb3b',
@@ -67,15 +68,18 @@ class Text extends Submenu {
   addEvent(actions) {
     const setTextEffect = this._setTextEffectHandler.bind(this);
     const setTextAlign = this._setTextAlignHandler.bind(this);
+    const setFontFamily = this._changeFontFamilyHandler.bind(this);
 
     this.eventHandler = {
       setTextEffect,
       setTextAlign,
+      setFontFamily,
     };
 
     this.actions = actions;
     this._els.textEffectButton.addEventListener('click', setTextEffect);
     this._els.textAlignButton.addEventListener('click', setTextAlign);
+    this._els.textFontFamly.addEventListener('change', setFontFamily);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
 
@@ -94,10 +98,11 @@ class Text extends Submenu {
    * @private
    */
   _removeEvent() {
-    const { setTextEffect, setTextAlign } = this.eventHandler;
+    const { setTextEffect, setTextAlign, setFontFamily } = this.eventHandler;
 
     this._els.textEffectButton.removeEventListener('click', setTextEffect);
     this._els.textAlignButton.removeEventListener('click', setTextAlign);
+    this._els.textAlignButton.removeEventListener('change', setFontFamily);
     this._els.textRange.off();
     this._els.textColorpicker.off();
 
@@ -272,6 +277,14 @@ class Text extends Submenu {
     color = color || 'transparent';
     this.actions.changeTextStyle({
       fill: color,
+    });
+  }
+
+  _changeFontFamilyHandler(event) {
+    const { target } = event;
+    const font = target.value;
+    this.actions.changeTextStyle({
+      fontFamily: font,
     });
   }
 }

@@ -1,3 +1,5 @@
+import { commonFonts } from '@/consts';
+
 /**
  * @param {Object} submenuInfo - submenu info for make template
  *   @param {Locale} locale - Translate text
@@ -28,6 +30,16 @@ export default ({ locale, makeSvgIcon }) => `
         </li>
         <li class="tui-image-editor-partition">
             <div></div>
+        </li>
+        <li class="tie-font-family-button">
+          <div class="tie-font-family-container">
+            <svg width="7" height="6" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M7 0.5H0L3.5 5.5L7 0.5Z" fill="#C4C4C4"/></svg>
+            <select class="tie-font-family-select">
+                ${commonFonts
+                  .map((fontName) => `<option value="${fontName}">${fontName}</option>`)
+                  .join('')}
+            </select>
+          </div>
         </li>
         <li class="tie-text-align-button">
             <div class="tui-image-editor-button left">

@@ -406,3 +406,26 @@ export const defaultResizePixelValues = {
   max: 4088,
   value: 800,
 };
+
+export const commonFonts = [
+  'Roboto',
+  'Open Sans',
+  'Noto Sans JP',
+  'Lato',
+  'Montserrat',
+  'Roboto Condensed',
+  'Poppins',
+  'Source Sans Pro',
+  'Oswald',
+  'Roboto Mono',
+  'Noto Sans',
+  'Raleway',
+  'Nunito',
+  'Ubuntu',
+  'Merriweather',
+  'Roboto Slab',
+  'PT Sans',
+  'Playfair Display',
+  'Mukta',
+  'Inter',
+];

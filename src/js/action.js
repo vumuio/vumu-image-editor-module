@@ -318,6 +318,9 @@ export default {
     return extend(
       {
         changeTextStyle: (styleObj, isSilent) => {
+          if (styleObj.fontFamily) {
+            this.fontFamily = styleObj.fontFamily;
+          }
           if (this.activeObjectId) {
             this.changeTextStyle(this.activeObjectId, styleObj, isSilent);
           }
@@ -637,7 +640,7 @@ export default {
       /* eslint-enable complexity */
       addText: (pos) => {
         const { textColor: fill, fontSize, fontStyle, fontWeight, underline } = this.ui.text;
-        const fontFamily = 'Noto Sans';
+        const fontFamily = this.fontFamily;
 
         this.addText('Double Click', {
           position: pos.originPosition,

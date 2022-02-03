@@ -50,10 +50,11 @@
     "fabric": "^4.2.0",
     "mini-css-extract-plugin": "^2.5.2",
     "mkdirp": "^1.0.4",
+    "svgstore": "*",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.6",
-    "webpack": "^5.66.0",
-    "svgstore": "*"
+    "webfontloader": "^1.6.28",
+    "webpack": "^5.66.0"
   },
   "devDependencies": {
     "@babel/core": "^7.16.10",
