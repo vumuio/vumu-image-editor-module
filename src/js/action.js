@@ -181,6 +181,30 @@ export default {
           this.deactivateAll();
           toggleHandMode();
         },
+        bringForward: () => {
+          const canvas = this._graphics.getCanvas();
+          const myObject = canvas.getActiveObject();
+          canvas.bringForward(myObject);
+          canvas.renderAll();
+        },
+        sendBackwards: () => {
+          const canvas = this._graphics.getCanvas();
+          const myObject = canvas.getActiveObject();
+          canvas.sendBackwards(myObject);
+          canvas.renderAll();
+        },
+        sendToBack: () => {
+          const canvas = this._graphics.getCanvas();
+          const myObject = canvas.getActiveObject();
+          canvas.sendToBack(myObject);
+          canvas.renderAll();
+        },
+        bringToFront: () => {
+          const canvas = this._graphics.getCanvas();
+          const myObject = canvas.getActiveObject();
+          canvas.bringToFront(myObject);
+          canvas.renderAll();
+        },
       },
       this._commonAction()
     );
@@ -694,7 +718,6 @@ export default {
       redo: (count) => this.redo(count),
     };
   },
-
   /**
    * Common Action
    * @returns {Object} common actions for ui

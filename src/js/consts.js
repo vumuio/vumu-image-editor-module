@@ -8,8 +8,15 @@ import { keyMirror } from '@/util';
  * Help features for zoom
  * @type {Array.<string>}
  */
-export const ZOOM_HELP_MENUS = ['zoomIn', 'zoomOut', 'hand'];
-
+export const ZOOM_HELP_MENUS = [
+  'zoomIn',
+  'zoomOut',
+  'hand',
+  'bringForward',
+  'sendBackwards',
+  'sendToBack',
+  'bringToFront',
+];
 /**
  * Help features for command
  * @type {Array.<string>}
@@ -92,6 +99,8 @@ export const SHAPE_DEFAULT_OPTIONS = {
   lockSkewingX: true,
   lockSkewingY: true,
   bringForward: true,
+  sendToBack: true,
+  bringToFront: true,
   isRegular: false,
 };
 

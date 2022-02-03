@@ -382,6 +382,10 @@ class Ui {
     this._subMenuElement = selector('.tui-image-editor-submenu');
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+      bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
+      sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
+      sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
+      bringToFront: this._selectedElement.querySelectorAll('.tie-btn-bringToFront'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
     };
 
@@ -572,7 +576,6 @@ class Ui {
       element.addEventListener('click', this.eventHandler.download);
     });
   }
-
   _removeDownloadEvent() {
     snippet.forEach(this._buttonElements.download, (element) => {
       element.removeEventListener('click', this.eventHandler.download);
