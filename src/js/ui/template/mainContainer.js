@@ -35,9 +35,7 @@ export default ({
                         <button class="btn-primary">Save & Next</button>
                     </div>
                   </div>
-                    <div class="tui-image-editor-submenu">
-                        <div class="tui-image-editor-submenu-style" style="${submenuStyle}"></div>
-                    </div>
+                    <div class="tui-image-editor-submenu"></div>
               </div>
             </div>
           </div>

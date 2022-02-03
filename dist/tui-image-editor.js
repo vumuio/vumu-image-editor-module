@@ -41553,7 +41553,7 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
 ;// CONCATENATED MODULE: ./src/js/ui/template/mainContainer.js
 
 /* harmony default export */ var mainContainer = (function (_ref) {
-  var _context, _context2, _context3, _context4, _context5, _context6;
+  var _context, _context2, _context3, _context4, _context5;
 
   var locale = _ref.locale,
       commonStyle = _ref.commonStyle,
@@ -41561,7 +41561,7 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
       loadButtonStyle = _ref.loadButtonStyle,
       downloadButtonStyle = _ref.downloadButtonStyle,
       submenuStyle = _ref.submenuStyle;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-header\" style=\"")).call(_context6, headerStyle, "\">\n                  <div class=\"tui-image-editor-header-buttons\">\n                      <div style=\"")).call(_context5, loadButtonStyle, "\">\n                          ")).call(_context4, locale.localize('Load'), "\n                          <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                      </div>\n                      <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context3, downloadButtonStyle, "\">\n                          ")).call(_context2, locale.localize('Download'), "\n                      </button>\n                  </div>\n              </div>\n              <div class=\"tui-image-editor-main\">\n                  <div class=\"tui-image-editor-wrap\">\n                      <div class=\"tui-image-editor-size-wrap\">\n                      <div class=\"tui-image-editor-align-wrap\">\n                          <div class=\"tui-image-editor\">\n                            <input type=\"text\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                          </div>\n                      </div>\n\n                    </div>\n                    <div class=\"save-button\">\n                        <button class=\"btn-primary\">Save & Next</button>\n                    </div>\n                  </div>\n                    <div class=\"tui-image-editor-submenu\">\n                        <div class=\"tui-image-editor-submenu-style\" style=\"")).call(_context, submenuStyle, "\"></div>\n                    </div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-header\" style=\"")).call(_context5, headerStyle, "\">\n                  <div class=\"tui-image-editor-header-buttons\">\n                      <div style=\"")).call(_context4, loadButtonStyle, "\">\n                          ")).call(_context3, locale.localize('Load'), "\n                          <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                      </div>\n                      <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                          ")).call(_context, locale.localize('Download'), "\n                      </button>\n                  </div>\n              </div>\n              <div class=\"tui-image-editor-main\">\n                  <div class=\"tui-image-editor-wrap\">\n                      <div class=\"tui-image-editor-size-wrap\">\n                      <div class=\"tui-image-editor-align-wrap\">\n                          <div class=\"tui-image-editor\">\n                            <input type=\"text\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                          </div>\n                      </div>\n\n                    </div>\n                    <div class=\"save-button\">\n                        <button class=\"btn-primary\">Save & Next</button>\n                    </div>\n                  </div>\n                    <div class=\"tui-image-editor-submenu\"></div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/template/controls.js
 
@@ -46445,6 +46445,3398 @@ var Locale = /*#__PURE__*/function () {
 }();
 
 /* harmony default export */ var locale = (Locale);
+;// CONCATENATED MODULE: ./src/js/ui.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var SUB_UI_COMPONENT = {
+  Shape: ui_shape,
+  Crop: ui_crop,
+  Resize: ui_resize,
+  Flip: ui_flip,
+  Rotate: ui_rotate,
+  Text: ui_text,
+  Mask: ui_mask,
+  Icon: ui_icon,
+  Draw: ui_draw,
+  Filter: ui_filter,
+  Image: ui_image
+};
+var CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
+var BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
+var HISTORY_MENU = 'history';
+var HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
+var CLASS_NAME_ON = 'on';
+var ZOOM_BUTTON_TYPE = {
+  ZOOM_IN: 'zoomIn',
+  HAND: 'hand'
+};
+/**
+ * Ui class
+ * @class
+ * @param {string|HTMLElement} element - Wrapper's element or selector
+ * @param {Object} [options] - Ui setting options
+ *   @param {number} options.loadImage - Init default load image
+ *   @param {number} options.initMenu - Init start menu
+ *   @param {Boolean} [options.menuBarPosition=bottom] - Let
+ *   @param {Boolean} [options.applyCropSelectionStyle=false] - Let
+ *   @param {Boolean} [options.usageStatistics=false] - Use statistics or not
+ *   @param {Object} [options.uiSize] - ui size of editor
+ *     @param {string} options.uiSize.width - width of ui
+ *     @param {string} options.uiSize.height - height of ui
+ * @param {Object} actions - ui action instance
+ */
+
+var Ui = /*#__PURE__*/function () {
+  function Ui(element, options, actions) {
+    _classCallCheck(this, Ui);
+
+    this.options = this._initializeOption(options);
+    this._actions = actions;
+    this.submenu = false;
+    this.imageSize = {};
+    this.uiSize = {};
+    this._locale = new locale(this.options.locale);
+    this.theme = new theme(this.options.theme);
+    this.eventHandler = {};
+    this._submenuChangeTransection = false;
+    this._selectedElement = null;
+    this._mainElement = null;
+    this._editorElementWrap = null;
+    this._editorElement = null;
+    this._menuBarElement = null;
+    this._subMenuElement = null;
+
+    this._makeUiElement(element);
+
+    this._setUiSize();
+
+    this._initMenuEvent = false;
+
+    this._makeSubMenu();
+
+    this._attachHistoryEvent();
+
+    this._attachZoomEvent();
+  }
+  /**
+   * Destroys the instance.
+   */
+
+
+  _createClass(Ui, [{
+    key: "destroy",
+    value: function destroy() {
+      this._removeUiEvent();
+
+      this._destroyAllMenu();
+
+      this._selectedElement.innerHTML = '';
+      assignmentForDestroy(this);
+    }
+    /**
+     * Set Default Selection for includeUI
+     * @param {Object} option - imageEditor options
+     * @returns {Object} - extends selectionStyle option
+     * @ignore
+     */
+
+  }, {
+    key: "setUiDefaultSelectionStyle",
+    value: function setUiDefaultSelectionStyle(option) {
+      return external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+        applyCropSelectionStyle: true,
+        applyGroupSelectionStyle: true,
+        selectionStyle: {
+          cornerStyle: 'circle',
+          cornerSize: 16,
+          cornerColor: '#fff',
+          cornerStrokeColor: '#fff',
+          transparentCorners: false,
+          lineWidth: 2,
+          borderColor: '#fff'
+        }
+      }, option);
+    }
+    /**
+     * Change editor size
+     * @param {Object} resizeInfo - ui & image size info
+     *   @param {Object} [resizeInfo.uiSize] - image size dimension
+     *     @param {string} resizeInfo.uiSize.width - ui width
+     *     @param {string} resizeInfo.uiSize.height - ui height
+     *   @param {Object} [resizeInfo.imageSize] - image size dimension
+     *     @param {Number} resizeInfo.imageSize.oldWidth - old width
+     *     @param {Number} resizeInfo.imageSize.oldHeight - old height
+     *     @param {Number} resizeInfo.imageSize.newWidth - new width
+     *     @param {Number} resizeInfo.imageSize.newHeight - new height
+     * @example
+     * // Change the image size and ui size, and change the affected ui state together.
+     * imageEditor.ui.resizeEditor({
+     *     imageSize: {oldWidth: 100, oldHeight: 100, newWidth: 700, newHeight: 700},
+     *     uiSize: {width: 1000, height: 1000}
+     * });
+     * @example
+     * // Apply the ui state while preserving the previous attribute (for example, if responsive Ui)
+     * imageEditor.ui.resizeEditor();
+     */
+
+  }, {
+    key: "resizeEditor",
+    value: function resizeEditor() {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          uiSize = _ref.uiSize,
+          _ref$imageSize = _ref.imageSize,
+          imageSize = _ref$imageSize === void 0 ? this.imageSize : _ref$imageSize;
+
+      if (imageSize !== this.imageSize) {
+        this.imageSize = imageSize;
+      }
+
+      if (uiSize) {
+        this._setUiSize(uiSize);
+      }
+
+      var _this$_getCanvasMaxDi = this._getCanvasMaxDimension(),
+          width = _this$_getCanvasMaxDi.width,
+          height = _this$_getCanvasMaxDi.height;
+
+      var editorElementStyle = this._editorElement.style;
+      var menuBarPosition = this.options.menuBarPosition;
+      editorElementStyle.height = "".concat(height, "px");
+      editorElementStyle.width = "".concat(width, "px");
+
+      this._setEditorPosition(menuBarPosition);
+
+      this._editorElementWrap.style.bottom = "0px";
+      this._editorElementWrap.style.top = "0px";
+      this._editorElementWrap.style.left = "0px";
+      this._editorElementWrap.style.width = "100%";
+      var selectElementClassList = this._selectedElement.classList;
+
+      if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION) {
+        selectElementClassList.add('tui-image-editor-top-optimization');
+      } else {
+        selectElementClassList.remove('tui-image-editor-top-optimization');
+      }
+    }
+    /**
+     * Toggle zoom button status
+     * @param {string} type - type of zoom button
+     */
+
+  }, {
+    key: "toggleZoomButtonStatus",
+    value: function toggleZoomButtonStatus(type) {
+      var targetClassList = this._buttonElements[type].classList;
+      targetClassList.toggle(CLASS_NAME_ON);
+
+      if (type === ZOOM_BUTTON_TYPE.ZOOM_IN) {
+        this._buttonElements[ZOOM_BUTTON_TYPE.HAND].classList.remove(CLASS_NAME_ON);
+      } else {
+        this._buttonElements[ZOOM_BUTTON_TYPE.ZOOM_IN].classList.remove(CLASS_NAME_ON);
+      }
+    }
+    /**
+     * Turn off zoom-in button status
+     */
+
+  }, {
+    key: "offZoomInButtonStatus",
+    value: function offZoomInButtonStatus() {
+      var zoomInClassList = this._buttonElements[ZOOM_BUTTON_TYPE.ZOOM_IN].classList;
+      zoomInClassList.remove(CLASS_NAME_ON);
+    }
+    /**
+     * Change hand button status
+     * @param {boolean} enabled - status to change
+     */
+
+  }, {
+    key: "changeHandButtonStatus",
+    value: function changeHandButtonStatus(enabled) {
+      var handClassList = this._buttonElements[ZOOM_BUTTON_TYPE.HAND].classList;
+      handClassList[enabled ? 'add' : 'remove'](CLASS_NAME_ON);
+    }
+    /**
+     * Change help button status
+     * @param {string} buttonType - target button type
+     * @param {Boolean} enableStatus - enabled status
+     * @ignore
+     */
+
+  }, {
+    key: "changeHelpButtonEnabled",
+    value: function changeHelpButtonEnabled(buttonType, enableStatus) {
+      var buttonClassList = this._buttonElements[buttonType].classList;
+      buttonClassList[enableStatus ? 'add' : 'remove']('enabled');
+    }
+    /**
+     * Change delete button status
+     * @param {Object} [options] - Ui setting options
+     *   @param {object} [options.loadImage] - Init default load image
+     *   @param {string} [options.initMenu] - Init start menu
+     *   @param {string} [options.menuBarPosition=bottom] - Let
+     *   @param {boolean} [options.applyCropSelectionStyle=false] - Let
+     *   @param {boolean} [options.usageStatistics=false] - Send statistics ping or not
+     * @returns {Object} initialize option
+     * @private
+     */
+
+  }, {
+    key: "_initializeOption",
+    value: function _initializeOption(options) {
+      return external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+        loadImage: {
+          path: '',
+          name: ''
+        },
+        locale: {},
+        menuIconPath: '',
+        menu: ['resize', 'crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter', 'image'],
+        initMenu: '',
+        uiSize: {
+          width: '100%',
+          height: '100%'
+        },
+        menuBarPosition: 'bottom'
+      }, options);
+    }
+    /**
+     * Set ui container size
+     * @param {Object} uiSize - ui dimension
+     *   @param {string} uiSize.width - css width property
+     *   @param {string} uiSize.height - css height property
+     * @private
+     */
+
+  }, {
+    key: "_setUiSize",
+    value: function _setUiSize() {
+      var uiSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.options.uiSize;
+      var elementDimension = this._selectedElement.style;
+      elementDimension.width = uiSize.width;
+      elementDimension.height = uiSize.height;
+    }
+    /**
+     * Make submenu dom element
+     * @private
+     */
+
+  }, {
+    key: "_makeSubMenu",
+    value: function _makeSubMenu() {
+      var _this = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
+        var SubComponentClass = SUB_UI_COMPONENT[menuName.replace(/^[a-z]/, function ($0) {
+          return $0.toUpperCase();
+        })]; // make menu element
+
+        _this._makeMenuElement(menuName); // menu btn element
+
+
+        _this._buttonElements[menuName] = _this._menuBarElement.querySelector(".tie-btn-".concat(menuName)); // submenu ui instance
+
+        _this[menuName] = new SubComponentClass(_this._subMenuElement, {
+          locale: _this._locale,
+          makeSvgIcon: _this.theme.makeMenSvgIconSet.bind(_this.theme),
+          menuBarPosition: _this.options.menuBarPosition,
+          usageStatistics: _this.options.usageStatistics
+        });
+      });
+    }
+    /**
+     * Attach history event
+     * @private
+     */
+
+  }, {
+    key: "_attachHistoryEvent",
+    value: function _attachHistoryEvent() {
+      this.on(eventNames.EXECUTE_COMMAND, this._addHistory.bind(this));
+      this.on(eventNames.AFTER_UNDO, this._selectPrevHistory.bind(this));
+      this.on(eventNames.AFTER_REDO, this._selectNextHistory.bind(this));
+    }
+    /**
+     * Attach zoom event
+     * @private
+     */
+
+  }, {
+    key: "_attachZoomEvent",
+    value: function _attachZoomEvent() {
+      var _this2 = this;
+
+      this.on(eventNames.HAND_STARTED, function () {
+        _this2.offZoomInButtonStatus();
+
+        _this2.changeHandButtonStatus(true);
+      });
+      this.on(eventNames.HAND_STOPPED, function () {
+        return _this2.changeHandButtonStatus(false);
+      });
+    }
+    /**
+     * Make primary ui dom element
+     * @param {string|HTMLElement} element - Wrapper's element or selector
+     * @private
+     */
+
+  }, {
+    key: "_makeUiElement",
+    value: function _makeUiElement(element) {
+      var selectedElement;
+      window.snippet = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default());
+
+      if (element.nodeType) {
+        selectedElement = element;
+      } else {
+        selectedElement = document.querySelector(element);
+      }
+
+      var selector = getSelector(selectedElement);
+      selectedElement.classList.add('tui-image-editor-container');
+      selectedElement.innerHTML = controls({
+        locale: this._locale,
+        biImage: this.theme.getStyle('common.bi'),
+        loadButtonStyle: this.theme.getStyle('loadButton'),
+        downloadButtonStyle: this.theme.getStyle('downloadButton'),
+        menuBarPosition: this.options.menuBarPosition
+      }) + mainContainer({
+        locale: this._locale,
+        biImage: this.theme.getStyle('common.bi'),
+        commonStyle: this.theme.getStyle('common'),
+        headerStyle: this.theme.getStyle('header'),
+        loadButtonStyle: this.theme.getStyle('loadButton'),
+        downloadButtonStyle: this.theme.getStyle('downloadButton'),
+        submenuStyle: this.theme.getStyle('submenu')
+      });
+      this._selectedElement = selectedElement;
+
+      this._selectedElement.classList.add(this.options.menuBarPosition);
+
+      this._mainElement = selector('.tui-image-editor-main');
+      this._editorElementWrap = selector('.tui-image-editor-wrap');
+      this._editorElement = selector('.tui-image-editor');
+      this._helpMenuBarElement = selector('.tui-image-editor-help-menu');
+      this._menuBarElement = selector('.tui-image-editor-menu');
+      this._subMenuElement = selector('.tui-image-editor-submenu');
+      this._buttonElements = {
+        download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+        bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
+        sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
+        sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
+        bringToFront: this._selectedElement.querySelectorAll('.tie-btn-bringToFront'),
+        load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
+      };
+
+      this._addHelpMenus();
+
+      this._historyMenu = new ui_history(this._buttonElements[HISTORY_MENU], {
+        locale: this._locale,
+        makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme)
+      });
+
+      this._activateZoomMenus();
+    }
+    /**
+     * Activate help menus for zoom.
+     * @private
+     */
+
+  }, {
+    key: "_activateZoomMenus",
+    value: function _activateZoomMenus() {
+      var _this3 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(ZOOM_HELP_MENUS, function (menu) {
+        _this3.changeHelpButtonEnabled(menu, true);
+      });
+    }
+    /**
+     * make array for help menu output, including partitions.
+     * @returns {Array}
+     * @private
+     */
+
+  }, {
+    key: "_makeHelpMenuWithPartition",
+    value: function _makeHelpMenuWithPartition() {
+      var _context;
+
+      return concat_default()(_context = []).call(_context, _toConsumableArray(ZOOM_HELP_MENUS), [''], _toConsumableArray(COMMAND_HELP_MENUS), [''], _toConsumableArray(DELETE_HELP_MENUS));
+    }
+    /**
+     * Add help menu
+     * @private
+     */
+
+  }, {
+    key: "_addHelpMenus",
+    value: function _addHelpMenus() {
+      var _this4 = this;
+
+      var helpMenuWithPartition = this._makeHelpMenuWithPartition();
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(helpMenuWithPartition, function (menuName) {
+        if (!menuName) {
+          _this4._makeMenuPartitionElement();
+        } else {
+          _this4._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
+
+          _this4._buttonElements[menuName] = _this4._helpMenuBarElement.querySelector(".tie-btn-".concat(menuName));
+        }
+      });
+    }
+    /**
+     * Make menu partition element
+     * @private
+     */
+
+  }, {
+    key: "_makeMenuPartitionElement",
+    value: function _makeMenuPartitionElement() {
+      var partitionElement = document.createElement('li');
+      var partitionInnerElement = document.createElement('div');
+      partitionElement.className = cls('item');
+      partitionInnerElement.className = cls('icpartition');
+      partitionElement.appendChild(partitionInnerElement);
+
+      this._helpMenuBarElement.appendChild(partitionElement);
+    }
+    /**
+     * Make menu button element
+     * @param {string} menuName - menu name
+     * @param {Array} useIconTypes - Possible values are  \['normal', 'active', 'hover', 'disabled'\]
+     * @param {string} menuType - 'normal' or 'help'
+     * @private
+     */
+
+  }, {
+    key: "_makeMenuElement",
+    value: function _makeMenuElement(menuName) {
+      var _context2, _context3;
+
+      var useIconTypes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['normal', 'active', 'hover'];
+      var menuType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
+      var btnElement = document.createElement('li');
+      var menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
+
+      this._addTooltipAttribute(btnElement, menuName);
+
+      btnElement.className = concat_default()(_context2 = concat_default()(_context3 = "tie-btn-".concat(menuName, " ")).call(_context3, cls('item'), " ")).call(_context2, menuType);
+      btnElement.innerHTML = menuItemHtml;
+
+      if (menuType === 'normal') {
+        this._menuBarElement.appendChild(btnElement);
+      } else {
+        this._helpMenuBarElement.appendChild(btnElement);
+      }
+    }
+    /**
+     * Add help action event
+     * @private
+     */
+
+  }, {
+    key: "_addHelpActionEvent",
+    value: function _addHelpActionEvent() {
+      var _this5 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(HELP_MENUS, function (helpName) {
+        _this5.eventHandler[helpName] = function (event) {
+          return _this5._actions.main[helpName](event);
+        };
+
+        _this5._buttonElements[helpName].addEventListener('click', _this5.eventHandler[helpName]);
+      });
+    }
+    /**
+     * Remove help action event
+     * @private
+     */
+
+  }, {
+    key: "_removeHelpActionEvent",
+    value: function _removeHelpActionEvent() {
+      var _this6 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(HELP_MENUS, function (helpName) {
+        _this6._buttonElements[helpName].removeEventListener('click', _this6.eventHandler[helpName]);
+      });
+    }
+    /**
+     * Add history
+     * @param {Command|string} command - command or command name
+     */
+
+  }, {
+    key: "_addHistory",
+    value: function _addHistory(command) {
+      if (!isSilentCommand(command)) {
+        var historyTitle = typeof command === 'string' ? {
+          name: command
+        } : getHistoryTitle(command);
+
+        this._historyMenu.add(historyTitle);
+      }
+    }
+    /**
+     * Init history
+     */
+
+  }, {
+    key: "initHistory",
+    value: function initHistory() {
+      this._historyMenu.init();
+    }
+    /**
+     * Clear history
+     */
+
+  }, {
+    key: "clearHistory",
+    value: function clearHistory() {
+      this._historyMenu.clear();
+    }
+    /**
+     * Select prev history
+     */
+
+  }, {
+    key: "_selectPrevHistory",
+    value: function _selectPrevHistory() {
+      this._historyMenu.prev();
+    }
+    /**
+     * Select next history
+     */
+
+  }, {
+    key: "_selectNextHistory",
+    value: function _selectNextHistory() {
+      this._historyMenu.next();
+    }
+    /**
+     * Toggle history menu
+     * @param {object} event - event object
+     */
+
+  }, {
+    key: "toggleHistoryMenu",
+    value: function toggleHistoryMenu(event) {
+      var target = event.target;
+      var item = target.closest(".".concat(HISTORY_PANEL_CLASS_NAME));
+
+      if (item) {
+        return;
+      }
+
+      var historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
+      historyButtonClassList.toggle('opened');
+    }
+    /**
+     * Add attribute for menu tooltip
+     * @param {HTMLElement} element - menu element
+     * @param {string} tooltipName - tooltipName
+     * @private
+     */
+
+  }, {
+    key: "_addTooltipAttribute",
+    value: function _addTooltipAttribute(element, tooltipName) {
+      element.setAttribute('tooltip-content', this._locale.localize(tooltipName.replace(/^[a-z]/g, function ($0) {
+        return $0.toUpperCase();
+      })));
+    }
+    /**
+     * Add download event
+     * @private
+     */
+
+  }, {
+    key: "_addDownloadEvent",
+    value: function _addDownloadEvent() {
+      var _this7 = this;
+
+      this.eventHandler.download = function () {
+        return _this7._actions.main.download();
+      };
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.download, function (element) {
+        element.addEventListener('click', _this7.eventHandler.download);
+      });
+    } // mostFrontLayer() {
+    //   console.log('most layer console called');
+    //   // eslint-disable-next-line prefer-destructuring
+    //   const canvas = this.canvas;
+    //   const activeObj = canvas.getActiveObject();
+    //   activeObj && canvas.bringToFront(activeObj).discardActiveObject(activeObj).renderAll();
+    //   // snippet.forEach(this._buttonElements.frontFace, (element) => {
+    //   //   element.removeEventListener('click', this.eventHandler.frontFace);
+    //   // });
+    // }
+
+  }, {
+    key: "_removeDownloadEvent",
+    value: function _removeDownloadEvent() {
+      var _this8 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.download, function (element) {
+        element.removeEventListener('click', _this8.eventHandler.download);
+      });
+    }
+    /**
+     * Add load event
+     * @private
+     */
+
+  }, {
+    key: "_addLoadEvent",
+    value: function _addLoadEvent() {
+      var _this9 = this;
+
+      this.eventHandler.loadImage = function (event) {
+        return _this9._actions.main.load(event.target.files[0]);
+      };
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.load, function (element) {
+        element.addEventListener('change', _this9.eventHandler.loadImage);
+      });
+    }
+    /**
+     * Remove load event
+     * @private
+     */
+
+  }, {
+    key: "_removeLoadEvent",
+    value: function _removeLoadEvent() {
+      var _this10 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.load, function (element) {
+        element.removeEventListener('change', _this10.eventHandler.loadImage);
+      });
+    }
+    /**
+     * Add menu event
+     * @param {string} menuName - menu name
+     * @private
+     */
+
+  }, {
+    key: "_addMainMenuEvent",
+    value: function _addMainMenuEvent(menuName) {
+      var _this11 = this;
+
+      this.eventHandler[menuName] = function () {
+        return _this11.changeMenu(menuName);
+      };
+
+      this._buttonElements[menuName].addEventListener('click', this.eventHandler[menuName]);
+    }
+    /**
+     * Add menu event
+     * @param {string} menuName - menu name
+     * @private
+     */
+
+  }, {
+    key: "_addSubMenuEvent",
+    value: function _addSubMenuEvent(menuName) {
+      var _this12 = this;
+
+      this[menuName].addEvent(this._actions[menuName]);
+      this[menuName].on(eventNames.INPUT_BOX_EDITING_STARTED, function () {
+        return _this12.fire(eventNames.INPUT_BOX_EDITING_STARTED);
+      });
+      this[menuName].on(eventNames.INPUT_BOX_EDITING_STOPPED, function () {
+        return _this12.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
+      });
+    }
+    /**
+     * Add menu event
+     * @private
+     */
+
+  }, {
+    key: "_addMenuEvent",
+    value: function _addMenuEvent() {
+      var _this13 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
+        _this13._addMainMenuEvent(menuName);
+
+        _this13._addSubMenuEvent(menuName);
+      });
+    }
+    /**
+     * Remove menu event
+     * @private
+     */
+
+  }, {
+    key: "_removeMainMenuEvent",
+    value: function _removeMainMenuEvent() {
+      var _this14 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
+        _this14._buttonElements[menuName].removeEventListener('click', _this14.eventHandler[menuName]);
+
+        _this14[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
+
+        _this14[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
+      });
+    }
+    /**
+     * Get editor area element
+     * @returns {HTMLElement} editor area html element
+     * @ignore
+     */
+
+  }, {
+    key: "getEditorArea",
+    value: function getEditorArea() {
+      return this._editorElement;
+    }
+    /**
+     * Add event for menu items
+     * @ignore
+     */
+
+  }, {
+    key: "activeMenuEvent",
+    value: function activeMenuEvent() {
+      if (this._initMenuEvent) {
+        return;
+      }
+
+      this._addHelpActionEvent();
+
+      this._addDownloadEvent();
+
+      this._addMenuEvent();
+
+      this._initMenu();
+
+      this._historyMenu.addEvent(this._actions.history);
+
+      this._initMenuEvent = true;
+    }
+    /**
+     * Remove ui event
+     * @private
+     */
+
+  }, {
+    key: "_removeUiEvent",
+    value: function _removeUiEvent() {
+      this._removeHelpActionEvent();
+
+      this._removeDownloadEvent();
+
+      this._removeLoadEvent();
+
+      this._removeMainMenuEvent();
+
+      this._historyMenu.removeEvent();
+    }
+    /**
+     * Destroy all menu instance
+     * @private
+     */
+
+  }, {
+    key: "_destroyAllMenu",
+    value: function _destroyAllMenu() {
+      var _this15 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
+        _this15[menuName].destroy();
+      });
+
+      this._historyMenu.destroy();
+    }
+    /**
+     * Init canvas
+     * @ignore
+     */
+
+  }, {
+    key: "initCanvas",
+    value: function initCanvas() {
+      var _this16 = this;
+
+      var loadImageInfo = this._getLoadImage();
+
+      if (loadImageInfo.path) {
+        this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(function () {
+          _this16.activeMenuEvent();
+        });
+      }
+
+      this._addLoadEvent();
+
+      var gridVisual = document.createElement('div');
+      gridVisual.className = cls('grid-visual');
+      var grid = "<table>\n           <tr><td class=\"dot left-top\"></td><td></td><td class=\"dot right-top\"></td></tr>\n           <tr><td></td><td></td><td></td></tr>\n           <tr><td class=\"dot left-bottom\"></td><td></td><td class=\"dot right-bottom\"></td></tr>\n         </table>";
+      gridVisual.innerHTML = grid;
+      this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
+
+      this._editorContainerElement.appendChild(gridVisual);
+    }
+    /**
+     * get editor area element
+     * @returns {Object} load image option
+     * @private
+     */
+
+  }, {
+    key: "_getLoadImage",
+    value: function _getLoadImage() {
+      return this.options.loadImage;
+    }
+    /**
+     * change menu
+     * @param {string} menuName - menu name
+     * @param {boolean} toggle - whether toogle or not
+     * @param {boolean} discardSelection - discard selection
+     * @ignore
+     */
+
+  }, {
+    key: "changeMenu",
+    value: function changeMenu(menuName) {
+      var toggle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var discardSelection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+      if (!this._submenuChangeTransection) {
+        this._submenuChangeTransection = true;
+
+        this._changeMenu(menuName, toggle, discardSelection);
+
+        this._submenuChangeTransection = false;
+      }
+    }
+    /**
+     * change menu
+     * @param {string} menuName - menu name
+     * @param {boolean} toggle - whether toggle or not
+     * @param {boolean} discardSelection - discard selection
+     * @private
+     */
+
+  }, {
+    key: "_changeMenu",
+    value: function _changeMenu(menuName, toggle, discardSelection) {
+      if (this.submenu) {
+        this._buttonElements[this.submenu].classList.remove('active');
+
+        this._mainElement.classList.remove("tui-image-editor-menu-".concat(this.submenu));
+
+        if (discardSelection) {
+          this._actions.main.discardSelection();
+        }
+
+        this._actions.main.changeSelectableAll(true);
+
+        this[this.submenu].changeStandbyMode();
+      }
+
+      if (this.submenu === menuName && toggle) {
+        this.submenu = null;
+      } else {
+        this._buttonElements[menuName].classList.add('active');
+
+        this._mainElement.classList.add("tui-image-editor-menu-".concat(menuName));
+
+        this.submenu = menuName;
+        this[this.submenu].changeStartMode();
+      }
+
+      this.resizeEditor();
+    }
+    /**
+     * Init menu
+     * @private
+     */
+
+  }, {
+    key: "_initMenu",
+    value: function _initMenu() {
+      if (this.options.initMenu) {
+        var evt = document.createEvent('MouseEvents');
+        evt.initEvent('click', true, false);
+
+        this._buttonElements[this.options.initMenu].dispatchEvent(evt);
+      }
+
+      if (this.icon) {
+        this.icon.registerDefaultIcon();
+      }
+    }
+    /**
+     * Get canvas max Dimension
+     * @returns {Object} - width & height of editor
+     * @private
+     */
+
+  }, {
+    key: "_getCanvasMaxDimension",
+    value: function _getCanvasMaxDimension() {
+      var _this$_editorContaine = this._editorContainerElement.style,
+          maxWidth = _this$_editorContaine.maxWidth,
+          maxHeight = _this$_editorContaine.maxHeight;
+      var width = parseFloat(maxWidth);
+      var height = parseFloat(maxHeight);
+      return {
+        width: width,
+        height: height
+      };
+    }
+    /**
+     * Set editor position
+     * @param {string} menuBarPosition - top or right or bottom or left
+     * @private
+     */
+    // eslint-disable-next-line complexity
+
+  }, {
+    key: "_setEditorPosition",
+    value: function _setEditorPosition(menuBarPosition) {
+      var _this$_getCanvasMaxDi2 = this._getCanvasMaxDimension(),
+          width = _this$_getCanvasMaxDi2.width,
+          height = _this$_getCanvasMaxDi2.height;
+
+      var editorElementStyle = this._editorElement.style;
+      var top = 0;
+      var left = 0;
+
+      if (this.submenu) {
+        if (menuBarPosition === 'bottom') {
+          if (height > this._editorElementWrap.scrollHeight - 150) {
+            top = (height - this._editorElementWrap.scrollHeight) / 2;
+          } else {
+            top = 150 / 2 * -1;
+          }
+        } else if (menuBarPosition === 'top') {
+          if (height > this._editorElementWrap.offsetHeight - 150) {
+            top = 150 / 2 - (height - (this._editorElementWrap.offsetHeight - 150)) / 2;
+          } else {
+            top = 150 / 2;
+          }
+        } else if (menuBarPosition === 'left') {
+          if (width > this._editorElementWrap.offsetWidth - 248) {
+            left = 248 / 2 - (width - (this._editorElementWrap.offsetWidth - 248)) / 2;
+          } else {
+            left = 248 / 2;
+          }
+        } else if (menuBarPosition === 'right') {
+          if (width > this._editorElementWrap.scrollWidth - 248) {
+            left = (width - this._editorElementWrap.scrollWidth) / 2;
+          } else {
+            left = 248 / 2 * -1;
+          }
+        }
+      }
+
+      editorElementStyle.top = "".concat(top, "px");
+      editorElementStyle.left = "".concat(left, "px");
+    }
+  }]);
+
+  return Ui;
+}();
+
+CustomEvents.mixin(Ui);
+/* harmony default export */ var ui = (Ui);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
+var instance_filter = __webpack_require__(116);
+var filter_default = /*#__PURE__*/__webpack_require__.n(instance_filter);
+;// CONCATENATED MODULE: ./src/js/helper/imagetracer.js
+
+
+
+
+
+/*
+  imagetracer.js version 1.2.4
+  Simple raster image tracer and vectorizer written in JavaScript.
+  andras@jankovics.net
+*/
+
+/*
+  The Unlicense / PUBLIC DOMAIN
+  This is free and unencumbered software released into the public domain.
+  Anyone is free to copy, modify, publish, use, compile, sell, or
+  distribute this software, either in source code form or as a compiled
+  binary, for any purpose, commercial or non-commercial, and by any
+  means.
+  In jurisdictions that recognize copyright laws, the author or authors
+  of this software dedicate any and all copyright interest in the
+  software to the public domain. We make this dedication for the benefit
+  of the public at large and to the detriment of our heirs and
+  successors. We intend this dedication to be an overt act of
+  relinquishment in perpetuity of all present and future rights to this
+  software under copyright law.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+  OTHER DEALINGS IN THE SOFTWARE.
+  For more information, please refer to http://unlicense.org/
+*/
+var ImageTracer = /*#__PURE__*/function () {
+  /* eslint-disable */
+  function ImageTracer() {
+    _classCallCheck(this, ImageTracer);
+
+    this.versionnumber = '1.2.4';
+    this.optionpresets = {
+      default: {
+        corsenabled: false,
+        ltres: 1,
+        qtres: 1,
+        pathomit: 8,
+        rightangleenhance: true,
+        colorsampling: 2,
+        numberofcolors: 16,
+        mincolorratio: 0,
+        colorquantcycles: 3,
+        layering: 0,
+        strokewidth: 1,
+        linefilter: false,
+        scale: 1,
+        roundcoords: 1,
+        viewbox: false,
+        desc: false,
+        lcpr: 0,
+        qcpr: 0,
+        blurradius: 0,
+        blurdelta: 20
+      },
+      posterized1: {
+        colorsampling: 0,
+        numberofcolors: 2
+      },
+      posterized2: {
+        numberofcolors: 4,
+        blurradius: 5
+      },
+      curvy: {
+        ltres: 0.01,
+        linefilter: true,
+        rightangleenhance: false
+      },
+      sharp: {
+        qtres: 0.01,
+        linefilter: false
+      },
+      detailed: {
+        pathomit: 0,
+        roundcoords: 2,
+        ltres: 0.5,
+        qtres: 0.5,
+        numberofcolors: 64
+      },
+      smoothed: {
+        blurradius: 5,
+        blurdelta: 64
+      },
+      grayscale: {
+        colorsampling: 0,
+        colorquantcycles: 1,
+        numberofcolors: 7
+      },
+      fixedpalette: {
+        colorsampling: 0,
+        colorquantcycles: 1,
+        numberofcolors: 27
+      },
+      randomsampling1: {
+        colorsampling: 1,
+        numberofcolors: 8
+      },
+      randomsampling2: {
+        colorsampling: 1,
+        numberofcolors: 64
+      },
+      artistic1: {
+        colorsampling: 0,
+        colorquantcycles: 1,
+        pathomit: 0,
+        blurradius: 5,
+        blurdelta: 64,
+        ltres: 0.01,
+        linefilter: true,
+        numberofcolors: 16,
+        strokewidth: 2
+      },
+      artistic2: {
+        qtres: 0.01,
+        colorsampling: 0,
+        colorquantcycles: 1,
+        numberofcolors: 4,
+        strokewidth: 0
+      },
+      artistic3: {
+        qtres: 10,
+        ltres: 10,
+        numberofcolors: 8
+      },
+      artistic4: {
+        qtres: 10,
+        ltres: 10,
+        numberofcolors: 64,
+        blurradius: 5,
+        blurdelta: 256,
+        strokewidth: 2
+      },
+      posterized3: {
+        ltres: 1,
+        qtres: 1,
+        pathomit: 20,
+        rightangleenhance: true,
+        colorsampling: 0,
+        numberofcolors: 3,
+        mincolorratio: 0,
+        colorquantcycles: 3,
+        blurradius: 3,
+        blurdelta: 20,
+        strokewidth: 0,
+        linefilter: false,
+        roundcoords: 1,
+        pal: [{
+          r: 0,
+          g: 0,
+          b: 100,
+          a: 255
+        }, {
+          r: 255,
+          g: 255,
+          b: 255,
+          a: 255
+        }]
+      }
+    };
+    this.pathscan_combined_lookup = [[[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[0, 1, 0, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [0, 2, -1, 0]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [0, 1, 0, -1], [0, 0, 1, 0]], [[0, 0, 1, 0], [-1, -1, -1, -1], [0, 2, -1, 0], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [0, 0, 1, 0], [0, 3, 0, 1], [-1, -1, -1, -1]], [[13, 3, 0, 1], [13, 2, -1, 0], [7, 1, 0, -1], [7, 0, 1, 0]], [[-1, -1, -1, -1], [0, 1, 0, -1], [-1, -1, -1, -1], [0, 3, 0, 1]], [[0, 3, 0, 1], [0, 2, -1, 0], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[0, 3, 0, 1], [0, 2, -1, 0], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [0, 1, 0, -1], [-1, -1, -1, -1], [0, 3, 0, 1]], [[11, 1, 0, -1], [14, 0, 1, 0], [14, 3, 0, 1], [11, 2, -1, 0]], [[-1, -1, -1, -1], [0, 0, 1, 0], [0, 3, 0, 1], [-1, -1, -1, -1]], [[0, 0, 1, 0], [-1, -1, -1, -1], [0, 2, -1, 0], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [0, 1, 0, -1], [0, 0, 1, 0]], [[0, 1, 0, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [0, 2, -1, 0]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]]];
+    this.gks = [[0.27901, 0.44198, 0.27901], [0.135336, 0.228569, 0.272192, 0.228569, 0.135336], [0.086776, 0.136394, 0.178908, 0.195843, 0.178908, 0.136394, 0.086776], [0.063327, 0.093095, 0.122589, 0.144599, 0.152781, 0.144599, 0.122589, 0.093095, 0.063327], [0.049692, 0.069304, 0.089767, 0.107988, 0.120651, 0.125194, 0.120651, 0.107988, 0.089767, 0.069304, 0.049692]];
+    this.specpalette = [{
+      r: 0,
+      g: 0,
+      b: 0,
+      a: 255
+    }, {
+      r: 128,
+      g: 128,
+      b: 128,
+      a: 255
+    }, {
+      r: 0,
+      g: 0,
+      b: 128,
+      a: 255
+    }, {
+      r: 64,
+      g: 64,
+      b: 128,
+      a: 255
+    }, {
+      r: 192,
+      g: 192,
+      b: 192,
+      a: 255
+    }, {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 255
+    }, {
+      r: 128,
+      g: 128,
+      b: 192,
+      a: 255
+    }, {
+      r: 0,
+      g: 0,
+      b: 192,
+      a: 255
+    }, {
+      r: 128,
+      g: 0,
+      b: 0,
+      a: 255
+    }, {
+      r: 128,
+      g: 64,
+      b: 64,
+      a: 255
+    }, {
+      r: 128,
+      g: 0,
+      b: 128,
+      a: 255
+    }, {
+      r: 168,
+      g: 168,
+      b: 168,
+      a: 255
+    }, {
+      r: 192,
+      g: 128,
+      b: 128,
+      a: 255
+    }, {
+      r: 192,
+      g: 0,
+      b: 0,
+      a: 255
+    }, {
+      r: 255,
+      g: 255,
+      b: 255,
+      a: 255
+    }, {
+      r: 0,
+      g: 128,
+      b: 0,
+      a: 255
+    }];
+  }
+
+  _createClass(ImageTracer, [{
+    key: "imageToSVG",
+    value: function imageToSVG(url, callback, options) {
+      var _this = this;
+
+      options = this.checkoptions(options);
+      this.loadImage(url, function (canvas) {
+        callback(_this.imagedataToSVG(_this.getImgdata(canvas), options));
+      }, options);
+    }
+  }, {
+    key: "imagedataToSVG",
+    value: function imagedataToSVG(imgd, options) {
+      options = this.checkoptions(options);
+      var td = this.imagedataToTracedata(imgd, options);
+      return this.getsvgstring(td, options);
+    }
+  }, {
+    key: "imageToTracedata",
+    value: function imageToTracedata(url, callback, options) {
+      var _this2 = this;
+
+      options = this.checkoptions(options);
+      this.loadImage(url, function (canvas) {
+        callback(_this2.imagedataToTracedata(_this2.getImgdata(canvas), options));
+      }, options);
+    }
+  }, {
+    key: "imagedataToTracedata",
+    value: function imagedataToTracedata(imgd, options) {
+      options = this.checkoptions(options);
+      var ii = this.colorquantization(imgd, options);
+      var tracedata;
+
+      if (options.layering === 0) {
+        tracedata = {
+          layers: [],
+          palette: ii.palette,
+          width: ii.array[0].length - 2,
+          height: ii.array.length - 2
+        };
+
+        for (var colornum = 0; colornum < ii.palette.length; colornum += 1) {
+          var tracedlayer = this.batchtracepaths(this.internodes(this.pathscan(this.layeringstep(ii, colornum), options.pathomit), options), options.ltres, options.qtres);
+          tracedata.layers.push(tracedlayer);
+        }
+      } else {
+        var ls = this.layering(ii);
+
+        if (options.layercontainerid) {
+          this.drawLayers(ls, this.specpalette, options.scale, options.layercontainerid);
+        }
+
+        var bps = this.batchpathscan(ls, options.pathomit);
+        var bis = this.batchinternodes(bps, options);
+        tracedata = {
+          layers: this.batchtracelayers(bis, options.ltres, options.qtres),
+          palette: ii.palette,
+          width: imgd.width,
+          height: imgd.height
+        };
+      }
+
+      return tracedata;
+    }
+  }, {
+    key: "checkoptions",
+    value: function checkoptions(options) {
+      options = options || {};
+
+      if (typeof options === 'string') {
+        options = options.toLowerCase();
+
+        if (this.optionpresets[options]) {
+          options = this.optionpresets[options];
+        } else {
+          options = {};
+        }
+      }
+
+      var ok = keys_default()(this.optionpresets['default']);
+
+      for (var k = 0; k < ok.length; k += 1) {
+        if (!options.hasOwnProperty(ok[k])) {
+          options[ok[k]] = this.optionpresets['default'][ok[k]];
+        }
+      }
+
+      return options;
+    }
+  }, {
+    key: "colorquantization",
+    value: function colorquantization(imgd, options) {
+      var arr = [];
+      var idx = 0;
+      var cd;
+      var cdl;
+      var ci;
+      var paletteacc = [];
+      var pixelnum = imgd.width * imgd.height;
+      var i;
+      var j;
+      var k;
+      var cnt;
+      var palette;
+
+      for (j = 0; j < imgd.height + 2; j += 1) {
+        arr[j] = [];
+
+        for (i = 0; i < imgd.width + 2; i += 1) {
+          arr[j][i] = -1;
+        }
+      }
+
+      if (options.pal) {
+        palette = options.pal;
+      } else if (options.colorsampling === 0) {
+        palette = this.generatepalette(options.numberofcolors);
+      } else if (options.colorsampling === 1) {
+        palette = this.samplepalette(options.numberofcolors, imgd);
+      } else {
+        palette = this.samplepalette2(options.numberofcolors, imgd);
+      }
+
+      if (options.blurradius > 0) {
+        imgd = this.blur(imgd, options.blurradius, options.blurdelta);
+      }
+
+      for (cnt = 0; cnt < options.colorquantcycles; cnt += 1) {
+        if (cnt > 0) {
+          for (k = 0; k < palette.length; k += 1) {
+            if (paletteacc[k].n > 0) {
+              palette[k] = {
+                r: Math.floor(paletteacc[k].r / paletteacc[k].n),
+                g: Math.floor(paletteacc[k].g / paletteacc[k].n),
+                b: Math.floor(paletteacc[k].b / paletteacc[k].n),
+                a: Math.floor(paletteacc[k].a / paletteacc[k].n)
+              };
+            }
+
+            if (paletteacc[k].n / pixelnum < options.mincolorratio && cnt < options.colorquantcycles - 1) {
+              palette[k] = {
+                r: Math.floor(Math.random() * 255),
+                g: Math.floor(Math.random() * 255),
+                b: Math.floor(Math.random() * 255),
+                a: Math.floor(Math.random() * 255)
+              };
+            }
+          }
+        }
+
+        for (i = 0; i < palette.length; i += 1) {
+          paletteacc[i] = {
+            r: 0,
+            g: 0,
+            b: 0,
+            a: 0,
+            n: 0
+          };
+        }
+
+        for (j = 0; j < imgd.height; j += 1) {
+          for (i = 0; i < imgd.width; i += 1) {
+            idx = (j * imgd.width + i) * 4;
+            ci = 0;
+            cdl = 1024;
+
+            for (k = 0; k < palette.length; k += 1) {
+              cd = Math.abs(palette[k].r - imgd.data[idx]) + Math.abs(palette[k].g - imgd.data[idx + 1]) + Math.abs(palette[k].b - imgd.data[idx + 2]) + Math.abs(palette[k].a - imgd.data[idx + 3]);
+
+              if (cd < cdl) {
+                cdl = cd;
+                ci = k;
+              }
+            }
+
+            paletteacc[ci].r += imgd.data[idx];
+            paletteacc[ci].g += imgd.data[idx + 1];
+            paletteacc[ci].b += imgd.data[idx + 2];
+            paletteacc[ci].a += imgd.data[idx + 3];
+            paletteacc[ci].n += 1;
+            arr[j + 1][i + 1] = ci;
+          }
+        }
+      }
+
+      return {
+        array: arr,
+        palette: palette
+      };
+    }
+  }, {
+    key: "samplepalette",
+    value: function samplepalette(numberofcolors, imgd) {
+      var idx;
+      var palette = [];
+
+      for (var i = 0; i < numberofcolors; i += 1) {
+        idx = Math.floor(Math.random() * imgd.data.length / 4) * 4;
+        palette.push({
+          r: imgd.data[idx],
+          g: imgd.data[idx + 1],
+          b: imgd.data[idx + 2],
+          a: imgd.data[idx + 3]
+        });
+      }
+
+      return palette;
+    }
+  }, {
+    key: "samplepalette2",
+    value: function samplepalette2(numberofcolors, imgd) {
+      var idx;
+      var palette = [];
+      var ni = Math.ceil(Math.sqrt(numberofcolors));
+      var nj = Math.ceil(numberofcolors / ni);
+      var vx = imgd.width / (ni + 1);
+      var vy = imgd.height / (nj + 1);
+
+      for (var j = 0; j < nj; j += 1) {
+        for (var i = 0; i < ni; i += 1) {
+          if (palette.length === numberofcolors) {
+            break;
+          } else {
+            idx = Math.floor((j + 1) * vy * imgd.width + (i + 1) * vx) * 4;
+            palette.push({
+              r: imgd.data[idx],
+              g: imgd.data[idx + 1],
+              b: imgd.data[idx + 2],
+              a: imgd.data[idx + 3]
+            });
+          }
+        }
+      }
+
+      return palette;
+    }
+  }, {
+    key: "generatepalette",
+    value: function generatepalette(numberofcolors) {
+      var palette = [];
+      var rcnt;
+      var gcnt;
+      var bcnt;
+
+      if (numberofcolors < 8) {
+        var graystep = Math.floor(255 / (numberofcolors - 1));
+
+        for (var i = 0; i < numberofcolors; i += 1) {
+          palette.push({
+            r: i * graystep,
+            g: i * graystep,
+            b: i * graystep,
+            a: 255
+          });
+        }
+      } else {
+        var colorqnum = Math.floor(Math.pow(numberofcolors, 1 / 3));
+        var colorstep = Math.floor(255 / (colorqnum - 1));
+        var rndnum = numberofcolors - colorqnum * colorqnum * colorqnum;
+
+        for (rcnt = 0; rcnt < colorqnum; rcnt += 1) {
+          for (gcnt = 0; gcnt < colorqnum; gcnt += 1) {
+            for (bcnt = 0; bcnt < colorqnum; bcnt += 1) {
+              palette.push({
+                r: rcnt * colorstep,
+                g: gcnt * colorstep,
+                b: bcnt * colorstep,
+                a: 255
+              });
+            }
+          }
+        }
+
+        for (rcnt = 0; rcnt < rndnum; rcnt += 1) {
+          palette.push({
+            r: Math.floor(Math.random() * 255),
+            g: Math.floor(Math.random() * 255),
+            b: Math.floor(Math.random() * 255),
+            a: Math.floor(Math.random() * 255)
+          });
+        }
+      }
+
+      return palette;
+    }
+  }, {
+    key: "layering",
+    value: function layering(ii) {
+      var layers = [];
+      var val = 0;
+      var ah = ii.array.length;
+      var aw = ii.array[0].length;
+      var n1;
+      var n2;
+      var n3;
+      var n4;
+      var n5;
+      var n6;
+      var n7;
+      var n8;
+      var i;
+      var j;
+      var k;
+
+      for (k = 0; k < ii.palette.length; k += 1) {
+        layers[k] = [];
+
+        for (j = 0; j < ah; j += 1) {
+          layers[k][j] = [];
+
+          for (i = 0; i < aw; i += 1) {
+            layers[k][j][i] = 0;
+          }
+        }
+      }
+
+      for (j = 1; j < ah - 1; j += 1) {
+        for (i = 1; i < aw - 1; i += 1) {
+          val = ii.array[j][i];
+          n1 = ii.array[j - 1][i - 1] === val ? 1 : 0;
+          n2 = ii.array[j - 1][i] === val ? 1 : 0;
+          n3 = ii.array[j - 1][i + 1] === val ? 1 : 0;
+          n4 = ii.array[j][i - 1] === val ? 1 : 0;
+          n5 = ii.array[j][i + 1] === val ? 1 : 0;
+          n6 = ii.array[j + 1][i - 1] === val ? 1 : 0;
+          n7 = ii.array[j + 1][i] === val ? 1 : 0;
+          n8 = ii.array[j + 1][i + 1] === val ? 1 : 0;
+          layers[val][j + 1][i + 1] = 1 + n5 * 2 + n8 * 4 + n7 * 8;
+
+          if (!n4) {
+            layers[val][j + 1][i] = 0 + 2 + n7 * 4 + n6 * 8;
+          }
+
+          if (!n2) {
+            layers[val][j][i + 1] = 0 + n3 * 2 + n5 * 4 + 8;
+          }
+
+          if (!n1) {
+            layers[val][j][i] = 0 + n2 * 2 + 4 + n4 * 8;
+          }
+        }
+      }
+
+      return layers;
+    }
+  }, {
+    key: "layeringstep",
+    value: function layeringstep(ii, cnum) {
+      var layer = [];
+      var ah = ii.array.length;
+      var aw = ii.array[0].length;
+      var i;
+      var j;
+
+      for (j = 0; j < ah; j += 1) {
+        layer[j] = [];
+
+        for (i = 0; i < aw; i += 1) {
+          layer[j][i] = 0;
+        }
+      }
+
+      for (j = 1; j < ah; j += 1) {
+        for (i = 1; i < aw; i += 1) {
+          layer[j][i] = (ii.array[j - 1][i - 1] === cnum ? 1 : 0) + (ii.array[j - 1][i] === cnum ? 2 : 0) + (ii.array[j][i - 1] === cnum ? 8 : 0) + (ii.array[j][i] === cnum ? 4 : 0);
+        }
+      }
+
+      return layer;
+    }
+  }, {
+    key: "pathscan",
+    value: function pathscan(arr, pathomit) {
+      var paths = [];
+      var pacnt = 0;
+      var pcnt = 0;
+      var px = 0;
+      var py = 0;
+      var w = arr[0].length;
+      var h = arr.length;
+      var dir = 0;
+      var pathfinished = true;
+      var holepath = false;
+      var lookuprow;
+
+      for (var j = 0; j < h; j += 1) {
+        for (var i = 0; i < w; i += 1) {
+          if (arr[j][i] === 4 || arr[j][i] === 11) {
+            px = i;
+            py = j;
+            paths[pacnt] = {};
+            paths[pacnt].points = [];
+            paths[pacnt].boundingbox = [px, py, px, py];
+            paths[pacnt].holechildren = [];
+            pathfinished = false;
+            pcnt = 0;
+            holepath = arr[j][i] === 11;
+            dir = 1;
+
+            while (!pathfinished) {
+              paths[pacnt].points[pcnt] = {};
+              paths[pacnt].points[pcnt].x = px - 1;
+              paths[pacnt].points[pcnt].y = py - 1;
+              paths[pacnt].points[pcnt].t = arr[py][px];
+
+              if (px - 1 < paths[pacnt].boundingbox[0]) {
+                paths[pacnt].boundingbox[0] = px - 1;
+              }
+
+              if (px - 1 > paths[pacnt].boundingbox[2]) {
+                paths[pacnt].boundingbox[2] = px - 1;
+              }
+
+              if (py - 1 < paths[pacnt].boundingbox[1]) {
+                paths[pacnt].boundingbox[1] = py - 1;
+              }
+
+              if (py - 1 > paths[pacnt].boundingbox[3]) {
+                paths[pacnt].boundingbox[3] = py - 1;
+              }
+
+              lookuprow = this.pathscan_combined_lookup[arr[py][px]][dir];
+              arr[py][px] = lookuprow[0];
+              dir = lookuprow[1];
+              px += lookuprow[2];
+              py += lookuprow[3];
+
+              if (px - 1 === paths[pacnt].points[0].x && py - 1 === paths[pacnt].points[0].y) {
+                pathfinished = true;
+
+                if (paths[pacnt].points.length < pathomit) {
+                  paths.pop();
+                } else {
+                  paths[pacnt].isholepath = !!holepath;
+
+                  if (holepath) {
+                    var parentidx = 0,
+                        parentbbox = [-1, -1, w + 1, h + 1];
+
+                    for (var parentcnt = 0; parentcnt < pacnt; parentcnt++) {
+                      if (!paths[parentcnt].isholepath && this.boundingboxincludes(paths[parentcnt].boundingbox, paths[pacnt].boundingbox) && this.boundingboxincludes(parentbbox, paths[parentcnt].boundingbox)) {
+                        parentidx = parentcnt;
+                        parentbbox = paths[parentcnt].boundingbox;
+                      }
+                    }
+
+                    paths[parentidx].holechildren.push(pacnt);
+                  }
+
+                  pacnt += 1;
+                }
+              }
+
+              pcnt += 1;
+            }
+          }
+        }
+      }
+
+      return paths;
+    }
+  }, {
+    key: "boundingboxincludes",
+    value: function boundingboxincludes(parentbbox, childbbox) {
+      return parentbbox[0] < childbbox[0] && parentbbox[1] < childbbox[1] && parentbbox[2] > childbbox[2] && parentbbox[3] > childbbox[3];
+    }
+  }, {
+    key: "batchpathscan",
+    value: function batchpathscan(layers, pathomit) {
+      var bpaths = [];
+
+      for (var k in layers) {
+        if (!layers.hasOwnProperty(k)) {
+          continue;
+        }
+
+        bpaths[k] = this.pathscan(layers[k], pathomit);
+      }
+
+      return bpaths;
+    }
+  }, {
+    key: "internodes",
+    value: function internodes(paths, options) {
+      var ins = [];
+      var palen = 0;
+      var nextidx = 0;
+      var nextidx2 = 0;
+      var previdx = 0;
+      var previdx2 = 0;
+      var pacnt;
+      var pcnt;
+
+      for (pacnt = 0; pacnt < paths.length; pacnt += 1) {
+        ins[pacnt] = {};
+        ins[pacnt].points = [];
+        ins[pacnt].boundingbox = paths[pacnt].boundingbox;
+        ins[pacnt].holechildren = paths[pacnt].holechildren;
+        ins[pacnt].isholepath = paths[pacnt].isholepath;
+        palen = paths[pacnt].points.length;
+
+        for (pcnt = 0; pcnt < palen; pcnt += 1) {
+          nextidx = (pcnt + 1) % palen;
+          nextidx2 = (pcnt + 2) % palen;
+          previdx = (pcnt - 1 + palen) % palen;
+          previdx2 = (pcnt - 2 + palen) % palen;
+
+          if (options.rightangleenhance && this.testrightangle(paths[pacnt], previdx2, previdx, pcnt, nextidx, nextidx2)) {
+            if (ins[pacnt].points.length > 0) {
+              ins[pacnt].points[ins[pacnt].points.length - 1].linesegment = this.getdirection(ins[pacnt].points[ins[pacnt].points.length - 1].x, ins[pacnt].points[ins[pacnt].points.length - 1].y, paths[pacnt].points[pcnt].x, paths[pacnt].points[pcnt].y);
+            }
+
+            ins[pacnt].points.push({
+              x: paths[pacnt].points[pcnt].x,
+              y: paths[pacnt].points[pcnt].y,
+              linesegment: this.getdirection(paths[pacnt].points[pcnt].x, paths[pacnt].points[pcnt].y, (paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2, (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2)
+            });
+          }
+
+          ins[pacnt].points.push({
+            x: (paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2,
+            y: (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2,
+            linesegment: this.getdirection((paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2, (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2, (paths[pacnt].points[nextidx].x + paths[pacnt].points[nextidx2].x) / 2, (paths[pacnt].points[nextidx].y + paths[pacnt].points[nextidx2].y) / 2)
+          });
+        }
+      }
+
+      return ins;
+    }
+  }, {
+    key: "testrightangle",
+    value: function testrightangle(path, idx1, idx2, idx3, idx4, idx5) {
+      return path.points[idx3].x === path.points[idx1].x && path.points[idx3].x === path.points[idx2].x && path.points[idx3].y === path.points[idx4].y && path.points[idx3].y === path.points[idx5].y || path.points[idx3].y === path.points[idx1].y && path.points[idx3].y === path.points[idx2].y && path.points[idx3].x === path.points[idx4].x && path.points[idx3].x === path.points[idx5].x;
+    }
+  }, {
+    key: "getdirection",
+    value: function getdirection(x1, y1, x2, y2) {
+      var val = 8;
+
+      if (x1 < x2) {
+        if (y1 < y2) {
+          val = 1;
+        } else if (y1 > y2) {
+          val = 7;
+        } else {
+          val = 0;
+        }
+      } else if (x1 > x2) {
+        if (y1 < y2) {
+          val = 3;
+        } else if (y1 > y2) {
+          val = 5;
+        } else {
+          val = 4;
+        }
+      } else if (y1 < y2) {
+        val = 2;
+      } else if (y1 > y2) {
+        val = 6;
+      } else {
+        val = 8;
+      }
+
+      return val;
+    }
+  }, {
+    key: "batchinternodes",
+    value: function batchinternodes(bpaths, options) {
+      var binternodes = [];
+
+      for (var k in bpaths) {
+        if (!bpaths.hasOwnProperty(k)) {
+          continue;
+        }
+
+        binternodes[k] = this.internodes(bpaths[k], options);
+      }
+
+      return binternodes;
+    }
+  }, {
+    key: "tracepath",
+    value: function tracepath(path, ltres, qtres) {
+      var pcnt = 0;
+      var segtype1;
+      var segtype2;
+      var seqend;
+      var smp = {};
+      smp.segments = [];
+      smp.boundingbox = path.boundingbox;
+      smp.holechildren = path.holechildren;
+      smp.isholepath = path.isholepath;
+
+      while (pcnt < path.points.length) {
+        var _context;
+
+        segtype1 = path.points[pcnt].linesegment;
+        segtype2 = -1;
+        seqend = pcnt + 1;
+
+        while ((path.points[seqend].linesegment === segtype1 || path.points[seqend].linesegment === segtype2 || segtype2 === -1) && seqend < path.points.length - 1) {
+          if (path.points[seqend].linesegment !== segtype1 && segtype2 === -1) {
+            segtype2 = path.points[seqend].linesegment;
+          }
+
+          seqend += 1;
+        }
+
+        if (seqend === path.points.length - 1) {
+          seqend = 0;
+        }
+
+        smp.segments = concat_default()(_context = smp.segments).call(_context, this.fitseq(path, ltres, qtres, pcnt, seqend));
+
+        if (seqend > 0) {
+          pcnt = seqend;
+        } else {
+          pcnt = path.points.length;
+        }
+      }
+
+      return smp;
+    }
+  }, {
+    key: "fitseq",
+    value: function fitseq(path, ltres, qtres, seqstart, seqend) {
+      var _context2;
+
+      if (seqend > path.points.length || seqend < 0) {
+        return [];
+      }
+
+      var errorpoint = seqstart,
+          errorval = 0,
+          curvepass = true,
+          px,
+          py,
+          dist2;
+      var tl = seqend - seqstart;
+
+      if (tl < 0) {
+        tl += path.points.length;
+      }
+
+      var vx = (path.points[seqend].x - path.points[seqstart].x) / tl,
+          vy = (path.points[seqend].y - path.points[seqstart].y) / tl;
+      var pcnt = (seqstart + 1) % path.points.length,
+          pl;
+
+      while (pcnt != seqend) {
+        pl = pcnt - seqstart;
+
+        if (pl < 0) {
+          pl += path.points.length;
+        }
+
+        px = path.points[seqstart].x + vx * pl;
+        py = path.points[seqstart].y + vy * pl;
+        dist2 = (path.points[pcnt].x - px) * (path.points[pcnt].x - px) + (path.points[pcnt].y - py) * (path.points[pcnt].y - py);
+
+        if (dist2 > ltres) {
+          curvepass = false;
+        }
+
+        if (dist2 > errorval) {
+          errorpoint = pcnt;
+          errorval = dist2;
+        }
+
+        pcnt = (pcnt + 1) % path.points.length;
+      }
+
+      if (curvepass) {
+        return [{
+          type: 'L',
+          x1: path.points[seqstart].x,
+          y1: path.points[seqstart].y,
+          x2: path.points[seqend].x,
+          y2: path.points[seqend].y
+        }];
+      }
+
+      var fitpoint = errorpoint;
+      curvepass = true;
+      errorval = 0;
+      var t = (fitpoint - seqstart) / tl,
+          t1 = (1 - t) * (1 - t),
+          t2 = 2 * (1 - t) * t,
+          t3 = t * t;
+      var cpx = (t1 * path.points[seqstart].x + t3 * path.points[seqend].x - path.points[fitpoint].x) / -t2,
+          cpy = (t1 * path.points[seqstart].y + t3 * path.points[seqend].y - path.points[fitpoint].y) / -t2;
+      pcnt = seqstart + 1;
+
+      while (pcnt != seqend) {
+        t = (pcnt - seqstart) / tl;
+        t1 = (1 - t) * (1 - t);
+        t2 = 2 * (1 - t) * t;
+        t3 = t * t;
+        px = t1 * path.points[seqstart].x + t2 * cpx + t3 * path.points[seqend].x;
+        py = t1 * path.points[seqstart].y + t2 * cpy + t3 * path.points[seqend].y;
+        dist2 = (path.points[pcnt].x - px) * (path.points[pcnt].x - px) + (path.points[pcnt].y - py) * (path.points[pcnt].y - py);
+
+        if (dist2 > qtres) {
+          curvepass = false;
+        }
+
+        if (dist2 > errorval) {
+          errorpoint = pcnt;
+          errorval = dist2;
+        }
+
+        pcnt = (pcnt + 1) % path.points.length;
+      }
+
+      if (curvepass) {
+        return [{
+          type: 'Q',
+          x1: path.points[seqstart].x,
+          y1: path.points[seqstart].y,
+          x2: cpx,
+          y2: cpy,
+          x3: path.points[seqend].x,
+          y3: path.points[seqend].y
+        }];
+      }
+
+      var splitpoint = fitpoint;
+      return concat_default()(_context2 = this.fitseq(path, ltres, qtres, seqstart, splitpoint)).call(_context2, this.fitseq(path, ltres, qtres, splitpoint, seqend));
+    }
+  }, {
+    key: "batchtracepaths",
+    value: function batchtracepaths(internodepaths, ltres, qtres) {
+      var btracedpaths = [];
+
+      for (var k in internodepaths) {
+        if (!internodepaths.hasOwnProperty(k)) {
+          continue;
+        }
+
+        btracedpaths.push(this.tracepath(internodepaths[k], ltres, qtres));
+      }
+
+      return btracedpaths;
+    }
+  }, {
+    key: "batchtracelayers",
+    value: function batchtracelayers(binternodes, ltres, qtres) {
+      var btbis = [];
+
+      for (var k in binternodes) {
+        if (!binternodes.hasOwnProperty(k)) {
+          continue;
+        }
+
+        btbis[k] = this.batchtracepaths(binternodes[k], ltres, qtres);
+      }
+
+      return btbis;
+    }
+  }, {
+    key: "roundtodec",
+    value: function roundtodec(val, places) {
+      return Number(val.toFixed(places));
+    }
+  }, {
+    key: "svgpathstring",
+    value: function svgpathstring(tracedata, lnum, pathnum, options) {
+      var _context3, _context4;
+
+      var layer = tracedata.layers[lnum],
+          smp = layer[pathnum],
+          str = '',
+          pcnt;
+
+      if (options.linefilter && smp.segments.length < 3) {
+        return str;
+      }
+
+      str = concat_default()(_context3 = "<path ".concat(options.desc ? concat_default()(_context4 = "desc=\"l ".concat(lnum, " p ")).call(_context4, pathnum, "\" ") : '')).call(_context3, this.tosvgcolorstr(tracedata.palette[lnum], options), "d=\"");
+
+      if (options.roundcoords === -1) {
+        var _context5;
+
+        str += concat_default()(_context5 = "M ".concat(smp.segments[0].x1 * options.scale, " ")).call(_context5, smp.segments[0].y1 * options.scale, " ");
+
+        for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
+          var _context6, _context7;
+
+          str += concat_default()(_context6 = concat_default()(_context7 = "".concat(smp.segments[pcnt].type, " ")).call(_context7, smp.segments[pcnt].x2 * options.scale, " ")).call(_context6, smp.segments[pcnt].y2 * options.scale, " ");
+
+          if (smp.segments[pcnt].hasOwnProperty('x3')) {
+            var _context8;
+
+            str += concat_default()(_context8 = "".concat(smp.segments[pcnt].x3 * options.scale, " ")).call(_context8, smp.segments[pcnt].y3 * options.scale, " ");
+          }
+        }
+
+        str += 'Z ';
+      } else {
+        var _context9;
+
+        str += concat_default()(_context9 = "M ".concat(this.roundtodec(smp.segments[0].x1 * options.scale, options.roundcoords), " ")).call(_context9, this.roundtodec(smp.segments[0].y1 * options.scale, options.roundcoords), " ");
+
+        for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
+          var _context10, _context11;
+
+          str += concat_default()(_context10 = concat_default()(_context11 = "".concat(smp.segments[pcnt].type, " ")).call(_context11, this.roundtodec(smp.segments[pcnt].x2 * options.scale, options.roundcoords), " ")).call(_context10, this.roundtodec(smp.segments[pcnt].y2 * options.scale, options.roundcoords), " ");
+
+          if (smp.segments[pcnt].hasOwnProperty('x3')) {
+            var _context12;
+
+            str += concat_default()(_context12 = "".concat(this.roundtodec(smp.segments[pcnt].x3 * options.scale, options.roundcoords), " ")).call(_context12, this.roundtodec(smp.segments[pcnt].y3 * options.scale, options.roundcoords), " ");
+          }
+        }
+
+        str += 'Z ';
+      }
+
+      for (var hcnt = 0; hcnt < smp.holechildren.length; hcnt++) {
+        var hsmp = layer[smp.holechildren[hcnt]];
+
+        if (options.roundcoords === -1) {
+          if (hsmp.segments[hsmp.segments.length - 1].hasOwnProperty('x3')) {
+            var _context13;
+
+            str += concat_default()(_context13 = "M ".concat(hsmp.segments[hsmp.segments.length - 1].x3 * options.scale, " ")).call(_context13, hsmp.segments[hsmp.segments.length - 1].y3 * options.scale, " ");
+          } else {
+            var _context14;
+
+            str += concat_default()(_context14 = "M ".concat(hsmp.segments[hsmp.segments.length - 1].x2 * options.scale, " ")).call(_context14, hsmp.segments[hsmp.segments.length - 1].y2 * options.scale, " ");
+          }
+
+          for (pcnt = hsmp.segments.length - 1; pcnt >= 0; pcnt--) {
+            var _context16;
+
+            str += "".concat(hsmp.segments[pcnt].type, " ");
+
+            if (hsmp.segments[pcnt].hasOwnProperty('x3')) {
+              var _context15;
+
+              str += concat_default()(_context15 = "".concat(hsmp.segments[pcnt].x2 * options.scale, " ")).call(_context15, hsmp.segments[pcnt].y2 * options.scale, " ");
+            }
+
+            str += concat_default()(_context16 = "".concat(hsmp.segments[pcnt].x1 * options.scale, " ")).call(_context16, hsmp.segments[pcnt].y1 * options.scale, " ");
+          }
+        } else {
+          if (hsmp.segments[hsmp.segments.length - 1].hasOwnProperty('x3')) {
+            var _context17;
+
+            str += concat_default()(_context17 = "M ".concat(this.roundtodec(hsmp.segments[hsmp.segments.length - 1].x3 * options.scale), " ")).call(_context17, this.roundtodec(hsmp.segments[hsmp.segments.length - 1].y3 * options.scale), " ");
+          } else {
+            var _context18;
+
+            str += concat_default()(_context18 = "M ".concat(this.roundtodec(hsmp.segments[hsmp.segments.length - 1].x2 * options.scale), " ")).call(_context18, this.roundtodec(hsmp.segments[hsmp.segments.length - 1].y2 * options.scale), " ");
+          }
+
+          for (pcnt = hsmp.segments.length - 1; pcnt >= 0; pcnt--) {
+            var _context20;
+
+            str += "".concat(hsmp.segments[pcnt].type, " ");
+
+            if (hsmp.segments[pcnt].hasOwnProperty('x3')) {
+              var _context19;
+
+              str += concat_default()(_context19 = "".concat(this.roundtodec(hsmp.segments[pcnt].x2 * options.scale), " ")).call(_context19, this.roundtodec(hsmp.segments[pcnt].y2 * options.scale), " ");
+            }
+
+            str += concat_default()(_context20 = "".concat(this.roundtodec(hsmp.segments[pcnt].x1 * options.scale), " ")).call(_context20, this.roundtodec(hsmp.segments[pcnt].y1 * options.scale), " ");
+          }
+        }
+
+        str += 'Z ';
+      }
+
+      str += '" />';
+
+      if (options.lcpr || options.qcpr) {
+        for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
+          if (smp.segments[pcnt].hasOwnProperty('x3') && options.qcpr) {
+            var _context21, _context22, _context23, _context24, _context25, _context26, _context27, _context28, _context29, _context30, _context31, _context32, _context33, _context34;
+
+            str += concat_default()(_context21 = concat_default()(_context22 = concat_default()(_context23 = "<circle cx=\"".concat(smp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context23, smp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context22, options.qcpr, "\" fill=\"cyan\" stroke-width=\"")).call(_context21, options.qcpr * 0.2, "\" stroke=\"black\" />");
+            str += concat_default()(_context24 = concat_default()(_context25 = concat_default()(_context26 = "<circle cx=\"".concat(smp.segments[pcnt].x3 * options.scale, "\" cy=\"")).call(_context26, smp.segments[pcnt].y3 * options.scale, "\" r=\"")).call(_context25, options.qcpr, "\" fill=\"white\" stroke-width=\"")).call(_context24, options.qcpr * 0.2, "\" stroke=\"black\" />");
+            str += concat_default()(_context27 = concat_default()(_context28 = concat_default()(_context29 = concat_default()(_context30 = "<line x1=\"".concat(smp.segments[pcnt].x1 * options.scale, "\" y1=\"")).call(_context30, smp.segments[pcnt].y1 * options.scale, "\" x2=\"")).call(_context29, smp.segments[pcnt].x2 * options.scale, "\" y2=\"")).call(_context28, smp.segments[pcnt].y2 * options.scale, "\" stroke-width=\"")).call(_context27, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
+            str += concat_default()(_context31 = concat_default()(_context32 = concat_default()(_context33 = concat_default()(_context34 = "<line x1=\"".concat(smp.segments[pcnt].x2 * options.scale, "\" y1=\"")).call(_context34, smp.segments[pcnt].y2 * options.scale, "\" x2=\"")).call(_context33, smp.segments[pcnt].x3 * options.scale, "\" y2=\"")).call(_context32, smp.segments[pcnt].y3 * options.scale, "\" stroke-width=\"")).call(_context31, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
+          }
+
+          if (!smp.segments[pcnt].hasOwnProperty('x3') && options.lcpr) {
+            var _context35, _context36, _context37;
+
+            str += concat_default()(_context35 = concat_default()(_context36 = concat_default()(_context37 = "<circle cx=\"".concat(smp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context37, smp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context36, options.lcpr, "\" fill=\"white\" stroke-width=\"")).call(_context35, options.lcpr * 0.2, "\" stroke=\"black\" />");
+          }
+        }
+
+        for (var hcnt = 0; hcnt < smp.holechildren.length; hcnt++) {
+          var hsmp = layer[smp.holechildren[hcnt]];
+
+          for (pcnt = 0; pcnt < hsmp.segments.length; pcnt++) {
+            if (hsmp.segments[pcnt].hasOwnProperty('x3') && options.qcpr) {
+              var _context38, _context39, _context40, _context41, _context42, _context43, _context44, _context45, _context46, _context47, _context48, _context49, _context50, _context51;
+
+              str += concat_default()(_context38 = concat_default()(_context39 = concat_default()(_context40 = "<circle cx=\"".concat(hsmp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context40, hsmp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context39, options.qcpr, "\" fill=\"cyan\" stroke-width=\"")).call(_context38, options.qcpr * 0.2, "\" stroke=\"black\" />");
+              str += concat_default()(_context41 = concat_default()(_context42 = concat_default()(_context43 = "<circle cx=\"".concat(hsmp.segments[pcnt].x3 * options.scale, "\" cy=\"")).call(_context43, hsmp.segments[pcnt].y3 * options.scale, "\" r=\"")).call(_context42, options.qcpr, "\" fill=\"white\" stroke-width=\"")).call(_context41, options.qcpr * 0.2, "\" stroke=\"black\" />");
+              str += concat_default()(_context44 = concat_default()(_context45 = concat_default()(_context46 = concat_default()(_context47 = "<line x1=\"".concat(hsmp.segments[pcnt].x1 * options.scale, "\" y1=\"")).call(_context47, hsmp.segments[pcnt].y1 * options.scale, "\" x2=\"")).call(_context46, hsmp.segments[pcnt].x2 * options.scale, "\" y2=\"")).call(_context45, hsmp.segments[pcnt].y2 * options.scale, "\" stroke-width=\"")).call(_context44, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
+              str += concat_default()(_context48 = concat_default()(_context49 = concat_default()(_context50 = concat_default()(_context51 = "<line x1=\"".concat(hsmp.segments[pcnt].x2 * options.scale, "\" y1=\"")).call(_context51, hsmp.segments[pcnt].y2 * options.scale, "\" x2=\"")).call(_context50, hsmp.segments[pcnt].x3 * options.scale, "\" y2=\"")).call(_context49, hsmp.segments[pcnt].y3 * options.scale, "\" stroke-width=\"")).call(_context48, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
+            }
+
+            if (!hsmp.segments[pcnt].hasOwnProperty('x3') && options.lcpr) {
+              var _context52, _context53, _context54;
+
+              str += concat_default()(_context52 = concat_default()(_context53 = concat_default()(_context54 = "<circle cx=\"".concat(hsmp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context54, hsmp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context53, options.lcpr, "\" fill=\"white\" stroke-width=\"")).call(_context52, options.lcpr * 0.2, "\" stroke=\"black\" />");
+            }
+          }
+        }
+      }
+
+      return str;
+    }
+  }, {
+    key: "getsvgstring",
+    value: function getsvgstring(tracedata, options) {
+      var _context55, _context56, _context57;
+
+      options = this.checkoptions(options);
+      var w = tracedata.width * options.scale;
+      var h = tracedata.height * options.scale;
+
+      var svgstr = concat_default()(_context55 = "<svg ".concat(options.viewbox ? concat_default()(_context56 = "viewBox=\"0 0 ".concat(w, " ")).call(_context56, h, "\" ") : concat_default()(_context57 = "width=\"".concat(w, "\" height=\"")).call(_context57, h, "\" "), "version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" desc=\"Created with imagetracer.js version ")).call(_context55, this.versionnumber, "\" >");
+
+      for (var lcnt = 0; lcnt < tracedata.layers.length; lcnt += 1) {
+        for (var pcnt = 0; pcnt < tracedata.layers[lcnt].length; pcnt += 1) {
+          if (!tracedata.layers[lcnt][pcnt].isholepath) {
+            svgstr += this.svgpathstring(tracedata, lcnt, pcnt, options);
+          }
+        }
+      }
+
+      svgstr += '</svg>';
+      return svgstr;
+    }
+  }, {
+    key: "compareNumbers",
+    value: function compareNumbers(a, b) {
+      return a - b;
+    }
+  }, {
+    key: "torgbastr",
+    value: function torgbastr(c) {
+      var _context58, _context59, _context60;
+
+      return concat_default()(_context58 = concat_default()(_context59 = concat_default()(_context60 = "rgba(".concat(c.r, ",")).call(_context60, c.g, ",")).call(_context59, c.b, ",")).call(_context58, c.a, ")");
+    }
+  }, {
+    key: "tosvgcolorstr",
+    value: function tosvgcolorstr(c, options) {
+      var _context61, _context62, _context63, _context64, _context65, _context66, _context67;
+
+      return concat_default()(_context61 = concat_default()(_context62 = concat_default()(_context63 = concat_default()(_context64 = concat_default()(_context65 = concat_default()(_context66 = concat_default()(_context67 = "fill=\"rgb(".concat(c.r, ",")).call(_context67, c.g, ",")).call(_context66, c.b, ")\" stroke=\"rgb(")).call(_context65, c.r, ",")).call(_context64, c.g, ",")).call(_context63, c.b, ")\" stroke-width=\"")).call(_context62, options.strokewidth, "\" opacity=\"")).call(_context61, c.a / 255.0, "\" ");
+    }
+  }, {
+    key: "appendSVGString",
+    value: function appendSVGString(svgstr, parentid) {
+      var div;
+
+      if (parentid) {
+        div = document.getElementById(parentid);
+
+        if (!div) {
+          div = document.createElement('div');
+          div.id = parentid;
+          document.body.appendChild(div);
+        }
+      } else {
+        div = document.createElement('div');
+        document.body.appendChild(div);
+      }
+
+      div.innerHTML += svgstr;
+    }
+  }, {
+    key: "blur",
+    value: function blur(imgd, radius, delta) {
+      var i, j, k, d, idx, racc, gacc, bacc, aacc, wacc;
+      var imgd2 = {
+        width: imgd.width,
+        height: imgd.height,
+        data: []
+      };
+      radius = Math.floor(radius);
+
+      if (radius < 1) {
+        return imgd;
+      }
+
+      if (radius > 5) {
+        radius = 5;
+      }
+
+      delta = Math.abs(delta);
+
+      if (delta > 1024) {
+        delta = 1024;
+      }
+
+      var thisgk = this.gks[radius - 1];
+
+      for (j = 0; j < imgd.height; j++) {
+        for (i = 0; i < imgd.width; i++) {
+          racc = 0;
+          gacc = 0;
+          bacc = 0;
+          aacc = 0;
+          wacc = 0;
+
+          for (k = -radius; k < radius + 1; k++) {
+            if (i + k > 0 && i + k < imgd.width) {
+              idx = (j * imgd.width + i + k) * 4;
+              racc += imgd.data[idx] * thisgk[k + radius];
+              gacc += imgd.data[idx + 1] * thisgk[k + radius];
+              bacc += imgd.data[idx + 2] * thisgk[k + radius];
+              aacc += imgd.data[idx + 3] * thisgk[k + radius];
+              wacc += thisgk[k + radius];
+            }
+          }
+
+          idx = (j * imgd.width + i) * 4;
+          imgd2.data[idx] = Math.floor(racc / wacc);
+          imgd2.data[idx + 1] = Math.floor(gacc / wacc);
+          imgd2.data[idx + 2] = Math.floor(bacc / wacc);
+          imgd2.data[idx + 3] = Math.floor(aacc / wacc);
+        }
+      }
+
+      var himgd = new Uint8ClampedArray(imgd2.data);
+
+      for (j = 0; j < imgd.height; j++) {
+        for (i = 0; i < imgd.width; i++) {
+          racc = 0;
+          gacc = 0;
+          bacc = 0;
+          aacc = 0;
+          wacc = 0;
+
+          for (k = -radius; k < radius + 1; k++) {
+            if (j + k > 0 && j + k < imgd.height) {
+              idx = ((j + k) * imgd.width + i) * 4;
+              racc += himgd[idx] * thisgk[k + radius];
+              gacc += himgd[idx + 1] * thisgk[k + radius];
+              bacc += himgd[idx + 2] * thisgk[k + radius];
+              aacc += himgd[idx + 3] * thisgk[k + radius];
+              wacc += thisgk[k + radius];
+            }
+          }
+
+          idx = (j * imgd.width + i) * 4;
+          imgd2.data[idx] = Math.floor(racc / wacc);
+          imgd2.data[idx + 1] = Math.floor(gacc / wacc);
+          imgd2.data[idx + 2] = Math.floor(bacc / wacc);
+          imgd2.data[idx + 3] = Math.floor(aacc / wacc);
+        }
+      }
+
+      for (j = 0; j < imgd.height; j++) {
+        for (i = 0; i < imgd.width; i++) {
+          idx = (j * imgd.width + i) * 4;
+          d = Math.abs(imgd2.data[idx] - imgd.data[idx]) + Math.abs(imgd2.data[idx + 1] - imgd.data[idx + 1]) + Math.abs(imgd2.data[idx + 2] - imgd.data[idx + 2]) + Math.abs(imgd2.data[idx + 3] - imgd.data[idx + 3]);
+
+          if (d > delta) {
+            imgd2.data[idx] = imgd.data[idx];
+            imgd2.data[idx + 1] = imgd.data[idx + 1];
+            imgd2.data[idx + 2] = imgd.data[idx + 2];
+            imgd2.data[idx + 3] = imgd.data[idx + 3];
+          }
+        }
+      }
+
+      return imgd2;
+    }
+  }, {
+    key: "loadImage",
+    value: function loadImage(url, callback, options) {
+      var img = new Image();
+
+      if (options && options.corsenabled) {
+        img.crossOrigin = 'Anonymous';
+      }
+
+      img.src = url;
+
+      img.onload = function () {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0);
+        callback(canvas);
+      };
+    }
+  }, {
+    key: "getImgdata",
+    value: function getImgdata(canvas) {
+      var context = canvas.getContext('2d');
+      return context.getImageData(0, 0, canvas.width, canvas.height);
+    }
+  }, {
+    key: "drawLayers",
+    value: function drawLayers(layers, palette, scale, parentid) {
+      scale = scale || 1;
+      var w, h, i, j, k;
+      var div;
+
+      if (parentid) {
+        div = document.getElementById(parentid);
+
+        if (!div) {
+          div = document.createElement('div');
+          div.id = parentid;
+          document.body.appendChild(div);
+        }
+      } else {
+        div = document.createElement('div');
+        document.body.appendChild(div);
+      }
+
+      for (k in layers) {
+        if (!layers.hasOwnProperty(k)) {
+          continue;
+        }
+
+        w = layers[k][0].length;
+        h = layers[k].length;
+        var canvas = document.createElement('canvas');
+        canvas.width = w * scale;
+        canvas.height = h * scale;
+        var context = canvas.getContext('2d');
+
+        for (j = 0; j < h; j += 1) {
+          for (i = 0; i < w; i += 1) {
+            context.fillStyle = this.torgbastr(palette[layers[k][j][i] % palette.length]);
+            context.fillRect(i * scale, j * scale, scale, scale);
+          }
+        }
+
+        div.appendChild(canvas);
+      }
+    }
+  }], [{
+    key: "tracerDefaultOption",
+    value: function tracerDefaultOption() {
+      return {
+        pathomit: 100,
+        ltres: 0.1,
+        qtres: 1,
+        scale: 1,
+        strokewidth: 5,
+        viewbox: false,
+        linefilter: true,
+        desc: false,
+        rightangleenhance: false,
+        pal: [{
+          r: 0,
+          g: 0,
+          b: 0,
+          a: 255
+        }, {
+          r: 255,
+          g: 255,
+          b: 255,
+          a: 255
+        }]
+      };
+    }
+  }]);
+
+  return ImageTracer;
+}();
+
+
+;// CONCATENATED MODULE: ./src/js/action.js
+
+
+
+
+
+
+
+
+
+/* harmony default export */ var action = ({
+  /**
+   * Get ui actions
+   * @returns {Object} actions for ui
+   * @private
+   */
+  getActions: function getActions() {
+    return {
+      main: this._mainAction(),
+      shape: this._shapeAction(),
+      crop: this._cropAction(),
+      resize: this._resizeAction(),
+      flip: this._flipAction(),
+      rotate: this._rotateAction(),
+      text: this._textAction(),
+      mask: this._maskAction(),
+      image: this._imageAction(),
+      draw: this._drawAction(),
+      icon: this._iconAction(),
+      filter: this._filterAction(),
+      history: this._historyAction()
+    };
+  },
+
+  /**
+   * Main Action
+   * @returns {Object} actions for ui main
+   * @private
+   */
+  _mainAction: function _mainAction() {
+    var _this = this;
+
+    var exitCropOnAction = function exitCropOnAction() {
+      if (_this.ui.submenu === 'crop') {
+        _this.stopDrawingMode();
+
+        _this.ui.changeMenu('crop');
+      }
+    };
+
+    var setAngleRangeBarOnAction = function setAngleRangeBarOnAction(angle) {
+      if (_this.ui.submenu === 'rotate') {
+        _this.ui.rotate.setRangeBarAngle('setAngle', angle);
+      }
+    };
+
+    var setFilterStateRangeBarOnAction = function setFilterStateRangeBarOnAction(filterOptions) {
+      if (_this.ui.submenu === 'filter') {
+        filter_default()(_this.ui).setFilterState(filterOptions);
+      }
+    };
+
+    var onEndUndoRedo = function onEndUndoRedo(result) {
+      setAngleRangeBarOnAction(result);
+      setFilterStateRangeBarOnAction(result);
+      return result;
+    };
+
+    var toggleZoomMode = function toggleZoomMode() {
+      var zoomMode = _this._graphics.getZoomMode();
+
+      _this.stopDrawingMode();
+
+      if (zoomMode !== zoomModes.ZOOM) {
+        _this.startDrawingMode(drawingModes.ZOOM);
+
+        _this._graphics.startZoomInMode();
+      } else {
+        _this._graphics.endZoomInMode();
+      }
+    };
+
+    var toggleHandMode = function toggleHandMode() {
+      var zoomMode = _this._graphics.getZoomMode();
+
+      _this.stopDrawingMode();
+
+      if (zoomMode !== zoomModes.HAND) {
+        _this.startDrawingMode(drawingModes.ZOOM);
+
+        _this._graphics.startHandMode();
+      } else {
+        _this._graphics.endHandMode();
+      }
+    };
+
+    var initFilterState = function initFilterState() {
+      if (filter_default()(_this.ui)) {
+        filter_default()(_this.ui).initFilterCheckBoxState();
+      }
+    };
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      initLoadImage: function initLoadImage(imagePath, imageName) {
+        return _this.loadImageFromURL(imagePath, imageName).then(function (sizeValue) {
+          exitCropOnAction();
+          _this.ui.initializeImgUrl = imagePath;
+
+          _this.ui.resizeEditor({
+            imageSize: sizeValue
+          });
+
+          _this.clearUndoStack();
+
+          _this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
+        });
+      },
+      undo: function undo() {
+        if (!_this.isEmptyUndoStack()) {
+          exitCropOnAction();
+
+          _this.deactivateAll();
+
+          _this.undo().then(onEndUndoRedo);
+        }
+      },
+      redo: function redo() {
+        if (!_this.isEmptyRedoStack()) {
+          exitCropOnAction();
+
+          _this.deactivateAll();
+
+          _this.redo().then(onEndUndoRedo);
+        }
+      },
+      reset: function reset() {
+        exitCropOnAction();
+
+        _this.loadImageFromURL(_this.ui.initializeImgUrl, 'resetImage').then(function (sizeValue) {
+          exitCropOnAction();
+          initFilterState();
+
+          _this.ui.resizeEditor({
+            imageSize: sizeValue
+          });
+
+          _this.clearUndoStack();
+
+          _this._initHistory();
+        });
+      },
+      delete: function _delete() {
+        _this.ui.changeHelpButtonEnabled('delete', false);
+
+        exitCropOnAction();
+
+        _this.removeActiveObject();
+
+        _this.activeObjectId = null;
+      },
+      deleteAll: function deleteAll() {
+        exitCropOnAction();
+
+        _this.clearObjects();
+
+        _this.ui.changeHelpButtonEnabled('delete', false);
+
+        _this.ui.changeHelpButtonEnabled('deleteAll', false);
+      },
+      load: function load(file) {
+        if (!isSupportFileApi()) {
+          alert('This browser does not support file-api');
+        }
+
+        _this.ui.initializeImgUrl = url_default().createObjectURL(file);
+
+        _this.loadImageFromFile(file).then(function (sizeValue) {
+          exitCropOnAction();
+          initFilterState();
+
+          _this.clearUndoStack();
+
+          _this.ui.activeMenuEvent();
+
+          _this.ui.resizeEditor({
+            imageSize: sizeValue
+          });
+
+          _this._clearHistory();
+
+          _this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
+        })['catch'](function (message) {
+          return promise_default().reject(message);
+        });
+      },
+      download: function download() {
+        var dataURL = _this.toDataURL();
+
+        var imageName = _this.getImageName();
+
+        var blob, type, w;
+
+        if (isSupportFileApi() && window.saveAs) {
+          blob = base64ToBlob(dataURL);
+          type = blob.type.split('/')[1];
+
+          if (imageName.split('.').pop() !== type) {
+            imageName += ".".concat(type);
+          }
+
+          saveAs(blob, imageName); // eslint-disable-line
+        } else {
+          w = window.open();
+          w.document.body.innerHTML = "<img src='".concat(dataURL, "'>");
+        }
+      },
+      history: function history(event) {
+        _this.ui.toggleHistoryMenu(event);
+      },
+      zoomIn: function zoomIn() {
+        _this.ui.toggleZoomButtonStatus('zoomIn');
+
+        _this.deactivateAll();
+
+        toggleZoomMode();
+      },
+      zoomOut: function zoomOut() {
+        _this._graphics.zoomOut();
+      },
+      hand: function hand() {
+        _this.ui.offZoomInButtonStatus();
+
+        _this.ui.toggleZoomButtonStatus('hand');
+
+        _this.deactivateAll();
+
+        toggleHandMode();
+      },
+      bringForward: function bringForward() {
+        var canvas = _this._graphics.getCanvas();
+
+        var myObject = canvas.getActiveObject();
+        canvas.bringForward(myObject);
+        canvas.renderAll();
+      },
+      sendBackwards: function sendBackwards() {
+        var canvas = _this._graphics.getCanvas();
+
+        var myObject = canvas.getActiveObject();
+        canvas.sendBackwards(myObject);
+        canvas.renderAll();
+      },
+      sendToBack: function sendToBack() {
+        var canvas = _this._graphics.getCanvas();
+
+        var myObject = canvas.getActiveObject();
+        canvas.sendToBack(myObject);
+        canvas.renderAll();
+      },
+      bringToFront: function bringToFront() {
+        var canvas = _this._graphics.getCanvas();
+
+        var myObject = canvas.getActiveObject();
+        canvas.bringToFront(myObject);
+        canvas.renderAll();
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Icon Action
+   * @returns {Object} actions for ui icon
+   * @private
+   */
+  _iconAction: function _iconAction() {
+    var _this2 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      changeColor: function changeColor(color) {
+        if (_this2.activeObjectId) {
+          _this2.changeIconColor(_this2.activeObjectId, color);
+        }
+      },
+      addIcon: function addIcon(iconType, iconColor) {
+        _this2.startDrawingMode('ICON');
+
+        _this2.setDrawingIcon(iconType, iconColor);
+      },
+      cancelAddIcon: function cancelAddIcon() {
+        _this2.ui.icon.clearIconType();
+
+        _this2.changeSelectableAll(true);
+
+        _this2.changeCursor('default');
+
+        _this2.stopDrawingMode();
+      },
+      registerDefaultIcons: function registerDefaultIcons(type, path) {
+        var iconObj = {};
+        iconObj[type] = path;
+
+        _this2.registerIcons(iconObj);
+      },
+      registerCustomIcon: function registerCustomIcon(imgUrl, file) {
+        var imagetracer = new ImageTracer();
+        imagetracer.imageToSVG(imgUrl, function (svgstr) {
+          var _svgstr$match = svgstr.match(/path[^>]*d="([^"]*)"/),
+              _svgstr$match2 = _slicedToArray(_svgstr$match, 2),
+              svgPath = _svgstr$match2[1];
+
+          var iconObj = {};
+          iconObj[file.name] = svgPath;
+
+          _this2.registerIcons(iconObj);
+
+          _this2.addIcon(file.name, {
+            left: 100,
+            top: 100
+          });
+        }, ImageTracer.tracerDefaultOption());
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Draw Action
+   * @returns {Object} actions for ui draw
+   * @private
+   */
+  _drawAction: function _drawAction() {
+    var _this3 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      setDrawMode: function setDrawMode(type, settings) {
+        _this3.stopDrawingMode();
+
+        if (type === 'free') {
+          _this3.startDrawingMode('FREE_DRAWING', settings);
+        } else {
+          _this3.startDrawingMode('LINE_DRAWING', settings);
+        }
+      },
+      setColor: function setColor(color) {
+        _this3.setBrush({
+          color: color
+        });
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Mask Action
+   * @returns {Object} actions for ui mask
+   * @private
+   */
+  _maskAction: function _maskAction() {
+    var _this4 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      loadImageFromURL: function loadImageFromURL(imgUrl, file) {
+        return _this4.loadImageFromURL(_this4.toDataURL(), 'FilterImage').then(function () {
+          _this4.addImageObject(imgUrl).then(function () {
+            url_default().revokeObjectURL(file);
+          });
+
+          _this4._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+        });
+      },
+      applyFilter: function applyFilter() {
+        _this4.applyFilter('mask', {
+          maskObjId: _this4.activeObjectId
+        });
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Image Action
+   * @returns {Object} actions for ui mask
+   * @private
+   */
+  _imageAction: function _imageAction() {
+    var _this5 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      loadImageFromURL: function loadImageFromURL(imgUrl, file) {
+        return _this5.loadImageFromURL(_this5.toDataURL(), 'FilterImage').then(function () {
+          _this5.addImageObject(imgUrl).then(function () {
+            url_default().revokeObjectURL(file);
+          });
+
+          _this5._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+        });
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Text Action
+   * @returns {Object} actions for ui text
+   * @private
+   */
+  _textAction: function _textAction() {
+    var _this6 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      changeTextStyle: function changeTextStyle(styleObj, isSilent) {
+        if (styleObj.fontFamily) {
+          _this6.fontFamily = styleObj.fontFamily;
+        }
+
+        if (_this6.activeObjectId) {
+          _this6.changeTextStyle(_this6.activeObjectId, styleObj, isSilent);
+        }
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Rotate Action
+   * @returns {Object} actions for ui rotate
+   * @private
+   */
+  _rotateAction: function _rotateAction() {
+    var _this7 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      rotate: function rotate(angle, isSilent) {
+        _this7.rotate(angle, isSilent);
+
+        _this7.ui.resizeEditor();
+
+        _this7.ui.rotate.setRangeBarAngle('rotate', angle);
+      },
+      setAngle: function setAngle(angle, isSilent) {
+        _this7.setAngle(angle, isSilent);
+
+        _this7.ui.resizeEditor();
+
+        _this7.ui.rotate.setRangeBarAngle('setAngle', angle);
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Shape Action
+   * @returns {Object} actions for ui shape
+   * @private
+   */
+  _shapeAction: function _shapeAction() {
+    var _this8 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      changeShape: function changeShape(changeShapeObject, isSilent) {
+        if (_this8.activeObjectId) {
+          _this8.changeShape(_this8.activeObjectId, changeShapeObject, isSilent);
+        }
+      },
+      setDrawingShape: function setDrawingShape(shapeType) {
+        _this8.setDrawingShape(shapeType);
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Crop Action
+   * @returns {Object} actions for ui crop
+   * @private
+   */
+  _cropAction: function _cropAction() {
+    var _this9 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      crop: function crop() {
+        var cropRect = _this9.getCropzoneRect();
+
+        if (cropRect && !isEmptyCropzone(cropRect)) {
+          _this9.crop(cropRect).then(function () {
+            _this9.stopDrawingMode();
+
+            _this9.ui.resizeEditor();
+
+            _this9.ui.changeMenu('crop');
+
+            _this9._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
+          })['catch'](function (message) {
+            return promise_default().reject(message);
+          });
+        }
+      },
+      cancel: function cancel() {
+        _this9.stopDrawingMode();
+
+        _this9.ui.changeMenu('crop');
+      },
+
+      /* eslint-disable */
+      preset: function preset(presetType) {
+        switch (presetType) {
+          case 'preset-square':
+            _this9.setCropzoneRect(1 / 1);
+
+            break;
+
+          case 'preset-3-2':
+            _this9.setCropzoneRect(3 / 2);
+
+            break;
+
+          case 'preset-4-3':
+            _this9.setCropzoneRect(4 / 3);
+
+            break;
+
+          case 'preset-5-4':
+            _this9.setCropzoneRect(5 / 4);
+
+            break;
+
+          case 'preset-7-5':
+            _this9.setCropzoneRect(7 / 5);
+
+            break;
+
+          case 'preset-16-9':
+            _this9.setCropzoneRect(16 / 9);
+
+            break;
+
+          default:
+            _this9.setCropzoneRect();
+
+            _this9.ui.crop.changeApplyButtonStatus(false);
+
+            break;
+        }
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Resize Action
+   * @returns {Object} actions for ui resize
+   * @private
+   */
+  _resizeAction: function _resizeAction() {
+    var _this10 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      getCurrentDimensions: function getCurrentDimensions() {
+        return _this10._graphics.getCurrentDimensions();
+      },
+      preview: function preview(actor, value, lockState) {
+        var currentDimensions = _this10._graphics.getCurrentDimensions();
+
+        var calcAspectRatio = function calcAspectRatio() {
+          return currentDimensions.width / currentDimensions.height;
+        };
+
+        var dimensions = {};
+
+        switch (actor) {
+          case 'width':
+            dimensions.width = value;
+
+            if (lockState) {
+              dimensions.height = value / calcAspectRatio();
+            } else {
+              dimensions.height = currentDimensions.height;
+            }
+
+            break;
+
+          case 'height':
+            dimensions.height = value;
+
+            if (lockState) {
+              dimensions.width = value * calcAspectRatio();
+            } else {
+              dimensions.width = currentDimensions.width;
+            }
+
+            break;
+
+          default:
+            dimensions = currentDimensions;
+        }
+
+        _this10._graphics.resize(dimensions).then(function () {
+          _this10.ui.resizeEditor();
+        });
+
+        if (lockState) {
+          _this10.ui.resize.setWidthValue(dimensions.width);
+
+          _this10.ui.resize.setHeightValue(dimensions.height);
+        }
+      },
+      lockAspectRatio: function lockAspectRatio(lockState, min, max) {
+        var _this10$_graphics$get = _this10._graphics.getCurrentDimensions(),
+            width = _this10$_graphics$get.width,
+            height = _this10$_graphics$get.height;
+
+        var aspectRatio = width / height;
+
+        if (lockState) {
+          if (width > height) {
+            var pMax = max / aspectRatio;
+            var pMin = min * aspectRatio;
+
+            _this10.ui.resize.setLimit({
+              minWidth: pMin > min ? pMin : min,
+              minHeight: min,
+              maxWidth: max,
+              maxHeight: pMax < max ? pMax : max
+            });
+          } else {
+            var _pMax = max * aspectRatio;
+
+            var _pMin = min / aspectRatio;
+
+            _this10.ui.resize.setLimit({
+              minWidth: min,
+              minHeight: _pMin > min ? _pMin : min,
+              maxWidth: _pMax < max ? _pMax : max,
+              maxHeight: max
+            });
+          }
+        } else {
+          _this10.ui.resize.setLimit({
+            minWidth: min,
+            minHeight: min,
+            maxWidth: max,
+            maxHeight: max
+          });
+        }
+      },
+      resize: function resize() {
+        var dimensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        if (!dimensions) {
+          dimensions = _this10._graphics.getCurrentDimensions();
+        }
+
+        _this10.resize(dimensions).then(function () {
+          _this10._graphics.setOriginalDimensions(dimensions);
+
+          _this10.stopDrawingMode();
+
+          _this10.ui.resizeEditor();
+
+          _this10.ui.changeMenu('resize');
+        })['catch'](function (message) {
+          return promise_default().reject(message);
+        });
+      },
+      reset: function reset() {
+        var standByMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+        var dimensions = _this10._graphics.getOriginalDimensions();
+
+        _this10.ui.resize.setWidthValue(dimensions.width, true);
+
+        _this10.ui.resize.setHeightValue(dimensions.height, true);
+
+        _this10._graphics.resize(dimensions).then(function () {
+          if (!standByMode) {
+            _this10.stopDrawingMode();
+
+            _this10.ui.resizeEditor();
+
+            _this10.ui.changeMenu('resize');
+          }
+        });
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Flip Action
+   * @returns {Object} actions for ui flip
+   * @private
+   */
+  _flipAction: function _flipAction() {
+    var _this11 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      flip: function flip(flipType) {
+        return _this11[flipType]();
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Filter Action
+   * @returns {Object} actions for ui filter
+   * @private
+   */
+  _filterAction: function _filterAction() {
+    var _this12 = this;
+
+    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+      applyFilter: function applyFilter(applying, type, options, isSilent) {
+        if (applying) {
+          _this12.applyFilter(type, options, isSilent);
+        } else if (_this12.hasFilter(type)) {
+          _this12.removeFilter(type);
+        }
+      }
+    }, this._commonAction());
+  },
+
+  /**
+   * Image Editor Event Observer
+   */
+  setReAction: function setReAction() {
+    var _this13 = this;
+
+    this.on({
+      undoStackChanged: function undoStackChanged(length) {
+        if (length) {
+          _this13.ui.changeHelpButtonEnabled('undo', true);
+
+          _this13.ui.changeHelpButtonEnabled('reset', true);
+        } else {
+          _this13.ui.changeHelpButtonEnabled('undo', false);
+
+          _this13.ui.changeHelpButtonEnabled('reset', false);
+        }
+
+        _this13.ui.resizeEditor();
+      },
+      redoStackChanged: function redoStackChanged(length) {
+        if (length) {
+          _this13.ui.changeHelpButtonEnabled('redo', true);
+        } else {
+          _this13.ui.changeHelpButtonEnabled('redo', false);
+        }
+
+        _this13.ui.resizeEditor();
+      },
+
+      /* eslint-disable complexity */
+      objectActivated: function objectActivated(obj) {
+        _this13.activeObjectId = obj.id;
+
+        _this13.ui.changeHelpButtonEnabled('delete', true);
+
+        _this13.ui.changeHelpButtonEnabled('deleteAll', true);
+
+        if (obj.type === 'cropzone') {
+          _this13.ui.crop.changeApplyButtonStatus(true);
+        } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+          _this13.stopDrawingMode();
+
+          if (_this13.ui.submenu !== 'shape') {
+            _this13.ui.changeMenu('shape', false, false);
+          }
+
+          _this13.ui.shape.setShapeStatus({
+            strokeColor: obj.stroke,
+            strokeWidth: obj.strokeWidth,
+            fillColor: fill_default()(obj)
+          });
+
+          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+        } else if (obj.type === 'path' || obj.type === 'line') {
+          if (_this13.ui.submenu !== 'draw') {
+            _this13.ui.changeMenu('draw', false, false);
+
+            _this13.ui.draw.changeStandbyMode();
+          }
+        } else if (['i-text', 'text'].indexOf(obj.type) > -1) {
+          if (_this13.ui.submenu !== 'text') {
+            _this13.ui.changeMenu('text', false, false);
+          }
+
+          _this13.ui.text.setTextStyleStateOnAction(obj);
+        } else if (obj.type === 'icon') {
+          _this13.stopDrawingMode();
+
+          if (_this13.ui.submenu !== 'icon') {
+            _this13.ui.changeMenu('icon', false, false);
+          }
+
+          _this13.ui.icon.setIconPickerColor(fill_default()(obj));
+        }
+      },
+
+      /* eslint-enable complexity */
+      addText: function addText(pos) {
+        var _this13$ui$text = _this13.ui.text,
+            fill = _this13$ui$text.textColor,
+            fontSize = _this13$ui$text.fontSize,
+            fontStyle = _this13$ui$text.fontStyle,
+            fontWeight = _this13$ui$text.fontWeight,
+            underline = _this13$ui$text.underline;
+        var fontFamily = _this13.fontFamily;
+
+        _this13.addText('Double Click', {
+          position: pos.originPosition,
+          styles: {
+            fill: fill,
+            fontSize: fontSize,
+            fontFamily: fontFamily,
+            fontStyle: fontStyle,
+            fontWeight: fontWeight,
+            underline: underline
+          }
+        }).then(function () {
+          _this13.changeCursor('default');
+        });
+      },
+      addObjectAfter: function addObjectAfter(obj) {
+        if (obj.type === 'icon') {
+          _this13.ui.icon.changeStandbyMode();
+        } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+
+          _this13.ui.shape.changeStandbyMode();
+        }
+      },
+      objectScaled: function objectScaled(obj) {
+        if (['i-text', 'text'].indexOf(obj.type) > -1) {
+          _this13.ui.text.fontSize = toInteger(obj.fontSize);
+        } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
+          var width = obj.width,
+              height = obj.height;
+
+          var strokeValue = _this13.ui.shape.getStrokeValue();
+
+          if (width < strokeValue) {
+            _this13.ui.shape.setStrokeValue(width);
+          }
+
+          if (height < strokeValue) {
+            _this13.ui.shape.setStrokeValue(height);
+          }
+        }
+      },
+      selectionCleared: function selectionCleared() {
+        _this13.activeObjectId = null;
+
+        if (_this13.ui.submenu === 'text') {
+          _this13.changeCursor('text');
+        } else if (!includes(['draw', 'crop', 'resize'], _this13.ui.submenu)) {
+          _this13.stopDrawingMode();
+        }
+      }
+    });
+  },
+
+  /**
+   * History Action
+   * @returns {Object} history actions for ui
+   * @private
+   */
+  _historyAction: function _historyAction() {
+    var _this14 = this;
+
+    return {
+      undo: function undo(count) {
+        return _this14.undo(count);
+      },
+      redo: function redo(count) {
+        return _this14.redo(count);
+      }
+    };
+  },
+
+  /**
+   * Common Action
+   * @returns {Object} common actions for ui
+   * @private
+   */
+  _commonAction: function _commonAction() {
+    var _this15 = this;
+
+    var TEXT = drawingModes.TEXT,
+        CROPPER = drawingModes.CROPPER,
+        SHAPE = drawingModes.SHAPE,
+        ZOOM = drawingModes.ZOOM,
+        RESIZE = drawingModes.RESIZE;
+    return {
+      modeChange: function modeChange(menu) {
+        switch (menu) {
+          case drawingMenuNames.TEXT:
+            _this15._changeActivateMode(TEXT);
+
+            break;
+
+          case drawingMenuNames.CROP:
+            _this15.startDrawingMode(CROPPER);
+
+            break;
+
+          case drawingMenuNames.SHAPE:
+            _this15._changeActivateMode(SHAPE);
+
+            _this15.setDrawingShape(_this15.ui.shape.type, _this15.ui.shape.options);
+
+            break;
+
+          case drawingMenuNames.ZOOM:
+            _this15.startDrawingMode(ZOOM);
+
+            break;
+
+          case drawingMenuNames.RESIZE:
+            _this15.startDrawingMode(RESIZE);
+
+            break;
+
+          default:
+            break;
+        }
+      },
+      deactivateAll: this.deactivateAll.bind(this),
+      changeSelectableAll: this.changeSelectableAll.bind(this),
+      discardSelection: this.discardSelection.bind(this),
+      stopDrawingMode: this.stopDrawingMode.bind(this)
+    };
+  },
+
+  /**
+   * Mixin
+   * @param {ImageEditor} ImageEditor instance
+   */
+  mixin: function mixin(ImageEditor) {
+    (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)(ImageEditor.prototype, this);
+  }
+});
 ;// CONCATENATED MODULE: ./src/js/interface/component.js
 
 
@@ -50158,9 +53550,6 @@ var filter_Filter = /*#__PURE__*/function (_Component) {
 }(component);
 
 /* harmony default export */ var component_filter = (filter_Filter);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
-var instance_filter = __webpack_require__(116);
-var filter_default = /*#__PURE__*/__webpack_require__.n(instance_filter);
 // EXTERNAL MODULE: ./src/js/helper/shapeResizeHelper.js
 var shapeResizeHelper = __webpack_require__(6261);
 var shapeResizeHelper_default = /*#__PURE__*/__webpack_require__.n(shapeResizeHelper);
@@ -53185,7 +56574,7 @@ var extend = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_
     isString = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).isString,
     forEachArray = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).forEachArray,
     forEachOwnProperties = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).forEachOwnProperties,
-    CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
+    graphics_CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
 var DEFAULT_CSS_MAX_WIDTH = 1000;
 var DEFAULT_CSS_MAX_HEIGHT = 800;
 var EXTRA_PX_FOR_PASTE = 10;
@@ -54916,3407 +58305,8 @@ var Graphics = /*#__PURE__*/function () {
   return Graphics;
 }();
 
-CustomEvents.mixin(Graphics);
+graphics_CustomEvents.mixin(Graphics);
 /* harmony default export */ var graphics = (Graphics);
-;// CONCATENATED MODULE: ./src/js/ui.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var SUB_UI_COMPONENT = {
-  Shape: ui_shape,
-  Crop: ui_crop,
-  Resize: ui_resize,
-  Flip: ui_flip,
-  Rotate: ui_rotate,
-  Text: ui_text,
-  Mask: ui_mask,
-  Icon: ui_icon,
-  Draw: ui_draw,
-  Filter: ui_filter,
-  Image: ui_image
-};
-var ui_CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
-var BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
-var HISTORY_MENU = 'history';
-var HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
-var CLASS_NAME_ON = 'on';
-var ZOOM_BUTTON_TYPE = {
-  ZOOM_IN: 'zoomIn',
-  HAND: 'hand'
-};
-/**
- * Ui class
- * @class
- * @param {string|HTMLElement} element - Wrapper's element or selector
- * @param {Object} [options] - Ui setting options
- *   @param {number} options.loadImage - Init default load image
- *   @param {number} options.initMenu - Init start menu
- *   @param {Boolean} [options.menuBarPosition=bottom] - Let
- *   @param {Boolean} [options.applyCropSelectionStyle=false] - Let
- *   @param {Boolean} [options.usageStatistics=false] - Use statistics or not
- *   @param {Object} [options.uiSize] - ui size of editor
- *     @param {string} options.uiSize.width - width of ui
- *     @param {string} options.uiSize.height - height of ui
- * @param {Object} actions - ui action instance
- */
-
-var Ui = /*#__PURE__*/function () {
-  function Ui(element, options, actions) {
-    _classCallCheck(this, Ui);
-
-    this.options = this._initializeOption(options);
-    this._actions = actions;
-    this.submenu = false;
-    this.imageSize = {};
-    this.uiSize = {};
-    this._locale = new locale(this.options.locale);
-    this.theme = new theme(this.options.theme);
-    this.eventHandler = {};
-    this._submenuChangeTransection = false;
-    this._selectedElement = null;
-    this._mainElement = null;
-    this._editorElementWrap = null;
-    this._editorElement = null;
-    this._menuBarElement = null;
-    this._subMenuElement = null;
-
-    this._makeUiElement(element);
-
-    this._setUiSize();
-
-    this._initMenuEvent = false;
-
-    this._makeSubMenu();
-
-    this._attachHistoryEvent();
-
-    this._attachZoomEvent();
-  }
-  /**
-   * Destroys the instance.
-   */
-
-
-  _createClass(Ui, [{
-    key: "destroy",
-    value: function destroy() {
-      this._removeUiEvent();
-
-      this._destroyAllMenu();
-
-      this._selectedElement.innerHTML = '';
-      assignmentForDestroy(this);
-    }
-    /**
-     * Set Default Selection for includeUI
-     * @param {Object} option - imageEditor options
-     * @returns {Object} - extends selectionStyle option
-     * @ignore
-     */
-
-  }, {
-    key: "setUiDefaultSelectionStyle",
-    value: function setUiDefaultSelectionStyle(option) {
-      return external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
-        applyCropSelectionStyle: true,
-        applyGroupSelectionStyle: true,
-        selectionStyle: {
-          cornerStyle: 'circle',
-          cornerSize: 16,
-          cornerColor: '#fff',
-          cornerStrokeColor: '#fff',
-          transparentCorners: false,
-          lineWidth: 2,
-          borderColor: '#fff'
-        }
-      }, option);
-    }
-    /**
-     * Change editor size
-     * @param {Object} resizeInfo - ui & image size info
-     *   @param {Object} [resizeInfo.uiSize] - image size dimension
-     *     @param {string} resizeInfo.uiSize.width - ui width
-     *     @param {string} resizeInfo.uiSize.height - ui height
-     *   @param {Object} [resizeInfo.imageSize] - image size dimension
-     *     @param {Number} resizeInfo.imageSize.oldWidth - old width
-     *     @param {Number} resizeInfo.imageSize.oldHeight - old height
-     *     @param {Number} resizeInfo.imageSize.newWidth - new width
-     *     @param {Number} resizeInfo.imageSize.newHeight - new height
-     * @example
-     * // Change the image size and ui size, and change the affected ui state together.
-     * imageEditor.ui.resizeEditor({
-     *     imageSize: {oldWidth: 100, oldHeight: 100, newWidth: 700, newHeight: 700},
-     *     uiSize: {width: 1000, height: 1000}
-     * });
-     * @example
-     * // Apply the ui state while preserving the previous attribute (for example, if responsive Ui)
-     * imageEditor.ui.resizeEditor();
-     */
-
-  }, {
-    key: "resizeEditor",
-    value: function resizeEditor() {
-      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          uiSize = _ref.uiSize,
-          _ref$imageSize = _ref.imageSize,
-          imageSize = _ref$imageSize === void 0 ? this.imageSize : _ref$imageSize;
-
-      if (imageSize !== this.imageSize) {
-        this.imageSize = imageSize;
-      }
-
-      if (uiSize) {
-        this._setUiSize(uiSize);
-      }
-
-      var _this$_getCanvasMaxDi = this._getCanvasMaxDimension(),
-          width = _this$_getCanvasMaxDi.width,
-          height = _this$_getCanvasMaxDi.height;
-
-      var editorElementStyle = this._editorElement.style;
-      var menuBarPosition = this.options.menuBarPosition;
-      editorElementStyle.height = "".concat(height, "px");
-      editorElementStyle.width = "".concat(width, "px");
-
-      this._setEditorPosition(menuBarPosition);
-
-      this._editorElementWrap.style.bottom = "0px";
-      this._editorElementWrap.style.top = "0px";
-      this._editorElementWrap.style.left = "0px";
-      this._editorElementWrap.style.width = "100%";
-      var selectElementClassList = this._selectedElement.classList;
-
-      if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION) {
-        selectElementClassList.add('tui-image-editor-top-optimization');
-      } else {
-        selectElementClassList.remove('tui-image-editor-top-optimization');
-      }
-    }
-    /**
-     * Toggle zoom button status
-     * @param {string} type - type of zoom button
-     */
-
-  }, {
-    key: "toggleZoomButtonStatus",
-    value: function toggleZoomButtonStatus(type) {
-      var targetClassList = this._buttonElements[type].classList;
-      targetClassList.toggle(CLASS_NAME_ON);
-
-      if (type === ZOOM_BUTTON_TYPE.ZOOM_IN) {
-        this._buttonElements[ZOOM_BUTTON_TYPE.HAND].classList.remove(CLASS_NAME_ON);
-      } else {
-        this._buttonElements[ZOOM_BUTTON_TYPE.ZOOM_IN].classList.remove(CLASS_NAME_ON);
-      }
-    }
-    /**
-     * Turn off zoom-in button status
-     */
-
-  }, {
-    key: "offZoomInButtonStatus",
-    value: function offZoomInButtonStatus() {
-      var zoomInClassList = this._buttonElements[ZOOM_BUTTON_TYPE.ZOOM_IN].classList;
-      zoomInClassList.remove(CLASS_NAME_ON);
-    }
-    /**
-     * Change hand button status
-     * @param {boolean} enabled - status to change
-     */
-
-  }, {
-    key: "changeHandButtonStatus",
-    value: function changeHandButtonStatus(enabled) {
-      var handClassList = this._buttonElements[ZOOM_BUTTON_TYPE.HAND].classList;
-      handClassList[enabled ? 'add' : 'remove'](CLASS_NAME_ON);
-    }
-    /**
-     * Change help button status
-     * @param {string} buttonType - target button type
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-
-  }, {
-    key: "changeHelpButtonEnabled",
-    value: function changeHelpButtonEnabled(buttonType, enableStatus) {
-      var buttonClassList = this._buttonElements[buttonType].classList;
-      buttonClassList[enableStatus ? 'add' : 'remove']('enabled');
-    }
-    /**
-     * Change delete button status
-     * @param {Object} [options] - Ui setting options
-     *   @param {object} [options.loadImage] - Init default load image
-     *   @param {string} [options.initMenu] - Init start menu
-     *   @param {string} [options.menuBarPosition=bottom] - Let
-     *   @param {boolean} [options.applyCropSelectionStyle=false] - Let
-     *   @param {boolean} [options.usageStatistics=false] - Send statistics ping or not
-     * @returns {Object} initialize option
-     * @private
-     */
-
-  }, {
-    key: "_initializeOption",
-    value: function _initializeOption(options) {
-      return external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
-        loadImage: {
-          path: '',
-          name: ''
-        },
-        locale: {},
-        menuIconPath: '',
-        menu: ['resize', 'crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter', 'image'],
-        initMenu: '',
-        uiSize: {
-          width: '100%',
-          height: '100%'
-        },
-        menuBarPosition: 'bottom'
-      }, options);
-    }
-    /**
-     * Set ui container size
-     * @param {Object} uiSize - ui dimension
-     *   @param {string} uiSize.width - css width property
-     *   @param {string} uiSize.height - css height property
-     * @private
-     */
-
-  }, {
-    key: "_setUiSize",
-    value: function _setUiSize() {
-      var uiSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.options.uiSize;
-      var elementDimension = this._selectedElement.style;
-      elementDimension.width = uiSize.width;
-      elementDimension.height = uiSize.height;
-    }
-    /**
-     * Make submenu dom element
-     * @private
-     */
-
-  }, {
-    key: "_makeSubMenu",
-    value: function _makeSubMenu() {
-      var _this = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        var SubComponentClass = SUB_UI_COMPONENT[menuName.replace(/^[a-z]/, function ($0) {
-          return $0.toUpperCase();
-        })]; // make menu element
-
-        _this._makeMenuElement(menuName); // menu btn element
-
-
-        _this._buttonElements[menuName] = _this._menuBarElement.querySelector(".tie-btn-".concat(menuName)); // submenu ui instance
-
-        _this[menuName] = new SubComponentClass(_this._subMenuElement, {
-          locale: _this._locale,
-          makeSvgIcon: _this.theme.makeMenSvgIconSet.bind(_this.theme),
-          menuBarPosition: _this.options.menuBarPosition,
-          usageStatistics: _this.options.usageStatistics
-        });
-      });
-    }
-    /**
-     * Attach history event
-     * @private
-     */
-
-  }, {
-    key: "_attachHistoryEvent",
-    value: function _attachHistoryEvent() {
-      this.on(eventNames.EXECUTE_COMMAND, this._addHistory.bind(this));
-      this.on(eventNames.AFTER_UNDO, this._selectPrevHistory.bind(this));
-      this.on(eventNames.AFTER_REDO, this._selectNextHistory.bind(this));
-    }
-    /**
-     * Attach zoom event
-     * @private
-     */
-
-  }, {
-    key: "_attachZoomEvent",
-    value: function _attachZoomEvent() {
-      var _this2 = this;
-
-      this.on(eventNames.HAND_STARTED, function () {
-        _this2.offZoomInButtonStatus();
-
-        _this2.changeHandButtonStatus(true);
-      });
-      this.on(eventNames.HAND_STOPPED, function () {
-        return _this2.changeHandButtonStatus(false);
-      });
-    }
-    /**
-     * Make primary ui dom element
-     * @param {string|HTMLElement} element - Wrapper's element or selector
-     * @private
-     */
-
-  }, {
-    key: "_makeUiElement",
-    value: function _makeUiElement(element) {
-      var selectedElement;
-      window.snippet = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default());
-
-      if (element.nodeType) {
-        selectedElement = element;
-      } else {
-        selectedElement = document.querySelector(element);
-      }
-
-      var selector = getSelector(selectedElement);
-      selectedElement.classList.add('tui-image-editor-container');
-      selectedElement.innerHTML = controls({
-        locale: this._locale,
-        biImage: this.theme.getStyle('common.bi'),
-        loadButtonStyle: this.theme.getStyle('loadButton'),
-        downloadButtonStyle: this.theme.getStyle('downloadButton'),
-        menuBarPosition: this.options.menuBarPosition
-      }) + mainContainer({
-        locale: this._locale,
-        biImage: this.theme.getStyle('common.bi'),
-        commonStyle: this.theme.getStyle('common'),
-        headerStyle: this.theme.getStyle('header'),
-        loadButtonStyle: this.theme.getStyle('loadButton'),
-        downloadButtonStyle: this.theme.getStyle('downloadButton'),
-        submenuStyle: this.theme.getStyle('submenu')
-      });
-      this._selectedElement = selectedElement;
-
-      this._selectedElement.classList.add(this.options.menuBarPosition);
-
-      this._mainElement = selector('.tui-image-editor-main');
-      this._editorElementWrap = selector('.tui-image-editor-wrap');
-      this._editorElement = selector('.tui-image-editor');
-      this._helpMenuBarElement = selector('.tui-image-editor-help-menu');
-      this._menuBarElement = selector('.tui-image-editor-menu');
-      this._subMenuElement = selector('.tui-image-editor-submenu');
-      this._buttonElements = {
-        download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
-        bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
-        sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
-        sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
-        bringToFront: this._selectedElement.querySelectorAll('.tie-btn-bringToFront'),
-        load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
-      };
-
-      this._addHelpMenus();
-
-      this._historyMenu = new ui_history(this._buttonElements[HISTORY_MENU], {
-        locale: this._locale,
-        makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme)
-      });
-
-      this._activateZoomMenus();
-    }
-    /**
-     * Activate help menus for zoom.
-     * @private
-     */
-
-  }, {
-    key: "_activateZoomMenus",
-    value: function _activateZoomMenus() {
-      var _this3 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(ZOOM_HELP_MENUS, function (menu) {
-        _this3.changeHelpButtonEnabled(menu, true);
-      });
-    }
-    /**
-     * make array for help menu output, including partitions.
-     * @returns {Array}
-     * @private
-     */
-
-  }, {
-    key: "_makeHelpMenuWithPartition",
-    value: function _makeHelpMenuWithPartition() {
-      var _context;
-
-      return concat_default()(_context = []).call(_context, _toConsumableArray(ZOOM_HELP_MENUS), [''], _toConsumableArray(COMMAND_HELP_MENUS), [''], _toConsumableArray(DELETE_HELP_MENUS));
-    }
-    /**
-     * Add help menu
-     * @private
-     */
-
-  }, {
-    key: "_addHelpMenus",
-    value: function _addHelpMenus() {
-      var _this4 = this;
-
-      var helpMenuWithPartition = this._makeHelpMenuWithPartition();
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(helpMenuWithPartition, function (menuName) {
-        if (!menuName) {
-          _this4._makeMenuPartitionElement();
-        } else {
-          _this4._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
-
-          _this4._buttonElements[menuName] = _this4._helpMenuBarElement.querySelector(".tie-btn-".concat(menuName));
-        }
-      });
-    }
-    /**
-     * Make menu partition element
-     * @private
-     */
-
-  }, {
-    key: "_makeMenuPartitionElement",
-    value: function _makeMenuPartitionElement() {
-      var partitionElement = document.createElement('li');
-      var partitionInnerElement = document.createElement('div');
-      partitionElement.className = cls('item');
-      partitionInnerElement.className = cls('icpartition');
-      partitionElement.appendChild(partitionInnerElement);
-
-      this._helpMenuBarElement.appendChild(partitionElement);
-    }
-    /**
-     * Make menu button element
-     * @param {string} menuName - menu name
-     * @param {Array} useIconTypes - Possible values are  \['normal', 'active', 'hover', 'disabled'\]
-     * @param {string} menuType - 'normal' or 'help'
-     * @private
-     */
-
-  }, {
-    key: "_makeMenuElement",
-    value: function _makeMenuElement(menuName) {
-      var _context2, _context3;
-
-      var useIconTypes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['normal', 'active', 'hover'];
-      var menuType = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'normal';
-      var btnElement = document.createElement('li');
-      var menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
-
-      this._addTooltipAttribute(btnElement, menuName);
-
-      btnElement.className = concat_default()(_context2 = concat_default()(_context3 = "tie-btn-".concat(menuName, " ")).call(_context3, cls('item'), " ")).call(_context2, menuType);
-      btnElement.innerHTML = menuItemHtml;
-
-      if (menuType === 'normal') {
-        this._menuBarElement.appendChild(btnElement);
-      } else {
-        this._helpMenuBarElement.appendChild(btnElement);
-      }
-    }
-    /**
-     * Add help action event
-     * @private
-     */
-
-  }, {
-    key: "_addHelpActionEvent",
-    value: function _addHelpActionEvent() {
-      var _this5 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(HELP_MENUS, function (helpName) {
-        _this5.eventHandler[helpName] = function (event) {
-          return _this5._actions.main[helpName](event);
-        };
-
-        _this5._buttonElements[helpName].addEventListener('click', _this5.eventHandler[helpName]);
-      });
-    }
-    /**
-     * Remove help action event
-     * @private
-     */
-
-  }, {
-    key: "_removeHelpActionEvent",
-    value: function _removeHelpActionEvent() {
-      var _this6 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(HELP_MENUS, function (helpName) {
-        _this6._buttonElements[helpName].removeEventListener('click', _this6.eventHandler[helpName]);
-      });
-    }
-    /**
-     * Add history
-     * @param {Command|string} command - command or command name
-     */
-
-  }, {
-    key: "_addHistory",
-    value: function _addHistory(command) {
-      if (!isSilentCommand(command)) {
-        var historyTitle = typeof command === 'string' ? {
-          name: command
-        } : getHistoryTitle(command);
-
-        this._historyMenu.add(historyTitle);
-      }
-    }
-    /**
-     * Init history
-     */
-
-  }, {
-    key: "initHistory",
-    value: function initHistory() {
-      this._historyMenu.init();
-    }
-    /**
-     * Clear history
-     */
-
-  }, {
-    key: "clearHistory",
-    value: function clearHistory() {
-      this._historyMenu.clear();
-    }
-    /**
-     * Select prev history
-     */
-
-  }, {
-    key: "_selectPrevHistory",
-    value: function _selectPrevHistory() {
-      this._historyMenu.prev();
-    }
-    /**
-     * Select next history
-     */
-
-  }, {
-    key: "_selectNextHistory",
-    value: function _selectNextHistory() {
-      this._historyMenu.next();
-    }
-    /**
-     * Toggle history menu
-     * @param {object} event - event object
-     */
-
-  }, {
-    key: "toggleHistoryMenu",
-    value: function toggleHistoryMenu(event) {
-      var target = event.target;
-      var item = target.closest(".".concat(HISTORY_PANEL_CLASS_NAME));
-
-      if (item) {
-        return;
-      }
-
-      var historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
-      historyButtonClassList.toggle('opened');
-    }
-    /**
-     * Add attribute for menu tooltip
-     * @param {HTMLElement} element - menu element
-     * @param {string} tooltipName - tooltipName
-     * @private
-     */
-
-  }, {
-    key: "_addTooltipAttribute",
-    value: function _addTooltipAttribute(element, tooltipName) {
-      element.setAttribute('tooltip-content', this._locale.localize(tooltipName.replace(/^[a-z]/g, function ($0) {
-        return $0.toUpperCase();
-      })));
-    }
-    /**
-     * Add download event
-     * @private
-     */
-
-  }, {
-    key: "_addDownloadEvent",
-    value: function _addDownloadEvent() {
-      var _this7 = this;
-
-      this.eventHandler.download = function () {
-        return _this7._actions.main.download();
-      };
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.download, function (element) {
-        element.addEventListener('click', _this7.eventHandler.download);
-      });
-    } // mostFrontLayer() {
-    //   console.log('most layer console called');
-    //   // eslint-disable-next-line prefer-destructuring
-    //   const canvas = this.canvas;
-    //   const activeObj = canvas.getActiveObject();
-    //   activeObj && canvas.bringToFront(activeObj).discardActiveObject(activeObj).renderAll();
-    //   // snippet.forEach(this._buttonElements.frontFace, (element) => {
-    //   //   element.removeEventListener('click', this.eventHandler.frontFace);
-    //   // });
-    // }
-
-  }, {
-    key: "_removeDownloadEvent",
-    value: function _removeDownloadEvent() {
-      var _this8 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.download, function (element) {
-        element.removeEventListener('click', _this8.eventHandler.download);
-      });
-    }
-  }, {
-    key: "_x",
-    value: function _x() {
-      var _this9 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.download, function (element) {
-        element.removeEventListener('click', _this9.eventHandler.customButton);
-      });
-    }
-    /**
-     * Add load event
-     * @private
-     */
-
-  }, {
-    key: "_addLoadEvent",
-    value: function _addLoadEvent() {
-      var _this10 = this;
-
-      this.eventHandler.loadImage = function (event) {
-        return _this10._actions.main.load(event.target.files[0]);
-      };
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.load, function (element) {
-        element.addEventListener('change', _this10.eventHandler.loadImage);
-      });
-    }
-    /**
-     * Remove load event
-     * @private
-     */
-
-  }, {
-    key: "_removeLoadEvent",
-    value: function _removeLoadEvent() {
-      var _this11 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.load, function (element) {
-        element.removeEventListener('change', _this11.eventHandler.loadImage);
-      });
-    }
-    /**
-     * Add menu event
-     * @param {string} menuName - menu name
-     * @private
-     */
-
-  }, {
-    key: "_addMainMenuEvent",
-    value: function _addMainMenuEvent(menuName) {
-      var _this12 = this;
-
-      this.eventHandler[menuName] = function () {
-        return _this12.changeMenu(menuName);
-      };
-
-      this._buttonElements[menuName].addEventListener('click', this.eventHandler[menuName]);
-    }
-    /**
-     * Add menu event
-     * @param {string} menuName - menu name
-     * @private
-     */
-
-  }, {
-    key: "_addSubMenuEvent",
-    value: function _addSubMenuEvent(menuName) {
-      var _this13 = this;
-
-      this[menuName].addEvent(this._actions[menuName]);
-      this[menuName].on(eventNames.INPUT_BOX_EDITING_STARTED, function () {
-        return _this13.fire(eventNames.INPUT_BOX_EDITING_STARTED);
-      });
-      this[menuName].on(eventNames.INPUT_BOX_EDITING_STOPPED, function () {
-        return _this13.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
-      });
-    }
-    /**
-     * Add menu event
-     * @private
-     */
-
-  }, {
-    key: "_addMenuEvent",
-    value: function _addMenuEvent() {
-      var _this14 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this14._addMainMenuEvent(menuName);
-
-        _this14._addSubMenuEvent(menuName);
-      });
-    }
-    /**
-     * Remove menu event
-     * @private
-     */
-
-  }, {
-    key: "_removeMainMenuEvent",
-    value: function _removeMainMenuEvent() {
-      var _this15 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this15._buttonElements[menuName].removeEventListener('click', _this15.eventHandler[menuName]);
-
-        _this15[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
-
-        _this15[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
-      });
-    }
-    /**
-     * Get editor area element
-     * @returns {HTMLElement} editor area html element
-     * @ignore
-     */
-
-  }, {
-    key: "getEditorArea",
-    value: function getEditorArea() {
-      return this._editorElement;
-    }
-    /**
-     * Add event for menu items
-     * @ignore
-     */
-
-  }, {
-    key: "activeMenuEvent",
-    value: function activeMenuEvent() {
-      if (this._initMenuEvent) {
-        return;
-      }
-
-      this._addHelpActionEvent();
-
-      this._addDownloadEvent();
-
-      this._addMenuEvent();
-
-      this._initMenu();
-
-      this._historyMenu.addEvent(this._actions.history);
-
-      this._initMenuEvent = true;
-    }
-    /**
-     * Remove ui event
-     * @private
-     */
-
-  }, {
-    key: "_removeUiEvent",
-    value: function _removeUiEvent() {
-      this._removeHelpActionEvent();
-
-      this._removeDownloadEvent();
-
-      this._removeLoadEvent();
-
-      this._removeMainMenuEvent();
-
-      this._historyMenu.removeEvent();
-    }
-    /**
-     * Destroy all menu instance
-     * @private
-     */
-
-  }, {
-    key: "_destroyAllMenu",
-    value: function _destroyAllMenu() {
-      var _this16 = this;
-
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this16[menuName].destroy();
-      });
-
-      this._historyMenu.destroy();
-    }
-    /**
-     * Init canvas
-     * @ignore
-     */
-
-  }, {
-    key: "initCanvas",
-    value: function initCanvas() {
-      var _this17 = this;
-
-      var loadImageInfo = this._getLoadImage();
-
-      if (loadImageInfo.path) {
-        this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(function () {
-          _this17.activeMenuEvent();
-        });
-      }
-
-      this._addLoadEvent();
-
-      var gridVisual = document.createElement('div');
-      gridVisual.className = cls('grid-visual');
-      var grid = "<table>\n           <tr><td class=\"dot left-top\"></td><td></td><td class=\"dot right-top\"></td></tr>\n           <tr><td></td><td></td><td></td></tr>\n           <tr><td class=\"dot left-bottom\"></td><td></td><td class=\"dot right-bottom\"></td></tr>\n         </table>";
-      gridVisual.innerHTML = grid;
-      this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
-
-      this._editorContainerElement.appendChild(gridVisual);
-    }
-    /**
-     * get editor area element
-     * @returns {Object} load image option
-     * @private
-     */
-
-  }, {
-    key: "_getLoadImage",
-    value: function _getLoadImage() {
-      return this.options.loadImage;
-    }
-    /**
-     * change menu
-     * @param {string} menuName - menu name
-     * @param {boolean} toggle - whether toogle or not
-     * @param {boolean} discardSelection - discard selection
-     * @ignore
-     */
-
-  }, {
-    key: "changeMenu",
-    value: function changeMenu(menuName) {
-      var toggle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      var discardSelection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-
-      if (!this._submenuChangeTransection) {
-        this._submenuChangeTransection = true;
-
-        this._changeMenu(menuName, toggle, discardSelection);
-
-        this._submenuChangeTransection = false;
-      }
-    }
-    /**
-     * change menu
-     * @param {string} menuName - menu name
-     * @param {boolean} toggle - whether toggle or not
-     * @param {boolean} discardSelection - discard selection
-     * @private
-     */
-
-  }, {
-    key: "_changeMenu",
-    value: function _changeMenu(menuName, toggle, discardSelection) {
-      if (this.submenu) {
-        this._buttonElements[this.submenu].classList.remove('active');
-
-        this._mainElement.classList.remove("tui-image-editor-menu-".concat(this.submenu));
-
-        if (discardSelection) {
-          this._actions.main.discardSelection();
-        }
-
-        this._actions.main.changeSelectableAll(true);
-
-        this[this.submenu].changeStandbyMode();
-      }
-
-      if (this.submenu === menuName && toggle) {
-        this.submenu = null;
-      } else {
-        this._buttonElements[menuName].classList.add('active');
-
-        this._mainElement.classList.add("tui-image-editor-menu-".concat(menuName));
-
-        this.submenu = menuName;
-        this[this.submenu].changeStartMode();
-      }
-
-      this.resizeEditor();
-    }
-    /**
-     * Init menu
-     * @private
-     */
-
-  }, {
-    key: "_initMenu",
-    value: function _initMenu() {
-      if (this.options.initMenu) {
-        var evt = document.createEvent('MouseEvents');
-        evt.initEvent('click', true, false);
-
-        this._buttonElements[this.options.initMenu].dispatchEvent(evt);
-      }
-
-      if (this.icon) {
-        this.icon.registerDefaultIcon();
-      }
-    }
-    /**
-     * Get canvas max Dimension
-     * @returns {Object} - width & height of editor
-     * @private
-     */
-
-  }, {
-    key: "_getCanvasMaxDimension",
-    value: function _getCanvasMaxDimension() {
-      var _this$_editorContaine = this._editorContainerElement.style,
-          maxWidth = _this$_editorContaine.maxWidth,
-          maxHeight = _this$_editorContaine.maxHeight;
-      var width = parseFloat(maxWidth);
-      var height = parseFloat(maxHeight);
-      return {
-        width: width,
-        height: height
-      };
-    }
-    /**
-     * Set editor position
-     * @param {string} menuBarPosition - top or right or bottom or left
-     * @private
-     */
-    // eslint-disable-next-line complexity
-
-  }, {
-    key: "_setEditorPosition",
-    value: function _setEditorPosition(menuBarPosition) {
-      var _this$_getCanvasMaxDi2 = this._getCanvasMaxDimension(),
-          width = _this$_getCanvasMaxDi2.width,
-          height = _this$_getCanvasMaxDi2.height;
-
-      var editorElementStyle = this._editorElement.style;
-      var top = 0;
-      var left = 0;
-
-      if (this.submenu) {
-        if (menuBarPosition === 'bottom') {
-          if (height > this._editorElementWrap.scrollHeight - 150) {
-            top = (height - this._editorElementWrap.scrollHeight) / 2;
-          } else {
-            top = 150 / 2 * -1;
-          }
-        } else if (menuBarPosition === 'top') {
-          if (height > this._editorElementWrap.offsetHeight - 150) {
-            top = 150 / 2 - (height - (this._editorElementWrap.offsetHeight - 150)) / 2;
-          } else {
-            top = 150 / 2;
-          }
-        } else if (menuBarPosition === 'left') {
-          if (width > this._editorElementWrap.offsetWidth - 248) {
-            left = 248 / 2 - (width - (this._editorElementWrap.offsetWidth - 248)) / 2;
-          } else {
-            left = 248 / 2;
-          }
-        } else if (menuBarPosition === 'right') {
-          if (width > this._editorElementWrap.scrollWidth - 248) {
-            left = (width - this._editorElementWrap.scrollWidth) / 2;
-          } else {
-            left = 248 / 2 * -1;
-          }
-        }
-      }
-
-      editorElementStyle.top = "".concat(top, "px");
-      editorElementStyle.left = "".concat(left, "px");
-    }
-  }]);
-
-  return Ui;
-}();
-
-ui_CustomEvents.mixin(Ui);
-/* harmony default export */ var ui = (Ui);
-;// CONCATENATED MODULE: ./src/js/helper/imagetracer.js
-
-
-
-
-
-/*
-  imagetracer.js version 1.2.4
-  Simple raster image tracer and vectorizer written in JavaScript.
-  andras@jankovics.net
-*/
-
-/*
-  The Unlicense / PUBLIC DOMAIN
-  This is free and unencumbered software released into the public domain.
-  Anyone is free to copy, modify, publish, use, compile, sell, or
-  distribute this software, either in source code form or as a compiled
-  binary, for any purpose, commercial or non-commercial, and by any
-  means.
-  In jurisdictions that recognize copyright laws, the author or authors
-  of this software dedicate any and all copyright interest in the
-  software to the public domain. We make this dedication for the benefit
-  of the public at large and to the detriment of our heirs and
-  successors. We intend this dedication to be an overt act of
-  relinquishment in perpetuity of all present and future rights to this
-  software under copyright law.
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-  OTHER DEALINGS IN THE SOFTWARE.
-  For more information, please refer to http://unlicense.org/
-*/
-var ImageTracer = /*#__PURE__*/function () {
-  /* eslint-disable */
-  function ImageTracer() {
-    _classCallCheck(this, ImageTracer);
-
-    this.versionnumber = '1.2.4';
-    this.optionpresets = {
-      default: {
-        corsenabled: false,
-        ltres: 1,
-        qtres: 1,
-        pathomit: 8,
-        rightangleenhance: true,
-        colorsampling: 2,
-        numberofcolors: 16,
-        mincolorratio: 0,
-        colorquantcycles: 3,
-        layering: 0,
-        strokewidth: 1,
-        linefilter: false,
-        scale: 1,
-        roundcoords: 1,
-        viewbox: false,
-        desc: false,
-        lcpr: 0,
-        qcpr: 0,
-        blurradius: 0,
-        blurdelta: 20
-      },
-      posterized1: {
-        colorsampling: 0,
-        numberofcolors: 2
-      },
-      posterized2: {
-        numberofcolors: 4,
-        blurradius: 5
-      },
-      curvy: {
-        ltres: 0.01,
-        linefilter: true,
-        rightangleenhance: false
-      },
-      sharp: {
-        qtres: 0.01,
-        linefilter: false
-      },
-      detailed: {
-        pathomit: 0,
-        roundcoords: 2,
-        ltres: 0.5,
-        qtres: 0.5,
-        numberofcolors: 64
-      },
-      smoothed: {
-        blurradius: 5,
-        blurdelta: 64
-      },
-      grayscale: {
-        colorsampling: 0,
-        colorquantcycles: 1,
-        numberofcolors: 7
-      },
-      fixedpalette: {
-        colorsampling: 0,
-        colorquantcycles: 1,
-        numberofcolors: 27
-      },
-      randomsampling1: {
-        colorsampling: 1,
-        numberofcolors: 8
-      },
-      randomsampling2: {
-        colorsampling: 1,
-        numberofcolors: 64
-      },
-      artistic1: {
-        colorsampling: 0,
-        colorquantcycles: 1,
-        pathomit: 0,
-        blurradius: 5,
-        blurdelta: 64,
-        ltres: 0.01,
-        linefilter: true,
-        numberofcolors: 16,
-        strokewidth: 2
-      },
-      artistic2: {
-        qtres: 0.01,
-        colorsampling: 0,
-        colorquantcycles: 1,
-        numberofcolors: 4,
-        strokewidth: 0
-      },
-      artistic3: {
-        qtres: 10,
-        ltres: 10,
-        numberofcolors: 8
-      },
-      artistic4: {
-        qtres: 10,
-        ltres: 10,
-        numberofcolors: 64,
-        blurradius: 5,
-        blurdelta: 256,
-        strokewidth: 2
-      },
-      posterized3: {
-        ltres: 1,
-        qtres: 1,
-        pathomit: 20,
-        rightangleenhance: true,
-        colorsampling: 0,
-        numberofcolors: 3,
-        mincolorratio: 0,
-        colorquantcycles: 3,
-        blurradius: 3,
-        blurdelta: 20,
-        strokewidth: 0,
-        linefilter: false,
-        roundcoords: 1,
-        pal: [{
-          r: 0,
-          g: 0,
-          b: 100,
-          a: 255
-        }, {
-          r: 255,
-          g: 255,
-          b: 255,
-          a: 255
-        }]
-      }
-    };
-    this.pathscan_combined_lookup = [[[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[0, 1, 0, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [0, 2, -1, 0]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [0, 1, 0, -1], [0, 0, 1, 0]], [[0, 0, 1, 0], [-1, -1, -1, -1], [0, 2, -1, 0], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [0, 0, 1, 0], [0, 3, 0, 1], [-1, -1, -1, -1]], [[13, 3, 0, 1], [13, 2, -1, 0], [7, 1, 0, -1], [7, 0, 1, 0]], [[-1, -1, -1, -1], [0, 1, 0, -1], [-1, -1, -1, -1], [0, 3, 0, 1]], [[0, 3, 0, 1], [0, 2, -1, 0], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[0, 3, 0, 1], [0, 2, -1, 0], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [0, 1, 0, -1], [-1, -1, -1, -1], [0, 3, 0, 1]], [[11, 1, 0, -1], [14, 0, 1, 0], [14, 3, 0, 1], [11, 2, -1, 0]], [[-1, -1, -1, -1], [0, 0, 1, 0], [0, 3, 0, 1], [-1, -1, -1, -1]], [[0, 0, 1, 0], [-1, -1, -1, -1], [0, 2, -1, 0], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [0, 1, 0, -1], [0, 0, 1, 0]], [[0, 1, 0, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [0, 2, -1, 0]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]]];
-    this.gks = [[0.27901, 0.44198, 0.27901], [0.135336, 0.228569, 0.272192, 0.228569, 0.135336], [0.086776, 0.136394, 0.178908, 0.195843, 0.178908, 0.136394, 0.086776], [0.063327, 0.093095, 0.122589, 0.144599, 0.152781, 0.144599, 0.122589, 0.093095, 0.063327], [0.049692, 0.069304, 0.089767, 0.107988, 0.120651, 0.125194, 0.120651, 0.107988, 0.089767, 0.069304, 0.049692]];
-    this.specpalette = [{
-      r: 0,
-      g: 0,
-      b: 0,
-      a: 255
-    }, {
-      r: 128,
-      g: 128,
-      b: 128,
-      a: 255
-    }, {
-      r: 0,
-      g: 0,
-      b: 128,
-      a: 255
-    }, {
-      r: 64,
-      g: 64,
-      b: 128,
-      a: 255
-    }, {
-      r: 192,
-      g: 192,
-      b: 192,
-      a: 255
-    }, {
-      r: 255,
-      g: 255,
-      b: 255,
-      a: 255
-    }, {
-      r: 128,
-      g: 128,
-      b: 192,
-      a: 255
-    }, {
-      r: 0,
-      g: 0,
-      b: 192,
-      a: 255
-    }, {
-      r: 128,
-      g: 0,
-      b: 0,
-      a: 255
-    }, {
-      r: 128,
-      g: 64,
-      b: 64,
-      a: 255
-    }, {
-      r: 128,
-      g: 0,
-      b: 128,
-      a: 255
-    }, {
-      r: 168,
-      g: 168,
-      b: 168,
-      a: 255
-    }, {
-      r: 192,
-      g: 128,
-      b: 128,
-      a: 255
-    }, {
-      r: 192,
-      g: 0,
-      b: 0,
-      a: 255
-    }, {
-      r: 255,
-      g: 255,
-      b: 255,
-      a: 255
-    }, {
-      r: 0,
-      g: 128,
-      b: 0,
-      a: 255
-    }];
-  }
-
-  _createClass(ImageTracer, [{
-    key: "imageToSVG",
-    value: function imageToSVG(url, callback, options) {
-      var _this = this;
-
-      options = this.checkoptions(options);
-      this.loadImage(url, function (canvas) {
-        callback(_this.imagedataToSVG(_this.getImgdata(canvas), options));
-      }, options);
-    }
-  }, {
-    key: "imagedataToSVG",
-    value: function imagedataToSVG(imgd, options) {
-      options = this.checkoptions(options);
-      var td = this.imagedataToTracedata(imgd, options);
-      return this.getsvgstring(td, options);
-    }
-  }, {
-    key: "imageToTracedata",
-    value: function imageToTracedata(url, callback, options) {
-      var _this2 = this;
-
-      options = this.checkoptions(options);
-      this.loadImage(url, function (canvas) {
-        callback(_this2.imagedataToTracedata(_this2.getImgdata(canvas), options));
-      }, options);
-    }
-  }, {
-    key: "imagedataToTracedata",
-    value: function imagedataToTracedata(imgd, options) {
-      options = this.checkoptions(options);
-      var ii = this.colorquantization(imgd, options);
-      var tracedata;
-
-      if (options.layering === 0) {
-        tracedata = {
-          layers: [],
-          palette: ii.palette,
-          width: ii.array[0].length - 2,
-          height: ii.array.length - 2
-        };
-
-        for (var colornum = 0; colornum < ii.palette.length; colornum += 1) {
-          var tracedlayer = this.batchtracepaths(this.internodes(this.pathscan(this.layeringstep(ii, colornum), options.pathomit), options), options.ltres, options.qtres);
-          tracedata.layers.push(tracedlayer);
-        }
-      } else {
-        var ls = this.layering(ii);
-
-        if (options.layercontainerid) {
-          this.drawLayers(ls, this.specpalette, options.scale, options.layercontainerid);
-        }
-
-        var bps = this.batchpathscan(ls, options.pathomit);
-        var bis = this.batchinternodes(bps, options);
-        tracedata = {
-          layers: this.batchtracelayers(bis, options.ltres, options.qtres),
-          palette: ii.palette,
-          width: imgd.width,
-          height: imgd.height
-        };
-      }
-
-      return tracedata;
-    }
-  }, {
-    key: "checkoptions",
-    value: function checkoptions(options) {
-      options = options || {};
-
-      if (typeof options === 'string') {
-        options = options.toLowerCase();
-
-        if (this.optionpresets[options]) {
-          options = this.optionpresets[options];
-        } else {
-          options = {};
-        }
-      }
-
-      var ok = keys_default()(this.optionpresets['default']);
-
-      for (var k = 0; k < ok.length; k += 1) {
-        if (!options.hasOwnProperty(ok[k])) {
-          options[ok[k]] = this.optionpresets['default'][ok[k]];
-        }
-      }
-
-      return options;
-    }
-  }, {
-    key: "colorquantization",
-    value: function colorquantization(imgd, options) {
-      var arr = [];
-      var idx = 0;
-      var cd;
-      var cdl;
-      var ci;
-      var paletteacc = [];
-      var pixelnum = imgd.width * imgd.height;
-      var i;
-      var j;
-      var k;
-      var cnt;
-      var palette;
-
-      for (j = 0; j < imgd.height + 2; j += 1) {
-        arr[j] = [];
-
-        for (i = 0; i < imgd.width + 2; i += 1) {
-          arr[j][i] = -1;
-        }
-      }
-
-      if (options.pal) {
-        palette = options.pal;
-      } else if (options.colorsampling === 0) {
-        palette = this.generatepalette(options.numberofcolors);
-      } else if (options.colorsampling === 1) {
-        palette = this.samplepalette(options.numberofcolors, imgd);
-      } else {
-        palette = this.samplepalette2(options.numberofcolors, imgd);
-      }
-
-      if (options.blurradius > 0) {
-        imgd = this.blur(imgd, options.blurradius, options.blurdelta);
-      }
-
-      for (cnt = 0; cnt < options.colorquantcycles; cnt += 1) {
-        if (cnt > 0) {
-          for (k = 0; k < palette.length; k += 1) {
-            if (paletteacc[k].n > 0) {
-              palette[k] = {
-                r: Math.floor(paletteacc[k].r / paletteacc[k].n),
-                g: Math.floor(paletteacc[k].g / paletteacc[k].n),
-                b: Math.floor(paletteacc[k].b / paletteacc[k].n),
-                a: Math.floor(paletteacc[k].a / paletteacc[k].n)
-              };
-            }
-
-            if (paletteacc[k].n / pixelnum < options.mincolorratio && cnt < options.colorquantcycles - 1) {
-              palette[k] = {
-                r: Math.floor(Math.random() * 255),
-                g: Math.floor(Math.random() * 255),
-                b: Math.floor(Math.random() * 255),
-                a: Math.floor(Math.random() * 255)
-              };
-            }
-          }
-        }
-
-        for (i = 0; i < palette.length; i += 1) {
-          paletteacc[i] = {
-            r: 0,
-            g: 0,
-            b: 0,
-            a: 0,
-            n: 0
-          };
-        }
-
-        for (j = 0; j < imgd.height; j += 1) {
-          for (i = 0; i < imgd.width; i += 1) {
-            idx = (j * imgd.width + i) * 4;
-            ci = 0;
-            cdl = 1024;
-
-            for (k = 0; k < palette.length; k += 1) {
-              cd = Math.abs(palette[k].r - imgd.data[idx]) + Math.abs(palette[k].g - imgd.data[idx + 1]) + Math.abs(palette[k].b - imgd.data[idx + 2]) + Math.abs(palette[k].a - imgd.data[idx + 3]);
-
-              if (cd < cdl) {
-                cdl = cd;
-                ci = k;
-              }
-            }
-
-            paletteacc[ci].r += imgd.data[idx];
-            paletteacc[ci].g += imgd.data[idx + 1];
-            paletteacc[ci].b += imgd.data[idx + 2];
-            paletteacc[ci].a += imgd.data[idx + 3];
-            paletteacc[ci].n += 1;
-            arr[j + 1][i + 1] = ci;
-          }
-        }
-      }
-
-      return {
-        array: arr,
-        palette: palette
-      };
-    }
-  }, {
-    key: "samplepalette",
-    value: function samplepalette(numberofcolors, imgd) {
-      var idx;
-      var palette = [];
-
-      for (var i = 0; i < numberofcolors; i += 1) {
-        idx = Math.floor(Math.random() * imgd.data.length / 4) * 4;
-        palette.push({
-          r: imgd.data[idx],
-          g: imgd.data[idx + 1],
-          b: imgd.data[idx + 2],
-          a: imgd.data[idx + 3]
-        });
-      }
-
-      return palette;
-    }
-  }, {
-    key: "samplepalette2",
-    value: function samplepalette2(numberofcolors, imgd) {
-      var idx;
-      var palette = [];
-      var ni = Math.ceil(Math.sqrt(numberofcolors));
-      var nj = Math.ceil(numberofcolors / ni);
-      var vx = imgd.width / (ni + 1);
-      var vy = imgd.height / (nj + 1);
-
-      for (var j = 0; j < nj; j += 1) {
-        for (var i = 0; i < ni; i += 1) {
-          if (palette.length === numberofcolors) {
-            break;
-          } else {
-            idx = Math.floor((j + 1) * vy * imgd.width + (i + 1) * vx) * 4;
-            palette.push({
-              r: imgd.data[idx],
-              g: imgd.data[idx + 1],
-              b: imgd.data[idx + 2],
-              a: imgd.data[idx + 3]
-            });
-          }
-        }
-      }
-
-      return palette;
-    }
-  }, {
-    key: "generatepalette",
-    value: function generatepalette(numberofcolors) {
-      var palette = [];
-      var rcnt;
-      var gcnt;
-      var bcnt;
-
-      if (numberofcolors < 8) {
-        var graystep = Math.floor(255 / (numberofcolors - 1));
-
-        for (var i = 0; i < numberofcolors; i += 1) {
-          palette.push({
-            r: i * graystep,
-            g: i * graystep,
-            b: i * graystep,
-            a: 255
-          });
-        }
-      } else {
-        var colorqnum = Math.floor(Math.pow(numberofcolors, 1 / 3));
-        var colorstep = Math.floor(255 / (colorqnum - 1));
-        var rndnum = numberofcolors - colorqnum * colorqnum * colorqnum;
-
-        for (rcnt = 0; rcnt < colorqnum; rcnt += 1) {
-          for (gcnt = 0; gcnt < colorqnum; gcnt += 1) {
-            for (bcnt = 0; bcnt < colorqnum; bcnt += 1) {
-              palette.push({
-                r: rcnt * colorstep,
-                g: gcnt * colorstep,
-                b: bcnt * colorstep,
-                a: 255
-              });
-            }
-          }
-        }
-
-        for (rcnt = 0; rcnt < rndnum; rcnt += 1) {
-          palette.push({
-            r: Math.floor(Math.random() * 255),
-            g: Math.floor(Math.random() * 255),
-            b: Math.floor(Math.random() * 255),
-            a: Math.floor(Math.random() * 255)
-          });
-        }
-      }
-
-      return palette;
-    }
-  }, {
-    key: "layering",
-    value: function layering(ii) {
-      var layers = [];
-      var val = 0;
-      var ah = ii.array.length;
-      var aw = ii.array[0].length;
-      var n1;
-      var n2;
-      var n3;
-      var n4;
-      var n5;
-      var n6;
-      var n7;
-      var n8;
-      var i;
-      var j;
-      var k;
-
-      for (k = 0; k < ii.palette.length; k += 1) {
-        layers[k] = [];
-
-        for (j = 0; j < ah; j += 1) {
-          layers[k][j] = [];
-
-          for (i = 0; i < aw; i += 1) {
-            layers[k][j][i] = 0;
-          }
-        }
-      }
-
-      for (j = 1; j < ah - 1; j += 1) {
-        for (i = 1; i < aw - 1; i += 1) {
-          val = ii.array[j][i];
-          n1 = ii.array[j - 1][i - 1] === val ? 1 : 0;
-          n2 = ii.array[j - 1][i] === val ? 1 : 0;
-          n3 = ii.array[j - 1][i + 1] === val ? 1 : 0;
-          n4 = ii.array[j][i - 1] === val ? 1 : 0;
-          n5 = ii.array[j][i + 1] === val ? 1 : 0;
-          n6 = ii.array[j + 1][i - 1] === val ? 1 : 0;
-          n7 = ii.array[j + 1][i] === val ? 1 : 0;
-          n8 = ii.array[j + 1][i + 1] === val ? 1 : 0;
-          layers[val][j + 1][i + 1] = 1 + n5 * 2 + n8 * 4 + n7 * 8;
-
-          if (!n4) {
-            layers[val][j + 1][i] = 0 + 2 + n7 * 4 + n6 * 8;
-          }
-
-          if (!n2) {
-            layers[val][j][i + 1] = 0 + n3 * 2 + n5 * 4 + 8;
-          }
-
-          if (!n1) {
-            layers[val][j][i] = 0 + n2 * 2 + 4 + n4 * 8;
-          }
-        }
-      }
-
-      return layers;
-    }
-  }, {
-    key: "layeringstep",
-    value: function layeringstep(ii, cnum) {
-      var layer = [];
-      var ah = ii.array.length;
-      var aw = ii.array[0].length;
-      var i;
-      var j;
-
-      for (j = 0; j < ah; j += 1) {
-        layer[j] = [];
-
-        for (i = 0; i < aw; i += 1) {
-          layer[j][i] = 0;
-        }
-      }
-
-      for (j = 1; j < ah; j += 1) {
-        for (i = 1; i < aw; i += 1) {
-          layer[j][i] = (ii.array[j - 1][i - 1] === cnum ? 1 : 0) + (ii.array[j - 1][i] === cnum ? 2 : 0) + (ii.array[j][i - 1] === cnum ? 8 : 0) + (ii.array[j][i] === cnum ? 4 : 0);
-        }
-      }
-
-      return layer;
-    }
-  }, {
-    key: "pathscan",
-    value: function pathscan(arr, pathomit) {
-      var paths = [];
-      var pacnt = 0;
-      var pcnt = 0;
-      var px = 0;
-      var py = 0;
-      var w = arr[0].length;
-      var h = arr.length;
-      var dir = 0;
-      var pathfinished = true;
-      var holepath = false;
-      var lookuprow;
-
-      for (var j = 0; j < h; j += 1) {
-        for (var i = 0; i < w; i += 1) {
-          if (arr[j][i] === 4 || arr[j][i] === 11) {
-            px = i;
-            py = j;
-            paths[pacnt] = {};
-            paths[pacnt].points = [];
-            paths[pacnt].boundingbox = [px, py, px, py];
-            paths[pacnt].holechildren = [];
-            pathfinished = false;
-            pcnt = 0;
-            holepath = arr[j][i] === 11;
-            dir = 1;
-
-            while (!pathfinished) {
-              paths[pacnt].points[pcnt] = {};
-              paths[pacnt].points[pcnt].x = px - 1;
-              paths[pacnt].points[pcnt].y = py - 1;
-              paths[pacnt].points[pcnt].t = arr[py][px];
-
-              if (px - 1 < paths[pacnt].boundingbox[0]) {
-                paths[pacnt].boundingbox[0] = px - 1;
-              }
-
-              if (px - 1 > paths[pacnt].boundingbox[2]) {
-                paths[pacnt].boundingbox[2] = px - 1;
-              }
-
-              if (py - 1 < paths[pacnt].boundingbox[1]) {
-                paths[pacnt].boundingbox[1] = py - 1;
-              }
-
-              if (py - 1 > paths[pacnt].boundingbox[3]) {
-                paths[pacnt].boundingbox[3] = py - 1;
-              }
-
-              lookuprow = this.pathscan_combined_lookup[arr[py][px]][dir];
-              arr[py][px] = lookuprow[0];
-              dir = lookuprow[1];
-              px += lookuprow[2];
-              py += lookuprow[3];
-
-              if (px - 1 === paths[pacnt].points[0].x && py - 1 === paths[pacnt].points[0].y) {
-                pathfinished = true;
-
-                if (paths[pacnt].points.length < pathomit) {
-                  paths.pop();
-                } else {
-                  paths[pacnt].isholepath = !!holepath;
-
-                  if (holepath) {
-                    var parentidx = 0,
-                        parentbbox = [-1, -1, w + 1, h + 1];
-
-                    for (var parentcnt = 0; parentcnt < pacnt; parentcnt++) {
-                      if (!paths[parentcnt].isholepath && this.boundingboxincludes(paths[parentcnt].boundingbox, paths[pacnt].boundingbox) && this.boundingboxincludes(parentbbox, paths[parentcnt].boundingbox)) {
-                        parentidx = parentcnt;
-                        parentbbox = paths[parentcnt].boundingbox;
-                      }
-                    }
-
-                    paths[parentidx].holechildren.push(pacnt);
-                  }
-
-                  pacnt += 1;
-                }
-              }
-
-              pcnt += 1;
-            }
-          }
-        }
-      }
-
-      return paths;
-    }
-  }, {
-    key: "boundingboxincludes",
-    value: function boundingboxincludes(parentbbox, childbbox) {
-      return parentbbox[0] < childbbox[0] && parentbbox[1] < childbbox[1] && parentbbox[2] > childbbox[2] && parentbbox[3] > childbbox[3];
-    }
-  }, {
-    key: "batchpathscan",
-    value: function batchpathscan(layers, pathomit) {
-      var bpaths = [];
-
-      for (var k in layers) {
-        if (!layers.hasOwnProperty(k)) {
-          continue;
-        }
-
-        bpaths[k] = this.pathscan(layers[k], pathomit);
-      }
-
-      return bpaths;
-    }
-  }, {
-    key: "internodes",
-    value: function internodes(paths, options) {
-      var ins = [];
-      var palen = 0;
-      var nextidx = 0;
-      var nextidx2 = 0;
-      var previdx = 0;
-      var previdx2 = 0;
-      var pacnt;
-      var pcnt;
-
-      for (pacnt = 0; pacnt < paths.length; pacnt += 1) {
-        ins[pacnt] = {};
-        ins[pacnt].points = [];
-        ins[pacnt].boundingbox = paths[pacnt].boundingbox;
-        ins[pacnt].holechildren = paths[pacnt].holechildren;
-        ins[pacnt].isholepath = paths[pacnt].isholepath;
-        palen = paths[pacnt].points.length;
-
-        for (pcnt = 0; pcnt < palen; pcnt += 1) {
-          nextidx = (pcnt + 1) % palen;
-          nextidx2 = (pcnt + 2) % palen;
-          previdx = (pcnt - 1 + palen) % palen;
-          previdx2 = (pcnt - 2 + palen) % palen;
-
-          if (options.rightangleenhance && this.testrightangle(paths[pacnt], previdx2, previdx, pcnt, nextidx, nextidx2)) {
-            if (ins[pacnt].points.length > 0) {
-              ins[pacnt].points[ins[pacnt].points.length - 1].linesegment = this.getdirection(ins[pacnt].points[ins[pacnt].points.length - 1].x, ins[pacnt].points[ins[pacnt].points.length - 1].y, paths[pacnt].points[pcnt].x, paths[pacnt].points[pcnt].y);
-            }
-
-            ins[pacnt].points.push({
-              x: paths[pacnt].points[pcnt].x,
-              y: paths[pacnt].points[pcnt].y,
-              linesegment: this.getdirection(paths[pacnt].points[pcnt].x, paths[pacnt].points[pcnt].y, (paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2, (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2)
-            });
-          }
-
-          ins[pacnt].points.push({
-            x: (paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2,
-            y: (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2,
-            linesegment: this.getdirection((paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2, (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2, (paths[pacnt].points[nextidx].x + paths[pacnt].points[nextidx2].x) / 2, (paths[pacnt].points[nextidx].y + paths[pacnt].points[nextidx2].y) / 2)
-          });
-        }
-      }
-
-      return ins;
-    }
-  }, {
-    key: "testrightangle",
-    value: function testrightangle(path, idx1, idx2, idx3, idx4, idx5) {
-      return path.points[idx3].x === path.points[idx1].x && path.points[idx3].x === path.points[idx2].x && path.points[idx3].y === path.points[idx4].y && path.points[idx3].y === path.points[idx5].y || path.points[idx3].y === path.points[idx1].y && path.points[idx3].y === path.points[idx2].y && path.points[idx3].x === path.points[idx4].x && path.points[idx3].x === path.points[idx5].x;
-    }
-  }, {
-    key: "getdirection",
-    value: function getdirection(x1, y1, x2, y2) {
-      var val = 8;
-
-      if (x1 < x2) {
-        if (y1 < y2) {
-          val = 1;
-        } else if (y1 > y2) {
-          val = 7;
-        } else {
-          val = 0;
-        }
-      } else if (x1 > x2) {
-        if (y1 < y2) {
-          val = 3;
-        } else if (y1 > y2) {
-          val = 5;
-        } else {
-          val = 4;
-        }
-      } else if (y1 < y2) {
-        val = 2;
-      } else if (y1 > y2) {
-        val = 6;
-      } else {
-        val = 8;
-      }
-
-      return val;
-    }
-  }, {
-    key: "batchinternodes",
-    value: function batchinternodes(bpaths, options) {
-      var binternodes = [];
-
-      for (var k in bpaths) {
-        if (!bpaths.hasOwnProperty(k)) {
-          continue;
-        }
-
-        binternodes[k] = this.internodes(bpaths[k], options);
-      }
-
-      return binternodes;
-    }
-  }, {
-    key: "tracepath",
-    value: function tracepath(path, ltres, qtres) {
-      var pcnt = 0;
-      var segtype1;
-      var segtype2;
-      var seqend;
-      var smp = {};
-      smp.segments = [];
-      smp.boundingbox = path.boundingbox;
-      smp.holechildren = path.holechildren;
-      smp.isholepath = path.isholepath;
-
-      while (pcnt < path.points.length) {
-        var _context;
-
-        segtype1 = path.points[pcnt].linesegment;
-        segtype2 = -1;
-        seqend = pcnt + 1;
-
-        while ((path.points[seqend].linesegment === segtype1 || path.points[seqend].linesegment === segtype2 || segtype2 === -1) && seqend < path.points.length - 1) {
-          if (path.points[seqend].linesegment !== segtype1 && segtype2 === -1) {
-            segtype2 = path.points[seqend].linesegment;
-          }
-
-          seqend += 1;
-        }
-
-        if (seqend === path.points.length - 1) {
-          seqend = 0;
-        }
-
-        smp.segments = concat_default()(_context = smp.segments).call(_context, this.fitseq(path, ltres, qtres, pcnt, seqend));
-
-        if (seqend > 0) {
-          pcnt = seqend;
-        } else {
-          pcnt = path.points.length;
-        }
-      }
-
-      return smp;
-    }
-  }, {
-    key: "fitseq",
-    value: function fitseq(path, ltres, qtres, seqstart, seqend) {
-      var _context2;
-
-      if (seqend > path.points.length || seqend < 0) {
-        return [];
-      }
-
-      var errorpoint = seqstart,
-          errorval = 0,
-          curvepass = true,
-          px,
-          py,
-          dist2;
-      var tl = seqend - seqstart;
-
-      if (tl < 0) {
-        tl += path.points.length;
-      }
-
-      var vx = (path.points[seqend].x - path.points[seqstart].x) / tl,
-          vy = (path.points[seqend].y - path.points[seqstart].y) / tl;
-      var pcnt = (seqstart + 1) % path.points.length,
-          pl;
-
-      while (pcnt != seqend) {
-        pl = pcnt - seqstart;
-
-        if (pl < 0) {
-          pl += path.points.length;
-        }
-
-        px = path.points[seqstart].x + vx * pl;
-        py = path.points[seqstart].y + vy * pl;
-        dist2 = (path.points[pcnt].x - px) * (path.points[pcnt].x - px) + (path.points[pcnt].y - py) * (path.points[pcnt].y - py);
-
-        if (dist2 > ltres) {
-          curvepass = false;
-        }
-
-        if (dist2 > errorval) {
-          errorpoint = pcnt;
-          errorval = dist2;
-        }
-
-        pcnt = (pcnt + 1) % path.points.length;
-      }
-
-      if (curvepass) {
-        return [{
-          type: 'L',
-          x1: path.points[seqstart].x,
-          y1: path.points[seqstart].y,
-          x2: path.points[seqend].x,
-          y2: path.points[seqend].y
-        }];
-      }
-
-      var fitpoint = errorpoint;
-      curvepass = true;
-      errorval = 0;
-      var t = (fitpoint - seqstart) / tl,
-          t1 = (1 - t) * (1 - t),
-          t2 = 2 * (1 - t) * t,
-          t3 = t * t;
-      var cpx = (t1 * path.points[seqstart].x + t3 * path.points[seqend].x - path.points[fitpoint].x) / -t2,
-          cpy = (t1 * path.points[seqstart].y + t3 * path.points[seqend].y - path.points[fitpoint].y) / -t2;
-      pcnt = seqstart + 1;
-
-      while (pcnt != seqend) {
-        t = (pcnt - seqstart) / tl;
-        t1 = (1 - t) * (1 - t);
-        t2 = 2 * (1 - t) * t;
-        t3 = t * t;
-        px = t1 * path.points[seqstart].x + t2 * cpx + t3 * path.points[seqend].x;
-        py = t1 * path.points[seqstart].y + t2 * cpy + t3 * path.points[seqend].y;
-        dist2 = (path.points[pcnt].x - px) * (path.points[pcnt].x - px) + (path.points[pcnt].y - py) * (path.points[pcnt].y - py);
-
-        if (dist2 > qtres) {
-          curvepass = false;
-        }
-
-        if (dist2 > errorval) {
-          errorpoint = pcnt;
-          errorval = dist2;
-        }
-
-        pcnt = (pcnt + 1) % path.points.length;
-      }
-
-      if (curvepass) {
-        return [{
-          type: 'Q',
-          x1: path.points[seqstart].x,
-          y1: path.points[seqstart].y,
-          x2: cpx,
-          y2: cpy,
-          x3: path.points[seqend].x,
-          y3: path.points[seqend].y
-        }];
-      }
-
-      var splitpoint = fitpoint;
-      return concat_default()(_context2 = this.fitseq(path, ltres, qtres, seqstart, splitpoint)).call(_context2, this.fitseq(path, ltres, qtres, splitpoint, seqend));
-    }
-  }, {
-    key: "batchtracepaths",
-    value: function batchtracepaths(internodepaths, ltres, qtres) {
-      var btracedpaths = [];
-
-      for (var k in internodepaths) {
-        if (!internodepaths.hasOwnProperty(k)) {
-          continue;
-        }
-
-        btracedpaths.push(this.tracepath(internodepaths[k], ltres, qtres));
-      }
-
-      return btracedpaths;
-    }
-  }, {
-    key: "batchtracelayers",
-    value: function batchtracelayers(binternodes, ltres, qtres) {
-      var btbis = [];
-
-      for (var k in binternodes) {
-        if (!binternodes.hasOwnProperty(k)) {
-          continue;
-        }
-
-        btbis[k] = this.batchtracepaths(binternodes[k], ltres, qtres);
-      }
-
-      return btbis;
-    }
-  }, {
-    key: "roundtodec",
-    value: function roundtodec(val, places) {
-      return Number(val.toFixed(places));
-    }
-  }, {
-    key: "svgpathstring",
-    value: function svgpathstring(tracedata, lnum, pathnum, options) {
-      var _context3, _context4;
-
-      var layer = tracedata.layers[lnum],
-          smp = layer[pathnum],
-          str = '',
-          pcnt;
-
-      if (options.linefilter && smp.segments.length < 3) {
-        return str;
-      }
-
-      str = concat_default()(_context3 = "<path ".concat(options.desc ? concat_default()(_context4 = "desc=\"l ".concat(lnum, " p ")).call(_context4, pathnum, "\" ") : '')).call(_context3, this.tosvgcolorstr(tracedata.palette[lnum], options), "d=\"");
-
-      if (options.roundcoords === -1) {
-        var _context5;
-
-        str += concat_default()(_context5 = "M ".concat(smp.segments[0].x1 * options.scale, " ")).call(_context5, smp.segments[0].y1 * options.scale, " ");
-
-        for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
-          var _context6, _context7;
-
-          str += concat_default()(_context6 = concat_default()(_context7 = "".concat(smp.segments[pcnt].type, " ")).call(_context7, smp.segments[pcnt].x2 * options.scale, " ")).call(_context6, smp.segments[pcnt].y2 * options.scale, " ");
-
-          if (smp.segments[pcnt].hasOwnProperty('x3')) {
-            var _context8;
-
-            str += concat_default()(_context8 = "".concat(smp.segments[pcnt].x3 * options.scale, " ")).call(_context8, smp.segments[pcnt].y3 * options.scale, " ");
-          }
-        }
-
-        str += 'Z ';
-      } else {
-        var _context9;
-
-        str += concat_default()(_context9 = "M ".concat(this.roundtodec(smp.segments[0].x1 * options.scale, options.roundcoords), " ")).call(_context9, this.roundtodec(smp.segments[0].y1 * options.scale, options.roundcoords), " ");
-
-        for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
-          var _context10, _context11;
-
-          str += concat_default()(_context10 = concat_default()(_context11 = "".concat(smp.segments[pcnt].type, " ")).call(_context11, this.roundtodec(smp.segments[pcnt].x2 * options.scale, options.roundcoords), " ")).call(_context10, this.roundtodec(smp.segments[pcnt].y2 * options.scale, options.roundcoords), " ");
-
-          if (smp.segments[pcnt].hasOwnProperty('x3')) {
-            var _context12;
-
-            str += concat_default()(_context12 = "".concat(this.roundtodec(smp.segments[pcnt].x3 * options.scale, options.roundcoords), " ")).call(_context12, this.roundtodec(smp.segments[pcnt].y3 * options.scale, options.roundcoords), " ");
-          }
-        }
-
-        str += 'Z ';
-      }
-
-      for (var hcnt = 0; hcnt < smp.holechildren.length; hcnt++) {
-        var hsmp = layer[smp.holechildren[hcnt]];
-
-        if (options.roundcoords === -1) {
-          if (hsmp.segments[hsmp.segments.length - 1].hasOwnProperty('x3')) {
-            var _context13;
-
-            str += concat_default()(_context13 = "M ".concat(hsmp.segments[hsmp.segments.length - 1].x3 * options.scale, " ")).call(_context13, hsmp.segments[hsmp.segments.length - 1].y3 * options.scale, " ");
-          } else {
-            var _context14;
-
-            str += concat_default()(_context14 = "M ".concat(hsmp.segments[hsmp.segments.length - 1].x2 * options.scale, " ")).call(_context14, hsmp.segments[hsmp.segments.length - 1].y2 * options.scale, " ");
-          }
-
-          for (pcnt = hsmp.segments.length - 1; pcnt >= 0; pcnt--) {
-            var _context16;
-
-            str += "".concat(hsmp.segments[pcnt].type, " ");
-
-            if (hsmp.segments[pcnt].hasOwnProperty('x3')) {
-              var _context15;
-
-              str += concat_default()(_context15 = "".concat(hsmp.segments[pcnt].x2 * options.scale, " ")).call(_context15, hsmp.segments[pcnt].y2 * options.scale, " ");
-            }
-
-            str += concat_default()(_context16 = "".concat(hsmp.segments[pcnt].x1 * options.scale, " ")).call(_context16, hsmp.segments[pcnt].y1 * options.scale, " ");
-          }
-        } else {
-          if (hsmp.segments[hsmp.segments.length - 1].hasOwnProperty('x3')) {
-            var _context17;
-
-            str += concat_default()(_context17 = "M ".concat(this.roundtodec(hsmp.segments[hsmp.segments.length - 1].x3 * options.scale), " ")).call(_context17, this.roundtodec(hsmp.segments[hsmp.segments.length - 1].y3 * options.scale), " ");
-          } else {
-            var _context18;
-
-            str += concat_default()(_context18 = "M ".concat(this.roundtodec(hsmp.segments[hsmp.segments.length - 1].x2 * options.scale), " ")).call(_context18, this.roundtodec(hsmp.segments[hsmp.segments.length - 1].y2 * options.scale), " ");
-          }
-
-          for (pcnt = hsmp.segments.length - 1; pcnt >= 0; pcnt--) {
-            var _context20;
-
-            str += "".concat(hsmp.segments[pcnt].type, " ");
-
-            if (hsmp.segments[pcnt].hasOwnProperty('x3')) {
-              var _context19;
-
-              str += concat_default()(_context19 = "".concat(this.roundtodec(hsmp.segments[pcnt].x2 * options.scale), " ")).call(_context19, this.roundtodec(hsmp.segments[pcnt].y2 * options.scale), " ");
-            }
-
-            str += concat_default()(_context20 = "".concat(this.roundtodec(hsmp.segments[pcnt].x1 * options.scale), " ")).call(_context20, this.roundtodec(hsmp.segments[pcnt].y1 * options.scale), " ");
-          }
-        }
-
-        str += 'Z ';
-      }
-
-      str += '" />';
-
-      if (options.lcpr || options.qcpr) {
-        for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
-          if (smp.segments[pcnt].hasOwnProperty('x3') && options.qcpr) {
-            var _context21, _context22, _context23, _context24, _context25, _context26, _context27, _context28, _context29, _context30, _context31, _context32, _context33, _context34;
-
-            str += concat_default()(_context21 = concat_default()(_context22 = concat_default()(_context23 = "<circle cx=\"".concat(smp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context23, smp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context22, options.qcpr, "\" fill=\"cyan\" stroke-width=\"")).call(_context21, options.qcpr * 0.2, "\" stroke=\"black\" />");
-            str += concat_default()(_context24 = concat_default()(_context25 = concat_default()(_context26 = "<circle cx=\"".concat(smp.segments[pcnt].x3 * options.scale, "\" cy=\"")).call(_context26, smp.segments[pcnt].y3 * options.scale, "\" r=\"")).call(_context25, options.qcpr, "\" fill=\"white\" stroke-width=\"")).call(_context24, options.qcpr * 0.2, "\" stroke=\"black\" />");
-            str += concat_default()(_context27 = concat_default()(_context28 = concat_default()(_context29 = concat_default()(_context30 = "<line x1=\"".concat(smp.segments[pcnt].x1 * options.scale, "\" y1=\"")).call(_context30, smp.segments[pcnt].y1 * options.scale, "\" x2=\"")).call(_context29, smp.segments[pcnt].x2 * options.scale, "\" y2=\"")).call(_context28, smp.segments[pcnt].y2 * options.scale, "\" stroke-width=\"")).call(_context27, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
-            str += concat_default()(_context31 = concat_default()(_context32 = concat_default()(_context33 = concat_default()(_context34 = "<line x1=\"".concat(smp.segments[pcnt].x2 * options.scale, "\" y1=\"")).call(_context34, smp.segments[pcnt].y2 * options.scale, "\" x2=\"")).call(_context33, smp.segments[pcnt].x3 * options.scale, "\" y2=\"")).call(_context32, smp.segments[pcnt].y3 * options.scale, "\" stroke-width=\"")).call(_context31, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
-          }
-
-          if (!smp.segments[pcnt].hasOwnProperty('x3') && options.lcpr) {
-            var _context35, _context36, _context37;
-
-            str += concat_default()(_context35 = concat_default()(_context36 = concat_default()(_context37 = "<circle cx=\"".concat(smp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context37, smp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context36, options.lcpr, "\" fill=\"white\" stroke-width=\"")).call(_context35, options.lcpr * 0.2, "\" stroke=\"black\" />");
-          }
-        }
-
-        for (var hcnt = 0; hcnt < smp.holechildren.length; hcnt++) {
-          var hsmp = layer[smp.holechildren[hcnt]];
-
-          for (pcnt = 0; pcnt < hsmp.segments.length; pcnt++) {
-            if (hsmp.segments[pcnt].hasOwnProperty('x3') && options.qcpr) {
-              var _context38, _context39, _context40, _context41, _context42, _context43, _context44, _context45, _context46, _context47, _context48, _context49, _context50, _context51;
-
-              str += concat_default()(_context38 = concat_default()(_context39 = concat_default()(_context40 = "<circle cx=\"".concat(hsmp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context40, hsmp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context39, options.qcpr, "\" fill=\"cyan\" stroke-width=\"")).call(_context38, options.qcpr * 0.2, "\" stroke=\"black\" />");
-              str += concat_default()(_context41 = concat_default()(_context42 = concat_default()(_context43 = "<circle cx=\"".concat(hsmp.segments[pcnt].x3 * options.scale, "\" cy=\"")).call(_context43, hsmp.segments[pcnt].y3 * options.scale, "\" r=\"")).call(_context42, options.qcpr, "\" fill=\"white\" stroke-width=\"")).call(_context41, options.qcpr * 0.2, "\" stroke=\"black\" />");
-              str += concat_default()(_context44 = concat_default()(_context45 = concat_default()(_context46 = concat_default()(_context47 = "<line x1=\"".concat(hsmp.segments[pcnt].x1 * options.scale, "\" y1=\"")).call(_context47, hsmp.segments[pcnt].y1 * options.scale, "\" x2=\"")).call(_context46, hsmp.segments[pcnt].x2 * options.scale, "\" y2=\"")).call(_context45, hsmp.segments[pcnt].y2 * options.scale, "\" stroke-width=\"")).call(_context44, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
-              str += concat_default()(_context48 = concat_default()(_context49 = concat_default()(_context50 = concat_default()(_context51 = "<line x1=\"".concat(hsmp.segments[pcnt].x2 * options.scale, "\" y1=\"")).call(_context51, hsmp.segments[pcnt].y2 * options.scale, "\" x2=\"")).call(_context50, hsmp.segments[pcnt].x3 * options.scale, "\" y2=\"")).call(_context49, hsmp.segments[pcnt].y3 * options.scale, "\" stroke-width=\"")).call(_context48, options.qcpr * 0.2, "\" stroke=\"cyan\" />");
-            }
-
-            if (!hsmp.segments[pcnt].hasOwnProperty('x3') && options.lcpr) {
-              var _context52, _context53, _context54;
-
-              str += concat_default()(_context52 = concat_default()(_context53 = concat_default()(_context54 = "<circle cx=\"".concat(hsmp.segments[pcnt].x2 * options.scale, "\" cy=\"")).call(_context54, hsmp.segments[pcnt].y2 * options.scale, "\" r=\"")).call(_context53, options.lcpr, "\" fill=\"white\" stroke-width=\"")).call(_context52, options.lcpr * 0.2, "\" stroke=\"black\" />");
-            }
-          }
-        }
-      }
-
-      return str;
-    }
-  }, {
-    key: "getsvgstring",
-    value: function getsvgstring(tracedata, options) {
-      var _context55, _context56, _context57;
-
-      options = this.checkoptions(options);
-      var w = tracedata.width * options.scale;
-      var h = tracedata.height * options.scale;
-
-      var svgstr = concat_default()(_context55 = "<svg ".concat(options.viewbox ? concat_default()(_context56 = "viewBox=\"0 0 ".concat(w, " ")).call(_context56, h, "\" ") : concat_default()(_context57 = "width=\"".concat(w, "\" height=\"")).call(_context57, h, "\" "), "version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" desc=\"Created with imagetracer.js version ")).call(_context55, this.versionnumber, "\" >");
-
-      for (var lcnt = 0; lcnt < tracedata.layers.length; lcnt += 1) {
-        for (var pcnt = 0; pcnt < tracedata.layers[lcnt].length; pcnt += 1) {
-          if (!tracedata.layers[lcnt][pcnt].isholepath) {
-            svgstr += this.svgpathstring(tracedata, lcnt, pcnt, options);
-          }
-        }
-      }
-
-      svgstr += '</svg>';
-      return svgstr;
-    }
-  }, {
-    key: "compareNumbers",
-    value: function compareNumbers(a, b) {
-      return a - b;
-    }
-  }, {
-    key: "torgbastr",
-    value: function torgbastr(c) {
-      var _context58, _context59, _context60;
-
-      return concat_default()(_context58 = concat_default()(_context59 = concat_default()(_context60 = "rgba(".concat(c.r, ",")).call(_context60, c.g, ",")).call(_context59, c.b, ",")).call(_context58, c.a, ")");
-    }
-  }, {
-    key: "tosvgcolorstr",
-    value: function tosvgcolorstr(c, options) {
-      var _context61, _context62, _context63, _context64, _context65, _context66, _context67;
-
-      return concat_default()(_context61 = concat_default()(_context62 = concat_default()(_context63 = concat_default()(_context64 = concat_default()(_context65 = concat_default()(_context66 = concat_default()(_context67 = "fill=\"rgb(".concat(c.r, ",")).call(_context67, c.g, ",")).call(_context66, c.b, ")\" stroke=\"rgb(")).call(_context65, c.r, ",")).call(_context64, c.g, ",")).call(_context63, c.b, ")\" stroke-width=\"")).call(_context62, options.strokewidth, "\" opacity=\"")).call(_context61, c.a / 255.0, "\" ");
-    }
-  }, {
-    key: "appendSVGString",
-    value: function appendSVGString(svgstr, parentid) {
-      var div;
-
-      if (parentid) {
-        div = document.getElementById(parentid);
-
-        if (!div) {
-          div = document.createElement('div');
-          div.id = parentid;
-          document.body.appendChild(div);
-        }
-      } else {
-        div = document.createElement('div');
-        document.body.appendChild(div);
-      }
-
-      div.innerHTML += svgstr;
-    }
-  }, {
-    key: "blur",
-    value: function blur(imgd, radius, delta) {
-      var i, j, k, d, idx, racc, gacc, bacc, aacc, wacc;
-      var imgd2 = {
-        width: imgd.width,
-        height: imgd.height,
-        data: []
-      };
-      radius = Math.floor(radius);
-
-      if (radius < 1) {
-        return imgd;
-      }
-
-      if (radius > 5) {
-        radius = 5;
-      }
-
-      delta = Math.abs(delta);
-
-      if (delta > 1024) {
-        delta = 1024;
-      }
-
-      var thisgk = this.gks[radius - 1];
-
-      for (j = 0; j < imgd.height; j++) {
-        for (i = 0; i < imgd.width; i++) {
-          racc = 0;
-          gacc = 0;
-          bacc = 0;
-          aacc = 0;
-          wacc = 0;
-
-          for (k = -radius; k < radius + 1; k++) {
-            if (i + k > 0 && i + k < imgd.width) {
-              idx = (j * imgd.width + i + k) * 4;
-              racc += imgd.data[idx] * thisgk[k + radius];
-              gacc += imgd.data[idx + 1] * thisgk[k + radius];
-              bacc += imgd.data[idx + 2] * thisgk[k + radius];
-              aacc += imgd.data[idx + 3] * thisgk[k + radius];
-              wacc += thisgk[k + radius];
-            }
-          }
-
-          idx = (j * imgd.width + i) * 4;
-          imgd2.data[idx] = Math.floor(racc / wacc);
-          imgd2.data[idx + 1] = Math.floor(gacc / wacc);
-          imgd2.data[idx + 2] = Math.floor(bacc / wacc);
-          imgd2.data[idx + 3] = Math.floor(aacc / wacc);
-        }
-      }
-
-      var himgd = new Uint8ClampedArray(imgd2.data);
-
-      for (j = 0; j < imgd.height; j++) {
-        for (i = 0; i < imgd.width; i++) {
-          racc = 0;
-          gacc = 0;
-          bacc = 0;
-          aacc = 0;
-          wacc = 0;
-
-          for (k = -radius; k < radius + 1; k++) {
-            if (j + k > 0 && j + k < imgd.height) {
-              idx = ((j + k) * imgd.width + i) * 4;
-              racc += himgd[idx] * thisgk[k + radius];
-              gacc += himgd[idx + 1] * thisgk[k + radius];
-              bacc += himgd[idx + 2] * thisgk[k + radius];
-              aacc += himgd[idx + 3] * thisgk[k + radius];
-              wacc += thisgk[k + radius];
-            }
-          }
-
-          idx = (j * imgd.width + i) * 4;
-          imgd2.data[idx] = Math.floor(racc / wacc);
-          imgd2.data[idx + 1] = Math.floor(gacc / wacc);
-          imgd2.data[idx + 2] = Math.floor(bacc / wacc);
-          imgd2.data[idx + 3] = Math.floor(aacc / wacc);
-        }
-      }
-
-      for (j = 0; j < imgd.height; j++) {
-        for (i = 0; i < imgd.width; i++) {
-          idx = (j * imgd.width + i) * 4;
-          d = Math.abs(imgd2.data[idx] - imgd.data[idx]) + Math.abs(imgd2.data[idx + 1] - imgd.data[idx + 1]) + Math.abs(imgd2.data[idx + 2] - imgd.data[idx + 2]) + Math.abs(imgd2.data[idx + 3] - imgd.data[idx + 3]);
-
-          if (d > delta) {
-            imgd2.data[idx] = imgd.data[idx];
-            imgd2.data[idx + 1] = imgd.data[idx + 1];
-            imgd2.data[idx + 2] = imgd.data[idx + 2];
-            imgd2.data[idx + 3] = imgd.data[idx + 3];
-          }
-        }
-      }
-
-      return imgd2;
-    }
-  }, {
-    key: "loadImage",
-    value: function loadImage(url, callback, options) {
-      var img = new Image();
-
-      if (options && options.corsenabled) {
-        img.crossOrigin = 'Anonymous';
-      }
-
-      img.src = url;
-
-      img.onload = function () {
-        var canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        var context = canvas.getContext('2d');
-        context.drawImage(img, 0, 0);
-        callback(canvas);
-      };
-    }
-  }, {
-    key: "getImgdata",
-    value: function getImgdata(canvas) {
-      var context = canvas.getContext('2d');
-      return context.getImageData(0, 0, canvas.width, canvas.height);
-    }
-  }, {
-    key: "drawLayers",
-    value: function drawLayers(layers, palette, scale, parentid) {
-      scale = scale || 1;
-      var w, h, i, j, k;
-      var div;
-
-      if (parentid) {
-        div = document.getElementById(parentid);
-
-        if (!div) {
-          div = document.createElement('div');
-          div.id = parentid;
-          document.body.appendChild(div);
-        }
-      } else {
-        div = document.createElement('div');
-        document.body.appendChild(div);
-      }
-
-      for (k in layers) {
-        if (!layers.hasOwnProperty(k)) {
-          continue;
-        }
-
-        w = layers[k][0].length;
-        h = layers[k].length;
-        var canvas = document.createElement('canvas');
-        canvas.width = w * scale;
-        canvas.height = h * scale;
-        var context = canvas.getContext('2d');
-
-        for (j = 0; j < h; j += 1) {
-          for (i = 0; i < w; i += 1) {
-            context.fillStyle = this.torgbastr(palette[layers[k][j][i] % palette.length]);
-            context.fillRect(i * scale, j * scale, scale, scale);
-          }
-        }
-
-        div.appendChild(canvas);
-      }
-    }
-  }], [{
-    key: "tracerDefaultOption",
-    value: function tracerDefaultOption() {
-      return {
-        pathomit: 100,
-        ltres: 0.1,
-        qtres: 1,
-        scale: 1,
-        strokewidth: 5,
-        viewbox: false,
-        linefilter: true,
-        desc: false,
-        rightangleenhance: false,
-        pal: [{
-          r: 0,
-          g: 0,
-          b: 0,
-          a: 255
-        }, {
-          r: 255,
-          g: 255,
-          b: 255,
-          a: 255
-        }]
-      };
-    }
-  }]);
-
-  return ImageTracer;
-}();
-
-
-;// CONCATENATED MODULE: ./src/js/action.js
-
-
-
-
-
-
-
-
-
-/* harmony default export */ var action = ({
-  /**
-   * Get ui actions
-   * @returns {Object} actions for ui
-   * @private
-   */
-  getActions: function getActions() {
-    return {
-      main: this._mainAction(),
-      shape: this._shapeAction(),
-      crop: this._cropAction(),
-      resize: this._resizeAction(),
-      flip: this._flipAction(),
-      rotate: this._rotateAction(),
-      text: this._textAction(),
-      mask: this._maskAction(),
-      image: this._imageAction(),
-      draw: this._drawAction(),
-      icon: this._iconAction(),
-      filter: this._filterAction(),
-      history: this._historyAction()
-    };
-  },
-
-  /**
-   * Main Action
-   * @returns {Object} actions for ui main
-   * @private
-   */
-  _mainAction: function _mainAction() {
-    var _this = this;
-
-    var exitCropOnAction = function exitCropOnAction() {
-      if (_this.ui.submenu === 'crop') {
-        _this.stopDrawingMode();
-
-        _this.ui.changeMenu('crop');
-      }
-    };
-
-    var setAngleRangeBarOnAction = function setAngleRangeBarOnAction(angle) {
-      if (_this.ui.submenu === 'rotate') {
-        _this.ui.rotate.setRangeBarAngle('setAngle', angle);
-      }
-    };
-
-    var setFilterStateRangeBarOnAction = function setFilterStateRangeBarOnAction(filterOptions) {
-      if (_this.ui.submenu === 'filter') {
-        filter_default()(_this.ui).setFilterState(filterOptions);
-      }
-    };
-
-    var onEndUndoRedo = function onEndUndoRedo(result) {
-      setAngleRangeBarOnAction(result);
-      setFilterStateRangeBarOnAction(result);
-      return result;
-    };
-
-    var toggleZoomMode = function toggleZoomMode() {
-      var zoomMode = _this._graphics.getZoomMode();
-
-      _this.stopDrawingMode();
-
-      if (zoomMode !== zoomModes.ZOOM) {
-        _this.startDrawingMode(drawingModes.ZOOM);
-
-        _this._graphics.startZoomInMode();
-      } else {
-        _this._graphics.endZoomInMode();
-      }
-    };
-
-    var toggleHandMode = function toggleHandMode() {
-      var zoomMode = _this._graphics.getZoomMode();
-
-      _this.stopDrawingMode();
-
-      if (zoomMode !== zoomModes.HAND) {
-        _this.startDrawingMode(drawingModes.ZOOM);
-
-        _this._graphics.startHandMode();
-      } else {
-        _this._graphics.endHandMode();
-      }
-    };
-
-    var initFilterState = function initFilterState() {
-      if (filter_default()(_this.ui)) {
-        filter_default()(_this.ui).initFilterCheckBoxState();
-      }
-    };
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      initLoadImage: function initLoadImage(imagePath, imageName) {
-        return _this.loadImageFromURL(imagePath, imageName).then(function (sizeValue) {
-          exitCropOnAction();
-          _this.ui.initializeImgUrl = imagePath;
-
-          _this.ui.resizeEditor({
-            imageSize: sizeValue
-          });
-
-          _this.clearUndoStack();
-
-          _this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
-        });
-      },
-      undo: function undo() {
-        if (!_this.isEmptyUndoStack()) {
-          exitCropOnAction();
-
-          _this.deactivateAll();
-
-          _this.undo().then(onEndUndoRedo);
-        }
-      },
-      redo: function redo() {
-        if (!_this.isEmptyRedoStack()) {
-          exitCropOnAction();
-
-          _this.deactivateAll();
-
-          _this.redo().then(onEndUndoRedo);
-        }
-      },
-      reset: function reset() {
-        exitCropOnAction();
-
-        _this.loadImageFromURL(_this.ui.initializeImgUrl, 'resetImage').then(function (sizeValue) {
-          exitCropOnAction();
-          initFilterState();
-
-          _this.ui.resizeEditor({
-            imageSize: sizeValue
-          });
-
-          _this.clearUndoStack();
-
-          _this._initHistory();
-        });
-      },
-      delete: function _delete() {
-        _this.ui.changeHelpButtonEnabled('delete', false);
-
-        exitCropOnAction();
-
-        _this.removeActiveObject();
-
-        _this.activeObjectId = null;
-      },
-      deleteAll: function deleteAll() {
-        exitCropOnAction();
-
-        _this.clearObjects();
-
-        _this.ui.changeHelpButtonEnabled('delete', false);
-
-        _this.ui.changeHelpButtonEnabled('deleteAll', false);
-      },
-      load: function load(file) {
-        if (!isSupportFileApi()) {
-          alert('This browser does not support file-api');
-        }
-
-        _this.ui.initializeImgUrl = url_default().createObjectURL(file);
-
-        _this.loadImageFromFile(file).then(function (sizeValue) {
-          exitCropOnAction();
-          initFilterState();
-
-          _this.clearUndoStack();
-
-          _this.ui.activeMenuEvent();
-
-          _this.ui.resizeEditor({
-            imageSize: sizeValue
-          });
-
-          _this._clearHistory();
-
-          _this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
-        })['catch'](function (message) {
-          return promise_default().reject(message);
-        });
-      },
-      download: function download() {
-        var dataURL = _this.toDataURL();
-
-        var imageName = _this.getImageName();
-
-        var blob, type, w;
-
-        if (isSupportFileApi() && window.saveAs) {
-          blob = base64ToBlob(dataURL);
-          type = blob.type.split('/')[1];
-
-          if (imageName.split('.').pop() !== type) {
-            imageName += ".".concat(type);
-          }
-
-          saveAs(blob, imageName); // eslint-disable-line
-        } else {
-          w = window.open();
-          w.document.body.innerHTML = "<img src='".concat(dataURL, "'>");
-        }
-      },
-      history: function history(event) {
-        _this.ui.toggleHistoryMenu(event);
-      },
-      zoomIn: function zoomIn() {
-        _this.ui.toggleZoomButtonStatus('zoomIn');
-
-        _this.deactivateAll();
-
-        toggleZoomMode();
-      },
-      zoomOut: function zoomOut() {
-        _this._graphics.zoomOut();
-      },
-      hand: function hand() {
-        _this.ui.offZoomInButtonStatus();
-
-        _this.ui.toggleZoomButtonStatus('hand');
-
-        _this.deactivateAll();
-
-        toggleHandMode();
-      },
-      bringForward: function bringForward() {
-        var canvas = _this._graphics.getCanvas();
-
-        var myObject = canvas.getActiveObject();
-        canvas.bringForward(myObject);
-        canvas.renderAll();
-      },
-      sendBackwards: function sendBackwards() {
-        var canvas = _this._graphics.getCanvas();
-
-        var myObject = canvas.getActiveObject();
-        canvas.sendBackwards(myObject);
-        canvas.renderAll();
-      },
-      sendToBack: function sendToBack() {
-        var canvas = _this._graphics.getCanvas();
-
-        var myObject = canvas.getActiveObject();
-        canvas.sendToBack(myObject);
-        canvas.renderAll();
-      },
-      bringToFront: function bringToFront() {
-        var canvas = _this._graphics.getCanvas();
-
-        var myObject = canvas.getActiveObject();
-        canvas.bringToFront(myObject);
-        canvas.renderAll();
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Icon Action
-   * @returns {Object} actions for ui icon
-   * @private
-   */
-  _iconAction: function _iconAction() {
-    var _this2 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      changeColor: function changeColor(color) {
-        if (_this2.activeObjectId) {
-          _this2.changeIconColor(_this2.activeObjectId, color);
-        }
-      },
-      addIcon: function addIcon(iconType, iconColor) {
-        _this2.startDrawingMode('ICON');
-
-        _this2.setDrawingIcon(iconType, iconColor);
-      },
-      cancelAddIcon: function cancelAddIcon() {
-        _this2.ui.icon.clearIconType();
-
-        _this2.changeSelectableAll(true);
-
-        _this2.changeCursor('default');
-
-        _this2.stopDrawingMode();
-      },
-      registerDefaultIcons: function registerDefaultIcons(type, path) {
-        var iconObj = {};
-        iconObj[type] = path;
-
-        _this2.registerIcons(iconObj);
-      },
-      registerCustomIcon: function registerCustomIcon(imgUrl, file) {
-        var imagetracer = new ImageTracer();
-        imagetracer.imageToSVG(imgUrl, function (svgstr) {
-          var _svgstr$match = svgstr.match(/path[^>]*d="([^"]*)"/),
-              _svgstr$match2 = _slicedToArray(_svgstr$match, 2),
-              svgPath = _svgstr$match2[1];
-
-          var iconObj = {};
-          iconObj[file.name] = svgPath;
-
-          _this2.registerIcons(iconObj);
-
-          _this2.addIcon(file.name, {
-            left: 100,
-            top: 100
-          });
-        }, ImageTracer.tracerDefaultOption());
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Draw Action
-   * @returns {Object} actions for ui draw
-   * @private
-   */
-  _drawAction: function _drawAction() {
-    var _this3 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      setDrawMode: function setDrawMode(type, settings) {
-        _this3.stopDrawingMode();
-
-        if (type === 'free') {
-          _this3.startDrawingMode('FREE_DRAWING', settings);
-        } else {
-          _this3.startDrawingMode('LINE_DRAWING', settings);
-        }
-      },
-      setColor: function setColor(color) {
-        _this3.setBrush({
-          color: color
-        });
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Mask Action
-   * @returns {Object} actions for ui mask
-   * @private
-   */
-  _maskAction: function _maskAction() {
-    var _this4 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      loadImageFromURL: function loadImageFromURL(imgUrl, file) {
-        return _this4.loadImageFromURL(_this4.toDataURL(), 'FilterImage').then(function () {
-          _this4.addImageObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this4._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
-        });
-      },
-      applyFilter: function applyFilter() {
-        _this4.applyFilter('mask', {
-          maskObjId: _this4.activeObjectId
-        });
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Image Action
-   * @returns {Object} actions for ui mask
-   * @private
-   */
-  _imageAction: function _imageAction() {
-    var _this5 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      loadImageFromURL: function loadImageFromURL(imgUrl, file) {
-        return _this5.loadImageFromURL(_this5.toDataURL(), 'FilterImage').then(function () {
-          _this5.addImageObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this5._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
-        });
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Text Action
-   * @returns {Object} actions for ui text
-   * @private
-   */
-  _textAction: function _textAction() {
-    var _this6 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      changeTextStyle: function changeTextStyle(styleObj, isSilent) {
-        if (styleObj.fontFamily) {
-          _this6.fontFamily = styleObj.fontFamily;
-        }
-
-        if (_this6.activeObjectId) {
-          _this6.changeTextStyle(_this6.activeObjectId, styleObj, isSilent);
-        }
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Rotate Action
-   * @returns {Object} actions for ui rotate
-   * @private
-   */
-  _rotateAction: function _rotateAction() {
-    var _this7 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      rotate: function rotate(angle, isSilent) {
-        _this7.rotate(angle, isSilent);
-
-        _this7.ui.resizeEditor();
-
-        _this7.ui.rotate.setRangeBarAngle('rotate', angle);
-      },
-      setAngle: function setAngle(angle, isSilent) {
-        _this7.setAngle(angle, isSilent);
-
-        _this7.ui.resizeEditor();
-
-        _this7.ui.rotate.setRangeBarAngle('setAngle', angle);
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Shape Action
-   * @returns {Object} actions for ui shape
-   * @private
-   */
-  _shapeAction: function _shapeAction() {
-    var _this8 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      changeShape: function changeShape(changeShapeObject, isSilent) {
-        if (_this8.activeObjectId) {
-          _this8.changeShape(_this8.activeObjectId, changeShapeObject, isSilent);
-        }
-      },
-      setDrawingShape: function setDrawingShape(shapeType) {
-        _this8.setDrawingShape(shapeType);
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Crop Action
-   * @returns {Object} actions for ui crop
-   * @private
-   */
-  _cropAction: function _cropAction() {
-    var _this9 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      crop: function crop() {
-        var cropRect = _this9.getCropzoneRect();
-
-        if (cropRect && !isEmptyCropzone(cropRect)) {
-          _this9.crop(cropRect).then(function () {
-            _this9.stopDrawingMode();
-
-            _this9.ui.resizeEditor();
-
-            _this9.ui.changeMenu('crop');
-
-            _this9._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
-          })['catch'](function (message) {
-            return promise_default().reject(message);
-          });
-        }
-      },
-      cancel: function cancel() {
-        _this9.stopDrawingMode();
-
-        _this9.ui.changeMenu('crop');
-      },
-
-      /* eslint-disable */
-      preset: function preset(presetType) {
-        switch (presetType) {
-          case 'preset-square':
-            _this9.setCropzoneRect(1 / 1);
-
-            break;
-
-          case 'preset-3-2':
-            _this9.setCropzoneRect(3 / 2);
-
-            break;
-
-          case 'preset-4-3':
-            _this9.setCropzoneRect(4 / 3);
-
-            break;
-
-          case 'preset-5-4':
-            _this9.setCropzoneRect(5 / 4);
-
-            break;
-
-          case 'preset-7-5':
-            _this9.setCropzoneRect(7 / 5);
-
-            break;
-
-          case 'preset-16-9':
-            _this9.setCropzoneRect(16 / 9);
-
-            break;
-
-          default:
-            _this9.setCropzoneRect();
-
-            _this9.ui.crop.changeApplyButtonStatus(false);
-
-            break;
-        }
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Resize Action
-   * @returns {Object} actions for ui resize
-   * @private
-   */
-  _resizeAction: function _resizeAction() {
-    var _this10 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      getCurrentDimensions: function getCurrentDimensions() {
-        return _this10._graphics.getCurrentDimensions();
-      },
-      preview: function preview(actor, value, lockState) {
-        var currentDimensions = _this10._graphics.getCurrentDimensions();
-
-        var calcAspectRatio = function calcAspectRatio() {
-          return currentDimensions.width / currentDimensions.height;
-        };
-
-        var dimensions = {};
-
-        switch (actor) {
-          case 'width':
-            dimensions.width = value;
-
-            if (lockState) {
-              dimensions.height = value / calcAspectRatio();
-            } else {
-              dimensions.height = currentDimensions.height;
-            }
-
-            break;
-
-          case 'height':
-            dimensions.height = value;
-
-            if (lockState) {
-              dimensions.width = value * calcAspectRatio();
-            } else {
-              dimensions.width = currentDimensions.width;
-            }
-
-            break;
-
-          default:
-            dimensions = currentDimensions;
-        }
-
-        _this10._graphics.resize(dimensions).then(function () {
-          _this10.ui.resizeEditor();
-        });
-
-        if (lockState) {
-          _this10.ui.resize.setWidthValue(dimensions.width);
-
-          _this10.ui.resize.setHeightValue(dimensions.height);
-        }
-      },
-      lockAspectRatio: function lockAspectRatio(lockState, min, max) {
-        var _this10$_graphics$get = _this10._graphics.getCurrentDimensions(),
-            width = _this10$_graphics$get.width,
-            height = _this10$_graphics$get.height;
-
-        var aspectRatio = width / height;
-
-        if (lockState) {
-          if (width > height) {
-            var pMax = max / aspectRatio;
-            var pMin = min * aspectRatio;
-
-            _this10.ui.resize.setLimit({
-              minWidth: pMin > min ? pMin : min,
-              minHeight: min,
-              maxWidth: max,
-              maxHeight: pMax < max ? pMax : max
-            });
-          } else {
-            var _pMax = max * aspectRatio;
-
-            var _pMin = min / aspectRatio;
-
-            _this10.ui.resize.setLimit({
-              minWidth: min,
-              minHeight: _pMin > min ? _pMin : min,
-              maxWidth: _pMax < max ? _pMax : max,
-              maxHeight: max
-            });
-          }
-        } else {
-          _this10.ui.resize.setLimit({
-            minWidth: min,
-            minHeight: min,
-            maxWidth: max,
-            maxHeight: max
-          });
-        }
-      },
-      resize: function resize() {
-        var dimensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-
-        if (!dimensions) {
-          dimensions = _this10._graphics.getCurrentDimensions();
-        }
-
-        _this10.resize(dimensions).then(function () {
-          _this10._graphics.setOriginalDimensions(dimensions);
-
-          _this10.stopDrawingMode();
-
-          _this10.ui.resizeEditor();
-
-          _this10.ui.changeMenu('resize');
-        })['catch'](function (message) {
-          return promise_default().reject(message);
-        });
-      },
-      reset: function reset() {
-        var standByMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-        var dimensions = _this10._graphics.getOriginalDimensions();
-
-        _this10.ui.resize.setWidthValue(dimensions.width, true);
-
-        _this10.ui.resize.setHeightValue(dimensions.height, true);
-
-        _this10._graphics.resize(dimensions).then(function () {
-          if (!standByMode) {
-            _this10.stopDrawingMode();
-
-            _this10.ui.resizeEditor();
-
-            _this10.ui.changeMenu('resize');
-          }
-        });
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Flip Action
-   * @returns {Object} actions for ui flip
-   * @private
-   */
-  _flipAction: function _flipAction() {
-    var _this11 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      flip: function flip(flipType) {
-        return _this11[flipType]();
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Filter Action
-   * @returns {Object} actions for ui filter
-   * @private
-   */
-  _filterAction: function _filterAction() {
-    var _this12 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      applyFilter: function applyFilter(applying, type, options, isSilent) {
-        if (applying) {
-          _this12.applyFilter(type, options, isSilent);
-        } else if (_this12.hasFilter(type)) {
-          _this12.removeFilter(type);
-        }
-      }
-    }, this._commonAction());
-  },
-
-  /**
-   * Image Editor Event Observer
-   */
-  setReAction: function setReAction() {
-    var _this13 = this;
-
-    this.on({
-      undoStackChanged: function undoStackChanged(length) {
-        if (length) {
-          _this13.ui.changeHelpButtonEnabled('undo', true);
-
-          _this13.ui.changeHelpButtonEnabled('reset', true);
-        } else {
-          _this13.ui.changeHelpButtonEnabled('undo', false);
-
-          _this13.ui.changeHelpButtonEnabled('reset', false);
-        }
-
-        _this13.ui.resizeEditor();
-      },
-      redoStackChanged: function redoStackChanged(length) {
-        if (length) {
-          _this13.ui.changeHelpButtonEnabled('redo', true);
-        } else {
-          _this13.ui.changeHelpButtonEnabled('redo', false);
-        }
-
-        _this13.ui.resizeEditor();
-      },
-
-      /* eslint-disable complexity */
-      objectActivated: function objectActivated(obj) {
-        _this13.activeObjectId = obj.id;
-
-        _this13.ui.changeHelpButtonEnabled('delete', true);
-
-        _this13.ui.changeHelpButtonEnabled('deleteAll', true);
-
-        if (obj.type === 'cropzone') {
-          _this13.ui.crop.changeApplyButtonStatus(true);
-        } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this13.stopDrawingMode();
-
-          if (_this13.ui.submenu !== 'shape') {
-            _this13.ui.changeMenu('shape', false, false);
-          }
-
-          _this13.ui.shape.setShapeStatus({
-            strokeColor: obj.stroke,
-            strokeWidth: obj.strokeWidth,
-            fillColor: fill_default()(obj)
-          });
-
-          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
-        } else if (obj.type === 'path' || obj.type === 'line') {
-          if (_this13.ui.submenu !== 'draw') {
-            _this13.ui.changeMenu('draw', false, false);
-
-            _this13.ui.draw.changeStandbyMode();
-          }
-        } else if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          if (_this13.ui.submenu !== 'text') {
-            _this13.ui.changeMenu('text', false, false);
-          }
-
-          _this13.ui.text.setTextStyleStateOnAction(obj);
-        } else if (obj.type === 'icon') {
-          _this13.stopDrawingMode();
-
-          if (_this13.ui.submenu !== 'icon') {
-            _this13.ui.changeMenu('icon', false, false);
-          }
-
-          _this13.ui.icon.setIconPickerColor(fill_default()(obj));
-        }
-      },
-
-      /* eslint-enable complexity */
-      addText: function addText(pos) {
-        var _this13$ui$text = _this13.ui.text,
-            fill = _this13$ui$text.textColor,
-            fontSize = _this13$ui$text.fontSize,
-            fontStyle = _this13$ui$text.fontStyle,
-            fontWeight = _this13$ui$text.fontWeight,
-            underline = _this13$ui$text.underline;
-        var fontFamily = _this13.fontFamily;
-
-        _this13.addText('Double Click', {
-          position: pos.originPosition,
-          styles: {
-            fill: fill,
-            fontSize: fontSize,
-            fontFamily: fontFamily,
-            fontStyle: fontStyle,
-            fontWeight: fontWeight,
-            underline: underline
-          }
-        }).then(function () {
-          _this13.changeCursor('default');
-        });
-      },
-      addObjectAfter: function addObjectAfter(obj) {
-        if (obj.type === 'icon') {
-          _this13.ui.icon.changeStandbyMode();
-        } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
-
-          _this13.ui.shape.changeStandbyMode();
-        }
-      },
-      objectScaled: function objectScaled(obj) {
-        if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          _this13.ui.text.fontSize = toInteger(obj.fontSize);
-        } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
-          var width = obj.width,
-              height = obj.height;
-
-          var strokeValue = _this13.ui.shape.getStrokeValue();
-
-          if (width < strokeValue) {
-            _this13.ui.shape.setStrokeValue(width);
-          }
-
-          if (height < strokeValue) {
-            _this13.ui.shape.setStrokeValue(height);
-          }
-        }
-      },
-      selectionCleared: function selectionCleared() {
-        _this13.activeObjectId = null;
-
-        if (_this13.ui.submenu === 'text') {
-          _this13.changeCursor('text');
-        } else if (!includes(['draw', 'crop', 'resize'], _this13.ui.submenu)) {
-          _this13.stopDrawingMode();
-        }
-      }
-    });
-  },
-
-  /**
-   * History Action
-   * @returns {Object} history actions for ui
-   * @private
-   */
-  _historyAction: function _historyAction() {
-    var _this14 = this;
-
-    return {
-      undo: function undo(count) {
-        return _this14.undo(count);
-      },
-      redo: function redo(count) {
-        return _this14.redo(count);
-      }
-    };
-  },
-
-  /**
-   * Common Action
-   * @returns {Object} common actions for ui
-   * @private
-   */
-  _commonAction: function _commonAction() {
-    var _this15 = this;
-
-    var TEXT = drawingModes.TEXT,
-        CROPPER = drawingModes.CROPPER,
-        SHAPE = drawingModes.SHAPE,
-        ZOOM = drawingModes.ZOOM,
-        RESIZE = drawingModes.RESIZE;
-    return {
-      modeChange: function modeChange(menu) {
-        switch (menu) {
-          case drawingMenuNames.TEXT:
-            _this15._changeActivateMode(TEXT);
-
-            break;
-
-          case drawingMenuNames.CROP:
-            _this15.startDrawingMode(CROPPER);
-
-            break;
-
-          case drawingMenuNames.SHAPE:
-            _this15._changeActivateMode(SHAPE);
-
-            _this15.setDrawingShape(_this15.ui.shape.type, _this15.ui.shape.options);
-
-            break;
-
-          case drawingMenuNames.ZOOM:
-            _this15.startDrawingMode(ZOOM);
-
-            break;
-
-          case drawingMenuNames.RESIZE:
-            _this15.startDrawingMode(RESIZE);
-
-            break;
-
-          default:
-            break;
-        }
-      },
-      deactivateAll: this.deactivateAll.bind(this),
-      changeSelectableAll: this.changeSelectableAll.bind(this),
-      discardSelection: this.discardSelection.bind(this),
-      stopDrawingMode: this.stopDrawingMode.bind(this)
-    };
-  },
-
-  /**
-   * Mixin
-   * @param {ImageEditor} ImageEditor instance
-   */
-  mixin: function mixin(ImageEditor) {
-    (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)(ImageEditor.prototype, this);
-  }
-});
 ;// CONCATENATED MODULE: ./src/js/imageEditor.js
 
 

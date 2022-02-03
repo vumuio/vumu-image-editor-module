@@ -24,7 +24,6 @@ import Draw from '@/ui/draw';
 import Filter from '@/ui/filter';
 import History from '@/ui/history';
 import Locale from '@/ui/locale/locale';
-import graphics from '@/graphics';
 
 const SUB_UI_COMPONENT = {
   Shape,
@@ -590,12 +589,6 @@ class Ui {
   _removeDownloadEvent() {
     snippet.forEach(this._buttonElements.download, (element) => {
       element.removeEventListener('click', this.eventHandler.download);
-    });
-  }
-
-  _x() {
-    snippet.forEach(this._buttonElements.download, (element) => {
-      element.removeEventListener('click', this.eventHandler.customButton);
     });
   }
 
