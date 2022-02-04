@@ -776,6 +776,14 @@ class ImageEditor {
     return this.execute(commands.ADD_IMAGE_OBJECT, imgUrl);
   }
 
+  addLogoObject(imgUrl) {
+    if (!imgUrl) {
+      return Promise.reject(rejectMessages.invalidParameters);
+    }
+
+    return this.execute(commands.ADD_LOGO, imgUrl);
+  }
+
   /**
    * Start a drawing mode. If the current mode is not 'NORMAL', 'stopDrawingMode()' will be called first.
    * @param {String} mode Can be one of <I>'CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE'</I>

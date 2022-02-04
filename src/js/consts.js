@@ -143,6 +143,7 @@ export const commandNames = {
   SET_OBJECT_POSITION: 'setObjectPosition',
   CHANGE_SELECTION: 'changeSelection',
   RESIZE_IMAGE: 'resize',
+  ADD_LOGO: 'addLogo',
 };
 
 /**
@@ -204,6 +205,7 @@ export const historyNames = {
   LOAD_MASK_IMAGE: 'Mask',
   ADD_MASK_IMAGE: 'Mask',
   ADD_IMAGE_OBJECT: 'Mask',
+  ADD_LOGO: 'Logo',
   CROP: 'Crop',
   RESIZE: 'Resize',
   APPLY_FILTER: 'Filter',
@@ -282,6 +284,11 @@ export const fObjectOptions = {
     cornerSize: 10,
     originX: 'center',
     originY: 'center',
+    transparentCorners: false,
+  },
+  LOGO_STYLE: {
+    originX: 'left',
+    originY: 'top',
     transparentCorners: false,
   },
 };

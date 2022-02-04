@@ -19,6 +19,7 @@ import Rotate from '@/ui/rotate';
 import Text from '@/ui/text';
 import Mask from '@/ui/mask';
 import Image from '@/ui/image';
+import Logo from '@/ui/logo';
 import Icon from '@/ui/icon';
 import Draw from '@/ui/draw';
 import Filter from '@/ui/filter';
@@ -37,6 +38,7 @@ const SUB_UI_COMPONENT = {
   Draw,
   Filter,
   Image,
+  Logo,
 };
 
 const { CustomEvents } = snippet;
@@ -263,6 +265,7 @@ class Ui {
           'mask',
           'filter',
           'image',
+          'logo',
         ],
         initMenu: '',
         uiSize: {

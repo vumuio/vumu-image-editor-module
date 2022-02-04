@@ -4,6 +4,7 @@ import '@css/index.styl';
 
 // commands
 import '@/command/addIcon';
+import '@/command/addLogo';
 import '@/command/addImageObject';
 import '@/command/addObject';
 import '@/command/addShape';

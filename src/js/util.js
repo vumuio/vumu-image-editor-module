@@ -429,6 +429,7 @@ export function getHistoryTitle(command) {
     CHANGE_TEXT_STYLE,
     CLEAR_OBJECTS,
     ADD_IMAGE_OBJECT,
+    ADD_LOGO,
     REMOVE_OBJECT,
     RESIZE_IMAGE,
   } = commandNames;
@@ -465,6 +466,8 @@ export function getHistoryTitle(command) {
       break;
     case ADD_IMAGE_OBJECT:
       historyInfo = { name: historyNames.ADD_IMAGE_OBJECT, detail: 'Add' };
+    case ADD_LOGO:
+      historyInfo = { name: historyNames.ADD_LOGO, detail: 'Add' };
       break;
     case ADD_TEXT:
       historyInfo = { name: historyNames.ADD_TEXT };
@@ -527,4 +530,20 @@ export function isEmptyCropzone(cropRect) {
   const { LEFT, TOP, WIDTH, HEIGHT } = emptyCropRectValues;
 
   return left === LEFT && top === TOP && width === WIDTH && height === HEIGHT;
+}
+
+/**
+ * return random number string
+ *  @param {Number} length - cropRect top position value
+ * @returns {string}
+ */
+
+export function randomString(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
 }

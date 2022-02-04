@@ -692,6 +692,22 @@ class Graphics {
       );
     });
   }
+  addLogoObject(imgUrl) {
+    const callback = this._callbackAfterLoadingLogoObject.bind(this);
+
+    return new Promise((resolve) => {
+      fabric.Image.fromURL(
+        imgUrl,
+        (image) => {
+          callback(image);
+          resolve(this.createObjectProperties(image));
+        },
+        {
+          crossOrigin: 'Anonymous',
+        }
+      );
+    });
+  }
 
   /**
    * Get center position of canvas
@@ -1076,6 +1092,19 @@ class Graphics {
     obj.set({
       left: centerPos.x,
       top: centerPos.y,
+      crossOrigin: 'Anonymous',
+    });
+
+    this.getCanvas().add(obj).setActiveObject(obj);
+  }
+
+  _callbackAfterLoadingLogoObject(obj) {
+    const { height } = this.getCanvasSize();
+    const logoPlaceholderHeight = 180;
+
+    obj.set(fObjectOptions.LOGO_STYLE);
+    obj.set({
+      top: height - logoPlaceholderHeight,
       crossOrigin: 'Anonymous',
     });
 

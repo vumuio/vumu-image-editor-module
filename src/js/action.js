@@ -1,6 +1,13 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
-import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone, includes } from '@/util';
+import {
+  isSupportFileApi,
+  base64ToBlob,
+  toInteger,
+  isEmptyCropzone,
+  includes,
+  randomString,
+} from '@/util';
 import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
 
 export default {
@@ -19,11 +26,12 @@ export default {
       rotate: this._rotateAction(),
       text: this._textAction(),
       mask: this._maskAction(),
-      image: this._imageAction(),
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
       history: this._historyAction(),
+      image: this._imageAction(),
+      logo: this._logoAction(),
     };
   },
 
@@ -321,7 +329,7 @@ export default {
     return extend(
       {
         loadImageFromURL: (imgUrl, file) => {
-          return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+          return this.loadImageFromURL(this.toDataURL(), `Image${randomString(6)}`).then(() => {
             this.addImageObject(imgUrl).then(() => {
               URL.revokeObjectURL(file);
             });
@@ -332,7 +340,21 @@ export default {
       this._commonAction()
     );
   },
-
+  _logoAction() {
+    return extend(
+      {
+        insertLogo: (imgUrl, file) => {
+          return this.loadImageFromURL(this.toDataURL(), `Logo${randomString(6)}`).then(() => {
+            this.addLogoObject(imgUrl).then(() => {
+              URL.revokeObjectURL(file);
+            });
+            this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+          });
+        },
+      },
+      this._commonAction()
+    );
+  },
   /**
    * Text Action
    * @returns {Object} actions for ui text
