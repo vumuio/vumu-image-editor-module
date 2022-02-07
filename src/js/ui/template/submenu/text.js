@@ -75,5 +75,11 @@ export default ({ locale, makeSvgIcon }) => `
             <div class="tie-text-range"></div>
             <input class="tie-text-range-value tui-image-editor-range-value" value="0" />
         </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
+        <li>
+            <button class="tie-add-label-button">Add Labels</button>
+        </li>
     </ul>
 `;

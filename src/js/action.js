@@ -371,6 +371,7 @@ export default {
             this.changeTextStyle(this.activeObjectId, styleObj, isSilent);
           }
         },
+        clickAddLabel: () => this._onAddLabel(),
       },
       this._commonAction()
     );

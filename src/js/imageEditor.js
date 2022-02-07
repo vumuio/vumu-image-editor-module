@@ -38,6 +38,7 @@ const {
   SELECTION_CLEARED,
   SELECTION_CREATED,
   ADD_OBJECT_AFTER,
+  ADD_LABEL,
 } = events;
 
 /**
@@ -228,6 +229,7 @@ class ImageEditor {
       iconCreateEnd: this._onIconCreateEnd.bind(this),
       selectionCleared: this._selectionCleared.bind(this),
       selectionCreated: this._selectionCreated.bind(this),
+      addLabel: this._onAddLabel.bind(this),
     };
 
     this._attachInvokerEvents();
@@ -1209,6 +1211,20 @@ class ImageEditor {
   }
 
   /**
+   * Change contents of selected text object on image
+   * @param {number} id - object id
+   * @param {string} text - Changing text
+   * @returns {Promise<ObjectProps, ErrorMsg>}
+   * @example
+   * imageEditor.changeText(id, 'change text');
+   */
+  appendUnderCursor(id, text) {
+    text = text || '';
+
+    return this.execute(commands.CHANGE_TEXT, id, text);
+  }
+
+  /**
    * Set style
    * @param {number} id - object id
    * @param {Object} styleObj - text styles
@@ -1318,6 +1334,17 @@ class ImageEditor {
       originPosition: event.originPosition,
       clientPosition: event.clientPosition,
     });
+  }
+
+  _onAddLabel() {
+    const canvas = this.getCanvasInstance();
+    const obj = canvas._activeObject;
+
+    var activeObj = canvas.getActiveObject();
+    var caretPositionStart = activeObj.selectionStart;
+    var caretPositionEnd = activeObj.selectionEnd;
+    console.log(obj, caretPositionEnd, caretPositionStart, activeObj);
+    this.fire(ADD_LABEL);
   }
 
   /**
