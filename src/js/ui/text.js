@@ -28,6 +28,7 @@ class Text extends Submenu {
     this.align = 'tie-text-align-left';
     this._els = {
       textEffectButton: this.selector('.tie-text-effect-button'),
+      textAddLabelButton: this.selector('.tie-add-label-button'),
       textFontFamly: this.selector('.tie-font-family-select'),
       textAlignButton: this.selector('.tie-text-align-button'),
       textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
@@ -69,16 +70,19 @@ class Text extends Submenu {
     const setTextEffect = this._setTextEffectHandler.bind(this);
     const setTextAlign = this._setTextAlignHandler.bind(this);
     const setFontFamily = this._changeFontFamilyHandler.bind(this);
+    const callAddLabel = this._addLabelHandler.bind(this);
 
     this.eventHandler = {
       setTextEffect,
       setTextAlign,
       setFontFamily,
+      callAddLabel,
     };
 
     this.actions = actions;
     this._els.textEffectButton.addEventListener('click', setTextEffect);
     this._els.textAlignButton.addEventListener('click', setTextAlign);
+    this._els.textAddLabelButton.addEventListener('click', callAddLabel);
     this._els.textFontFamly.addEventListener('change', setFontFamily);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
@@ -98,11 +102,12 @@ class Text extends Submenu {
    * @private
    */
   _removeEvent() {
-    const { setTextEffect, setTextAlign, setFontFamily } = this.eventHandler;
+    const { setTextEffect, setTextAlign, setFontFamily, callAddLabel } = this.eventHandler;
 
     this._els.textEffectButton.removeEventListener('click', setTextEffect);
     this._els.textAlignButton.removeEventListener('click', setTextAlign);
-    this._els.textAlignButton.removeEventListener('change', setFontFamily);
+    this._els.textAddLabelButton.removeEventListener('click', callAddLabel);
+    this._els.textFontFamly.removeEventListener('change', setFontFamily);
     this._els.textRange.off();
     this._els.textColorpicker.off();
 
@@ -286,6 +291,10 @@ class Text extends Submenu {
     this.actions.changeTextStyle({
       fontFamily: font,
     });
+  }
+
+  _addLabelHandler() {
+    this.actions.clickAddLabel();
   }
 }
 

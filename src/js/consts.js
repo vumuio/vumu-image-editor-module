@@ -186,6 +186,7 @@ export const eventNames = {
   FOCUS: 'focus',
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
+  ADD_LABEL: 'addLabel',
 };
 
 /**
@@ -213,6 +214,7 @@ export const historyNames = {
   CHANGE_SHAPE: 'Shape',
   CHANGE_ICON_COLOR: 'Icon',
   ADD_TEXT: 'Text',
+  ADD_LABEL: 'Text',
   CHANGE_TEXT_STYLE: 'Text',
   REMOVE_OBJECT: 'Delete',
   CLEAR_OBJECTS: 'Delete',

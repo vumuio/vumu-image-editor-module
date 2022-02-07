@@ -38,6 +38,7 @@ const {
   SELECTION_CLEARED,
   SELECTION_CREATED,
   ADD_OBJECT_AFTER,
+  ADD_LABEL,
 } = events;
 
 /**
@@ -228,6 +229,7 @@ class ImageEditor {
       iconCreateEnd: this._onIconCreateEnd.bind(this),
       selectionCleared: this._selectionCleared.bind(this),
       selectionCreated: this._selectionCreated.bind(this),
+      addLabel: this._onAddLabel.bind(this),
     };
 
     this._attachInvokerEvents();
@@ -1209,8 +1211,32 @@ class ImageEditor {
   }
 
   /**
-   * Set style
+   * Append word at current cursor position of text object on image
    * @param {number} id - object id
+   * @param {string} text - Append text
+   * @returns {Promise<ObjectProps, ErrorMsg>}
+   * @example
+   * imageEditor.apendUnderCursor(id, 'change text');
+   */
+  async appendUnderCursor(id, appendText) {
+    const canvas = this.getCanvasInstance();
+    const activeObj = canvas.getActiveObject();
+    const { text } = activeObj;
+
+    const caretPositionStart = activeObj.selectionStart;
+    const caretPositionEnd = activeObj.selectionEnd;
+    const newText = text.slice(0, caretPositionStart) + appendText + text.slice(caretPositionEnd);
+
+    await this.execute(commands.CHANGE_TEXT, id, newText);
+
+    activeObj.setSelectionStart(caretPositionStart + appendText.length);
+    activeObj.setSelectionEnd(caretPositionStart + appendText.length);
+    canvas.renderAll();
+  }
+
+  /**
+   * Set style
+k   * @param {number} id - object id
    * @param {Object} styleObj - text styles
    *     @param {string} [styleObj.fill] Color
    *     @param {string} [styleObj.fontFamily] Font type for text
@@ -1318,6 +1344,10 @@ class ImageEditor {
       originPosition: event.originPosition,
       clientPosition: event.clientPosition,
     });
+  }
+
+  _onAddLabel() {
+    this.fire(ADD_LABEL);
   }
 
   /**

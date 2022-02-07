@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.15.2
+// Type definitions for TOAST UI Image Editor v3.17.1
 // TypeScript Version: 3.2.2
 // TypeScript Version: 3.2.2
 declare module 'vumu-image-editor' {
@@ -297,6 +297,7 @@ declare module 'vumu-image-editor' {
       public flipY(): Promise<IFlipXYResolveObject>;
       public getCanvasSize(): ICanvasSize;
       public getCanvasInstance(): fabric.Canvas;
+      public appendUnderCursor(id: number, text: string): void;
       public getCropzoneRect(): IRectConfig;
       public getDrawingMode(): string;
       public getImageName(): string;
