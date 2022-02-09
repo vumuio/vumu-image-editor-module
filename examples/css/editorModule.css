@@ -443,7 +443,12 @@ input.tui-colorpicker-palette-button {
 main.ant-layout-content > div {
   padding-top: 0;
 }
-
+.hide-btn{
+  width:0 !important;
+  height:0;
+  visibility: hidden;
+  z-index: -1;
+}
 @media (max-width: 1200px) {
   .tui-image-editor-controls {
     margin-top: -17px !important;
