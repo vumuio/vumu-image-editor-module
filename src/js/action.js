@@ -141,6 +141,7 @@ export default {
           if (!isSupportFileApi()) {
             alert('This browser does not support file-api');
           }
+          this._onLoadBackground(file);
 
           this.ui.initializeImgUrl = URL.createObjectURL(file);
           this.loadImageFromFile(file)

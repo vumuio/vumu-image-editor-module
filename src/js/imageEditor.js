@@ -39,6 +39,7 @@ const {
   SELECTION_CREATED,
   ADD_OBJECT_AFTER,
   ADD_LABEL,
+  LOAD_BACKGROUND,
 } = events;
 
 /**
@@ -1348,6 +1349,10 @@ k   * @param {number} id - object id
 
   _onAddLabel() {
     this.fire(ADD_LABEL);
+  }
+
+  _onLoadBackground(file) {
+    this.fire(LOAD_BACKGROUND, file);
   }
 
   /**

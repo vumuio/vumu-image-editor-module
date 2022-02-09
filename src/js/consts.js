@@ -187,6 +187,7 @@ export const eventNames = {
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
   ADD_LABEL: 'addLabel',
+  LOAD_BACKGROUND: 'loadBackground',
 };
 
 /**
