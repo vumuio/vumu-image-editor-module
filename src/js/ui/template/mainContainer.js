@@ -19,6 +19,9 @@ export default ({
                       <button class="tui-image-editor-download-btn" style="${downloadButtonStyle}">
                           ${locale.localize('Download')}
                       </button>
+                      <button id="save-as-template-btn" class="tui-save-as-template-btn" style="${downloadButtonStyle}">
+                          Save as Template
+                      </button>
                   </div>
               </div>
               <div class="tui-image-editor-main">
