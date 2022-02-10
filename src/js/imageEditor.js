@@ -40,6 +40,7 @@ const {
   ADD_OBJECT_AFTER,
   ADD_LABEL,
   LOAD_BACKGROUND,
+  SAVE_AND_NEXT,
 } = events;
 
 /**
@@ -1228,11 +1229,7 @@ class ImageEditor {
     const caretPositionEnd = activeObj.selectionEnd;
     const newText = text.slice(0, caretPositionStart) + appendText + text.slice(caretPositionEnd);
 
-    await this.execute(commands.CHANGE_TEXT, id, newText);
-
-    activeObj.setSelectionStart(caretPositionStart + appendText.length);
-    activeObj.setSelectionEnd(caretPositionStart + appendText.length);
-    canvas.renderAll();
+    return this.execute(commands.CHANGE_TEXT, id, newText);
   }
 
   /**
@@ -1353,6 +1350,10 @@ k   * @param {number} id - object id
 
   _onLoadBackground(file) {
     this.fire(LOAD_BACKGROUND, file);
+  }
+
+  _onSaveAndNext() {
+    this.fire(SAVE_AND_NEXT);
   }
 
   /**

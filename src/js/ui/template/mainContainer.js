@@ -35,7 +35,7 @@ export default ({
 
                     </div>
                     <div class="save-button">
-                        <button class="btn-primary">Save & Next</button>
+                        <button class="btn-primary tui-image-editor-save-btn">Save & Next</button>
                     </div>
                   </div>
                     <div class="tui-image-editor-submenu"></div>

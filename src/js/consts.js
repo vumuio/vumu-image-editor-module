@@ -188,6 +188,7 @@ export const eventNames = {
   IMAGE_RESIZED: 'imageResized',
   ADD_LABEL: 'addLabel',
   LOAD_BACKGROUND: 'loadBackground',
+  SAVE_AND_NEXT: 'saveAndNext',
 };
 
 /**

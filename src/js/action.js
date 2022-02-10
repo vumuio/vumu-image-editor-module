@@ -173,6 +173,9 @@ export default {
             w.document.body.innerHTML = `<img src='${dataURL}'>`;
           }
         },
+        save: () => {
+          this._onSaveAndNext();
+        },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
         },
