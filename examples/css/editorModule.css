@@ -450,6 +450,9 @@ main.ant-layout-content > div {
   visibility: hidden;
   z-index: -1;
 }
+.tui-image-editor-container{
+  min-height: 800px;
+}
 @media (max-width: 1200px) {
   .tui-image-editor-controls {
     margin-top: -17px !important;
