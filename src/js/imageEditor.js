@@ -1229,8 +1229,15 @@ class ImageEditor {
     const caretPositionStart = activeObj.selectionStart;
     const caretPositionEnd = activeObj.selectionEnd;
     const newText = text.slice(0, caretPositionStart) + appendText + text.slice(caretPositionEnd);
+    this.discardSelection();
 
-    return this.execute(commands.CHANGE_TEXT, id, newText);
+    await this.execute(commands.CHANGE_TEXT, id, newText);
+
+    canvas.setActiveObject(activeObj);
+    activeObj.enterEditing();
+    activeObj.setSelectionStart(caretPositionStart + appendText.length);
+    activeObj.setSelectionEnd(caretPositionStart + appendText.length);
+    canvas.renderAll();
   }
 
   /**
