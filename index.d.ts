@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.17.1
+// Type definitions for TOAST UI Image Editor v3.17.5
 // TypeScript Version: 3.2.2
 // TypeScript Version: 3.2.2
 declare module 'vumu-image-editor' {
@@ -318,6 +318,7 @@ declare module 'vumu-image-editor' {
       public removeObject(id: number): Promise<void>;
       public resetFlip(): Promise<IFlipXYResolveObject>;
       public resizeCanvasDimension(dimension: ICanvasSize): Promise<void>;
+      public resize(dimension: ICanvasSize): Promise<void>;
       public rotate(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
       public setAngle(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
       public setBrush(option: IBrushOptions): void;
