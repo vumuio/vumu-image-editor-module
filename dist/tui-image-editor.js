@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 3.17.1
+ * @version 3.17.5
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -50241,28 +50241,6 @@ var ImageTracer = /*#__PURE__*/function () {
         }
       },
       save: function save() {
-        var dataURL = _this.toDataURL();
-
-        var imageName = _this.getImageName();
-
-        var blob, type, w;
-
-        if (isSupportFileApi() && window.saveAs) {
-          blob = base64ToBlob(dataURL);
-          type = blob.type.split('/')[1];
-
-          if (imageName.split('.').pop() !== type) {
-            imageName += ".".concat(type);
-          }
-
-          var newFile = new File([blob], imageName);
-
-          _this._onSaveAndNext(newFile);
-        } else {
-          w = window.open();
-          w.document.body.innerHTML = "<img src='".concat(dataURL, "'>");
-        }
-
         _this._onSaveAndNext();
       },
       history: function history(event) {
@@ -61037,7 +61015,6 @@ var ImageEditor = /*#__PURE__*/function () {
   }, {
     key: "_onSaveAsTemplate",
     value: function _onSaveAsTemplate() {
-      console.log('Save as template');
       this.fire(SAVE_AS_TEMPLATE);
     }
   }, {
@@ -61047,8 +61024,8 @@ var ImageEditor = /*#__PURE__*/function () {
     }
   }, {
     key: "_onSaveAndNext",
-    value: function _onSaveAndNext(file) {
-      this.fire(SAVE_AND_NEXT, file);
+    value: function _onSaveAndNext() {
+      this.fire(SAVE_AND_NEXT);
     }
     /**
      * 'addObject' event handler

@@ -1350,7 +1350,6 @@ k   * @param {number} id - object id
   }
 
   _onSaveAsTemplate() {
-    console.log('Save as template');
     this.fire(SAVE_AS_TEMPLATE);
   }
 
@@ -1358,8 +1357,8 @@ k   * @param {number} id - object id
     this.fire(LOAD_BACKGROUND, file);
   }
 
-  _onSaveAndNext(file) {
-    this.fire(SAVE_AND_NEXT, file);
+  _onSaveAndNext() {
+    this.fire(SAVE_AND_NEXT);
   }
 
   /**
