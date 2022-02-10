@@ -156,6 +156,9 @@ export default {
             })
             ['catch']((message) => Promise.reject(message));
         },
+        saveAsTemplate: () => {
+          this._onSaveAsTemplate();
+        },
         download: () => {
           const dataURL = this.toDataURL();
           let imageName = this.getImageName();

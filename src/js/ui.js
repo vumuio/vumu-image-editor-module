@@ -385,6 +385,7 @@ class Ui {
     this._subMenuElement = selector('.tui-image-editor-submenu');
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+      saveAsTemplate: this._selectedElement.querySelectorAll('.tui-save-as-template-btn'),
       bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
       sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
       sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
@@ -620,6 +621,27 @@ class Ui {
   }
 
   /**
+   * Call save as template event listener
+   * @private
+   */
+  _addSaveAsTemplateEvent() {
+    this.eventHandler.saveAsTemplate = (event) => this._actions.main.saveAsTemplate();
+    snippet.forEach(this._buttonElements.saveAsTemplate, (element) => {
+      element.addEventListener('click', this.eventHandler.saveAsTemplate);
+    });
+  }
+
+  /**
+   * Removes event listener added to save as template
+   * @private
+   */
+  _removeSaveAsTemplateEvent() {
+    snippet.forEach(this._buttonElements.saveAsTemplate, (element) => {
+      element.removeEventListener('click', this.eventHandler.saveAsTemplate);
+    });
+  }
+
+  /**
    * Add menu event
    * @param {string} menuName - menu name
    * @private
@@ -687,6 +709,7 @@ class Ui {
 
     this._addHelpActionEvent();
     this._addDownloadEvent();
+    this._addSaveAsTemplateEvent();
     this._addSaveEvent();
     this._addMenuEvent();
     this._initMenu();
@@ -701,6 +724,7 @@ class Ui {
   _removeUiEvent() {
     this._removeHelpActionEvent();
     this._removeDownloadEvent();
+    this._removeSaveAsTemplateEvent();
     this._removeLoadEvent();
     this._removeSaveEvent();
     this._removeMainMenuEvent();

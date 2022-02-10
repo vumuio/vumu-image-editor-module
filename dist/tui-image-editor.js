@@ -40996,6 +40996,7 @@ var eventNames = {
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
   ADD_LABEL: 'addLabel',
+  SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext'
 };
@@ -42478,7 +42479,7 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
 ;// CONCATENATED MODULE: ./src/js/ui/template/mainContainer.js
 
 /* harmony default export */ var mainContainer = (function (_ref) {
-  var _context, _context2, _context3, _context4, _context5, _context6;
+  var _context, _context2, _context3, _context4, _context5, _context6, _context7;
 
   var locale = _ref.locale,
       commonStyle = _ref.commonStyle,
@@ -42486,20 +42487,20 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
       loadButtonStyle = _ref.loadButtonStyle,
       downloadButtonStyle = _ref.downloadButtonStyle,
       submenuStyle = _ref.submenuStyle;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-header\" style=\"")).call(_context6, headerStyle, "\">\n                  <div class=\"tui-image-editor-header-buttons\">\n                      <div style=\"")).call(_context5, loadButtonStyle, "\">\n                          ")).call(_context4, locale.localize('Load'), "\n                          <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                      </div>\n                      <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context3, downloadButtonStyle, "\">\n                          ")).call(_context2, locale.localize('Download'), "\n                      </button>\n                      <button id=\"save-as-template-btn\" class=\"tui-save-as-template-btn hide-btn\" style=\"")).call(_context, downloadButtonStyle, "\">\n                          Save as Template\n                      </button>\n                  </div>\n              </div>\n              <div class=\"tui-image-editor-main\">\n                  <div class=\"tui-image-editor-wrap\">\n                      <div class=\"tui-image-editor-size-wrap\">\n                      <div class=\"tui-image-editor-align-wrap\">\n                          <div class=\"tui-image-editor\">\n                            <input type=\"text\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                          </div>\n                      </div>\n\n                    </div>\n                    <div class=\"save-button\">\n                        <button class=\"btn-primary tui-image-editor-save-btn\">Save & Next</button>\n                    </div>\n                  </div>\n                    <div class=\"tui-image-editor-submenu\"></div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-header\" style=\"")).call(_context7, headerStyle, "\">\n                  <div class=\"tui-image-editor-header-buttons\">\n                      <div style=\"")).call(_context6, loadButtonStyle, "\">\n                          ")).call(_context5, locale.localize('Load'), "\n                          <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                      </div>\n                      <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context4, downloadButtonStyle, "\">\n                          ")).call(_context3, locale.localize('Download'), "\n                      </button>\n                      <button id=\"save-as-template-btn\" class=\"tui-save-as-template-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                          ")).call(_context, locale.localize('Save as Template'), "\n                      </button>\n                  </div>\n              </div>\n              <div class=\"tui-image-editor-main\">\n                  <div class=\"tui-image-editor-wrap\">\n                      <div class=\"tui-image-editor-size-wrap\">\n                      <div class=\"tui-image-editor-align-wrap\">\n                          <div class=\"tui-image-editor\">\n                            <input type=\"text\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                          </div>\n                      </div>\n\n                    </div>\n                    <div class=\"save-button\">\n                        <button class=\"btn-primary tui-image-editor-save-btn\">Save & Next</button>\n                    </div>\n                  </div>\n                    <div class=\"tui-image-editor-submenu\"></div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/template/controls.js
 
 
 /* harmony default export */ var controls = (function (_ref) {
-  var _context, _context2, _context3, _context4;
+  var _context, _context2, _context3, _context4, _context5, _context6;
 
   var locale = _ref.locale,
       biImage = _ref.biImage,
       loadButtonStyle = _ref.loadButtonStyle,
       downloadButtonStyle = _ref.downloadButtonStyle,
       menuBarPosition = _ref.menuBarPosition;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = "\n    <ul class=\"tui-image-editor-help-menu top\"></ul>\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"".concat(biImage, "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\"></ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <div style=\"")).call(_context4, loadButtonStyle, "\">\n                ")).call(_context3, locale.localize('Load'), "\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </div>\n            <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                ")).call(_context, locale.localize('Download'), "\n            </button>\n        </div>\n    </div>\n");
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = "\n    <ul class=\"tui-image-editor-help-menu top\"></ul>\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"".concat(biImage, "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\"></ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <div style=\"")).call(_context6, loadButtonStyle, "\">\n                ")).call(_context5, locale.localize('Load'), "\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </div>\n            <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context4, downloadButtonStyle, "\">\n                ")).call(_context3, locale.localize('Download'), "\n            </button>\n            <button id=\"save-as-template-btn\" class=\"tui-save-as-template-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                ")).call(_context, locale.localize('Save as Template'), "\n            </button>\n        </div>\n    </div>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/template/style.js
 
@@ -47901,6 +47902,7 @@ var Ui = /*#__PURE__*/function () {
       this._subMenuElement = selector('.tui-image-editor-submenu');
       this._buttonElements = {
         download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+        saveAsTemplate: this._selectedElement.querySelectorAll('.tui-save-as-template-btn'),
         bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
         sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
         sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
@@ -48210,6 +48212,38 @@ var Ui = /*#__PURE__*/function () {
       });
     }
     /**
+     * Call save as template event listener
+     * @private
+     */
+
+  }, {
+    key: "_addSaveAsTemplateEvent",
+    value: function _addSaveAsTemplateEvent() {
+      var _this13 = this;
+
+      this.eventHandler.saveAsTemplate = function (event) {
+        return _this13._actions.main.saveAsTemplate();
+      };
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.saveAsTemplate, function (element) {
+        element.addEventListener('click', _this13.eventHandler.saveAsTemplate);
+      });
+    }
+    /**
+     * Removes event listener added to save as template
+     * @private
+     */
+
+  }, {
+    key: "_removeSaveAsTemplateEvent",
+    value: function _removeSaveAsTemplateEvent() {
+      var _this14 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.saveAsTemplate, function (element) {
+        element.removeEventListener('click', _this14.eventHandler.saveAsTemplate);
+      });
+    }
+    /**
      * Add menu event
      * @param {string} menuName - menu name
      * @private
@@ -48218,10 +48252,10 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_addMainMenuEvent",
     value: function _addMainMenuEvent(menuName) {
-      var _this13 = this;
+      var _this15 = this;
 
       this.eventHandler[menuName] = function () {
-        return _this13.changeMenu(menuName);
+        return _this15.changeMenu(menuName);
       };
 
       this._buttonElements[menuName].addEventListener('click', this.eventHandler[menuName]);
@@ -48235,14 +48269,14 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_addSubMenuEvent",
     value: function _addSubMenuEvent(menuName) {
-      var _this14 = this;
+      var _this16 = this;
 
       this[menuName].addEvent(this._actions[menuName]);
       this[menuName].on(eventNames.INPUT_BOX_EDITING_STARTED, function () {
-        return _this14.fire(eventNames.INPUT_BOX_EDITING_STARTED);
+        return _this16.fire(eventNames.INPUT_BOX_EDITING_STARTED);
       });
       this[menuName].on(eventNames.INPUT_BOX_EDITING_STOPPED, function () {
-        return _this14.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
+        return _this16.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
       });
     }
     /**
@@ -48253,12 +48287,12 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_addMenuEvent",
     value: function _addMenuEvent() {
-      var _this15 = this;
+      var _this17 = this;
 
       external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this15._addMainMenuEvent(menuName);
+        _this17._addMainMenuEvent(menuName);
 
-        _this15._addSubMenuEvent(menuName);
+        _this17._addSubMenuEvent(menuName);
       });
     }
     /**
@@ -48269,14 +48303,14 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_removeMainMenuEvent",
     value: function _removeMainMenuEvent() {
-      var _this16 = this;
+      var _this18 = this;
 
       external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this16._buttonElements[menuName].removeEventListener('click', _this16.eventHandler[menuName]);
+        _this18._buttonElements[menuName].removeEventListener('click', _this18.eventHandler[menuName]);
 
-        _this16[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
+        _this18[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
 
-        _this16[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
+        _this18[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
       });
     }
     /**
@@ -48306,6 +48340,8 @@ var Ui = /*#__PURE__*/function () {
 
       this._addDownloadEvent();
 
+      this._addSaveAsTemplateEvent();
+
       this._addSaveEvent();
 
       this._addMenuEvent();
@@ -48328,6 +48364,8 @@ var Ui = /*#__PURE__*/function () {
 
       this._removeDownloadEvent();
 
+      this._removeSaveAsTemplateEvent();
+
       this._removeLoadEvent();
 
       this._removeSaveEvent();
@@ -48344,10 +48382,10 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_destroyAllMenu",
     value: function _destroyAllMenu() {
-      var _this17 = this;
+      var _this19 = this;
 
       external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this17[menuName].destroy();
+        _this19[menuName].destroy();
       });
 
       this._historyMenu.destroy();
@@ -48360,13 +48398,13 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "initCanvas",
     value: function initCanvas() {
-      var _this18 = this;
+      var _this20 = this;
 
       var loadImageInfo = this._getLoadImage();
 
       if (loadImageInfo.path) {
         this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(function () {
-          _this18.activeMenuEvent();
+          _this20.activeMenuEvent();
         });
       }
 
@@ -50177,6 +50215,9 @@ var ImageTracer = /*#__PURE__*/function () {
         })['catch'](function (message) {
           return core_js_stable_promise_default().reject(message);
         });
+      },
+      saveAsTemplate: function saveAsTemplate() {
+        _this._onSaveAsTemplate();
       },
       download: function download() {
         var dataURL = _this.toDataURL();
@@ -59504,6 +59545,7 @@ var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     SELECTION_CREATED = eventNames.SELECTION_CREATED,
     ADD_OBJECT_AFTER = eventNames.ADD_OBJECT_AFTER,
     ADD_LABEL = eventNames.ADD_LABEL,
+    SAVE_AS_TEMPLATE = eventNames.SAVE_AS_TEMPLATE,
     LOAD_BACKGROUND = eventNames.LOAD_BACKGROUND,
     SAVE_AND_NEXT = eventNames.SAVE_AND_NEXT;
 /**
@@ -60995,6 +61037,12 @@ var ImageEditor = /*#__PURE__*/function () {
     key: "_onAddLabel",
     value: function _onAddLabel() {
       this.fire(ADD_LABEL);
+    }
+  }, {
+    key: "_onSaveAsTemplate",
+    value: function _onSaveAsTemplate() {
+      console.log('Save as template');
+      this.fire(SAVE_AS_TEMPLATE);
     }
   }, {
     key: "_onLoadBackground",

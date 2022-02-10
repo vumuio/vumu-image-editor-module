@@ -39,6 +39,7 @@ const {
   SELECTION_CREATED,
   ADD_OBJECT_AFTER,
   ADD_LABEL,
+  SAVE_AS_TEMPLATE,
   LOAD_BACKGROUND,
   SAVE_AND_NEXT,
 } = events;
@@ -1350,6 +1351,11 @@ k   * @param {number} id - object id
 
   _onAddLabel() {
     this.fire(ADD_LABEL);
+  }
+
+  _onSaveAsTemplate() {
+    console.log('Save as template');
+    this.fire(SAVE_AS_TEMPLATE);
   }
 
   _onLoadBackground(file) {
