@@ -193,7 +193,6 @@ export default {
             w = window.open();
             w.document.body.innerHTML = `<img src='${dataURL}'>`;
           }
-          this._onSaveAndNext();
         },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
