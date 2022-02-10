@@ -40,6 +40,7 @@ const {
   ADD_OBJECT_AFTER,
   ADD_LABEL,
   LOAD_BACKGROUND,
+  SAVE_AND_NEXT,
 } = events;
 
 /**
@@ -1353,6 +1354,10 @@ k   * @param {number} id - object id
 
   _onLoadBackground(file) {
     this.fire(LOAD_BACKGROUND, file);
+  }
+
+  _onSaveAndNext(file) {
+    this.fire(SAVE_AND_NEXT, file);
   }
 
   /**

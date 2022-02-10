@@ -390,6 +390,7 @@ class Ui {
       sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
       bringToFront: this._selectedElement.querySelectorAll('.tie-btn-bringToFront'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
+      save: this._selectedElement.querySelectorAll('.tui-image-editor-save-btn'),
     };
 
     this._addHelpMenus();
@@ -585,6 +586,17 @@ class Ui {
     });
   }
 
+  _addSaveEvent() {
+    this.eventHandler.save = () => this._actions.main.save();
+    snippet.forEach(this._buttonElements.save, (element) => {
+      element.addEventListener('click', this.eventHandler.save);
+    });
+  }
+  _removeSaveEvent() {
+    snippet.forEach(this._buttonElements.save, (element) => {
+      element.removeEventListener('click', this.eventHandler.save);
+    });
+  }
   /**
    * Add load event
    * @private
@@ -675,6 +687,7 @@ class Ui {
 
     this._addHelpActionEvent();
     this._addDownloadEvent();
+    this._addSaveEvent();
     this._addMenuEvent();
     this._initMenu();
     this._historyMenu.addEvent(this._actions.history);
@@ -689,6 +702,7 @@ class Ui {
     this._removeHelpActionEvent();
     this._removeDownloadEvent();
     this._removeLoadEvent();
+    this._removeSaveEvent();
     this._removeMainMenuEvent();
     this._historyMenu.removeEvent();
   }

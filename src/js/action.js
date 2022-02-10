@@ -173,6 +173,24 @@ export default {
             w.document.body.innerHTML = `<img src='${dataURL}'>`;
           }
         },
+        save: () => {
+          const dataURL = this.toDataURL();
+          let imageName = this.getImageName();
+          let blob, type, w;
+
+          if (isSupportFileApi() && window.saveAs) {
+            blob = base64ToBlob(dataURL);
+            type = blob.type.split('/')[1];
+            if (imageName.split('.').pop() !== type) {
+              imageName += `.${type}`;
+            }
+            const newFile = new File([blob], imageName);
+            this._onSaveAndNext(newFile);
+          } else {
+            w = window.open();
+            w.document.body.innerHTML = `<img src='${dataURL}'>`;
+          }
+        },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
         },
