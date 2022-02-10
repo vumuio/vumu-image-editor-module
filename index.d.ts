@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.17.5
+// Type definitions for TOAST UI Image Editor v3.17.6
 // TypeScript Version: 3.2.2
 // TypeScript Version: 3.2.2
 declare module 'vumu-image-editor' {

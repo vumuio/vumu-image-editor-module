@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 3.17.5
+ * @version 3.17.6
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -60868,9 +60868,18 @@ var ImageEditor = /*#__PURE__*/function () {
                 caretPositionStart = activeObj.selectionStart;
                 caretPositionEnd = activeObj.selectionEnd;
                 newText = slice_default()(text).call(text, 0, caretPositionStart) + appendText + slice_default()(text).call(text, caretPositionEnd);
-                return _context5.abrupt("return", this.execute(commandNames.CHANGE_TEXT, id, newText));
+                this.discardSelection();
+                _context5.next = 9;
+                return this.execute(commandNames.CHANGE_TEXT, id, newText);
 
-              case 7:
+              case 9:
+                canvas.setActiveObject(activeObj);
+                activeObj.enterEditing();
+                activeObj.setSelectionStart(caretPositionStart + appendText.length);
+                activeObj.setSelectionEnd(caretPositionStart + appendText.length);
+                canvas.renderAll();
+
+              case 14:
               case "end":
                 return _context5.stop();
             }
