@@ -23,7 +23,6 @@ const command = {
     const prevImageWidth = prevImage ? prevImage.width : 0;
     const prevImageHeight = prevImage ? prevImage.height : 0;
     const objects = graphics.removeAll(true).filter((objectItem) => objectItem.type !== 'cropzone');
-    //const objects = graphics.filter((objectItem) => objectItem.type !== 'cropzone');
 
     objects.forEach((objectItem) => {
       objectItem.evented = true;

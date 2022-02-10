@@ -41014,8 +41014,8 @@ var selectorNames = {
 
 var historyNames = {
   LOAD_IMAGE: 'Load',
-  LOAD_MASK_IMAGE: 'Mask',
-  ADD_MASK_IMAGE: 'Mask',
+  // LOAD_MASK_IMAGE: 'Mask',
+  // ADD_MASK_IMAGE: 'Mask',
   ADD_IMAGE_OBJECT: 'Image',
   ADD_LOGO: 'Logo',
   CROP: 'Crop',
@@ -41791,14 +41791,10 @@ function getHistoryTitle(command) {
         name: name
       };
       break;
-  }
+  } // if (args[1] === 'mask') {
+  //   historyInfo = { name: historyNames.LOAD_MASK_IMAGE, detail: 'Apply' };
+  // }
 
-  if (args[1] === 'mask') {
-    historyInfo = {
-      name: historyNames.LOAD_MASK_IMAGE,
-      detail: 'Apply'
-    };
-  }
 
   return historyInfo;
 }
@@ -50009,7 +50005,7 @@ var ImageTracer = /*#__PURE__*/function () {
       flip: this._flipAction(),
       rotate: this._rotateAction(),
       text: this._textAction(),
-      mask: this._maskAction(),
+      //mask: this._maskAction(),
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
@@ -50365,26 +50361,26 @@ var ImageTracer = /*#__PURE__*/function () {
    * @returns {Object} actions for ui mask
    * @private
    */
-  _maskAction: function _maskAction() {
-    var _this4 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      loadImageFromURL: function loadImageFromURL(imgUrl, file) {
-        return _this4.loadImageFromURL(_this4.toDataURL(), 'FilterImage').then(function () {
-          _this4.addImageObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this4._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
-        });
-      },
-      applyFilter: function applyFilter() {
-        _this4.applyFilter('mask', {
-          maskObjId: _this4.activeObjectId
-        });
-      }
-    }, this._commonAction());
-  },
+  // _maskAction() {
+  //   return extend(
+  //     {
+  //       loadImageFromURL: (imgUrl, file) => {
+  //         return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+  //           this.addImageObject(imgUrl).then(() => {
+  //             URL.revokeObjectURL(file);
+  //           });
+  //           this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+  //         });
+  //       },
+  //       applyFilter: () => {
+  //         this.applyFilter('mask', {
+  //           maskObjId: this.activeObjectId,
+  //         });
+  //       },
+  //     },
+  //     this._commonAction()
+  //   );
+  // },
 
   /**
    * Image Action
@@ -50392,32 +50388,34 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _imageAction: function _imageAction() {
-    var _this5 = this;
+    var _this4 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       loadImageFromURL: function loadImageFromURL(imgUrl, file) {
-        return _this5.loadImageFromURL(_this5.toDataURL(), "Image".concat(randomString(6))).then(function () {
-          _this5.addImageObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this5._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+        _this4.addImageObject(imgUrl).then(function () {
+          url_default().revokeObjectURL(file);
         });
+
+        return _this4._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.ADD_IMAGE_OBJECT);
       }
     }, this._commonAction());
   },
+
+  /**
+   * Logo Action
+   * @returns {Object} actions for ui mask
+   * @private
+   */
   _logoAction: function _logoAction() {
-    var _this6 = this;
+    var _this5 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       insertLogo: function insertLogo(imgUrl, file) {
-        return _this6.loadImageFromURL(_this6.toDataURL(), "Logo".concat(randomString(6))).then(function () {
-          _this6.addLogoObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this6._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+        _this5.addLogoObject(imgUrl).then(function () {
+          url_default().revokeObjectURL(file);
         });
+
+        return _this5._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.ADD_LOGO);
       }
     }, this._commonAction());
   },
@@ -50428,20 +50426,20 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _textAction: function _textAction() {
-    var _this7 = this;
+    var _this6 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       changeTextStyle: function changeTextStyle(styleObj, isSilent) {
         if (styleObj.fontFamily) {
-          _this7.fontFamily = styleObj.fontFamily;
+          _this6.fontFamily = styleObj.fontFamily;
         }
 
-        if (_this7.activeObjectId) {
-          _this7.changeTextStyle(_this7.activeObjectId, styleObj, isSilent);
+        if (_this6.activeObjectId) {
+          _this6.changeTextStyle(_this6.activeObjectId, styleObj, isSilent);
         }
       },
       clickAddLabel: function clickAddLabel() {
-        return _this7._onAddLabel();
+        return _this6._onAddLabel();
       }
     }, this._commonAction());
   },
@@ -50452,22 +50450,22 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _rotateAction: function _rotateAction() {
-    var _this8 = this;
+    var _this7 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       rotate: function rotate(angle, isSilent) {
-        _this8.rotate(angle, isSilent);
+        _this7.rotate(angle, isSilent);
 
-        _this8.ui.resizeEditor();
+        _this7.ui.resizeEditor();
 
-        _this8.ui.rotate.setRangeBarAngle('rotate', angle);
+        _this7.ui.rotate.setRangeBarAngle('rotate', angle);
       },
       setAngle: function setAngle(angle, isSilent) {
-        _this8.setAngle(angle, isSilent);
+        _this7.setAngle(angle, isSilent);
 
-        _this8.ui.resizeEditor();
+        _this7.ui.resizeEditor();
 
-        _this8.ui.rotate.setRangeBarAngle('setAngle', angle);
+        _this7.ui.rotate.setRangeBarAngle('setAngle', angle);
       }
     }, this._commonAction());
   },
@@ -50478,16 +50476,16 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _shapeAction: function _shapeAction() {
-    var _this9 = this;
+    var _this8 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       changeShape: function changeShape(changeShapeObject, isSilent) {
-        if (_this9.activeObjectId) {
-          _this9.changeShape(_this9.activeObjectId, changeShapeObject, isSilent);
+        if (_this8.activeObjectId) {
+          _this8.changeShape(_this8.activeObjectId, changeShapeObject, isSilent);
         }
       },
       setDrawingShape: function setDrawingShape(shapeType) {
-        _this9.setDrawingShape(shapeType);
+        _this8.setDrawingShape(shapeType);
       }
     }, this._commonAction());
   },
@@ -50498,69 +50496,69 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _cropAction: function _cropAction() {
-    var _this10 = this;
+    var _this9 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       crop: function crop() {
-        var cropRect = _this10.getCropzoneRect();
+        var cropRect = _this9.getCropzoneRect();
 
         if (cropRect && !isEmptyCropzone(cropRect)) {
-          _this10.crop(cropRect).then(function () {
-            _this10.stopDrawingMode();
+          _this9.crop(cropRect).then(function () {
+            _this9.stopDrawingMode();
 
-            _this10.ui.resizeEditor();
+            _this9.ui.resizeEditor();
 
-            _this10.ui.changeMenu('crop');
+            _this9.ui.changeMenu('crop');
 
-            _this10._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
+            _this9._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
           })['catch'](function (message) {
             return core_js_stable_promise_default().reject(message);
           });
         }
       },
       cancel: function cancel() {
-        _this10.stopDrawingMode();
+        _this9.stopDrawingMode();
 
-        _this10.ui.changeMenu('crop');
+        _this9.ui.changeMenu('crop');
       },
 
       /* eslint-disable */
       preset: function preset(presetType) {
         switch (presetType) {
           case 'preset-square':
-            _this10.setCropzoneRect(1 / 1);
+            _this9.setCropzoneRect(1 / 1);
 
             break;
 
           case 'preset-3-2':
-            _this10.setCropzoneRect(3 / 2);
+            _this9.setCropzoneRect(3 / 2);
 
             break;
 
           case 'preset-4-3':
-            _this10.setCropzoneRect(4 / 3);
+            _this9.setCropzoneRect(4 / 3);
 
             break;
 
           case 'preset-5-4':
-            _this10.setCropzoneRect(5 / 4);
+            _this9.setCropzoneRect(5 / 4);
 
             break;
 
           case 'preset-7-5':
-            _this10.setCropzoneRect(7 / 5);
+            _this9.setCropzoneRect(7 / 5);
 
             break;
 
           case 'preset-16-9':
-            _this10.setCropzoneRect(16 / 9);
+            _this9.setCropzoneRect(16 / 9);
 
             break;
 
           default:
-            _this10.setCropzoneRect();
+            _this9.setCropzoneRect();
 
-            _this10.ui.crop.changeApplyButtonStatus(false);
+            _this9.ui.crop.changeApplyButtonStatus(false);
 
             break;
         }
@@ -50574,14 +50572,14 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _resizeAction: function _resizeAction() {
-    var _this11 = this;
+    var _this10 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       getCurrentDimensions: function getCurrentDimensions() {
-        return _this11._graphics.getCurrentDimensions();
+        return _this10._graphics.getCurrentDimensions();
       },
       preview: function preview(actor, value, lockState) {
-        var currentDimensions = _this11._graphics.getCurrentDimensions();
+        var currentDimensions = _this10._graphics.getCurrentDimensions();
 
         var calcAspectRatio = function calcAspectRatio() {
           return currentDimensions.width / currentDimensions.height;
@@ -50616,20 +50614,20 @@ var ImageTracer = /*#__PURE__*/function () {
             dimensions = currentDimensions;
         }
 
-        _this11._graphics.resize(dimensions).then(function () {
-          _this11.ui.resizeEditor();
+        _this10._graphics.resize(dimensions).then(function () {
+          _this10.ui.resizeEditor();
         });
 
         if (lockState) {
-          _this11.ui.resize.setWidthValue(dimensions.width);
+          _this10.ui.resize.setWidthValue(dimensions.width);
 
-          _this11.ui.resize.setHeightValue(dimensions.height);
+          _this10.ui.resize.setHeightValue(dimensions.height);
         }
       },
       lockAspectRatio: function lockAspectRatio(lockState, min, max) {
-        var _this11$_graphics$get = _this11._graphics.getCurrentDimensions(),
-            width = _this11$_graphics$get.width,
-            height = _this11$_graphics$get.height;
+        var _this10$_graphics$get = _this10._graphics.getCurrentDimensions(),
+            width = _this10$_graphics$get.width,
+            height = _this10$_graphics$get.height;
 
         var aspectRatio = width / height;
 
@@ -50638,7 +50636,7 @@ var ImageTracer = /*#__PURE__*/function () {
             var pMax = max / aspectRatio;
             var pMin = min * aspectRatio;
 
-            _this11.ui.resize.setLimit({
+            _this10.ui.resize.setLimit({
               minWidth: pMin > min ? pMin : min,
               minHeight: min,
               maxWidth: max,
@@ -50649,7 +50647,7 @@ var ImageTracer = /*#__PURE__*/function () {
 
             var _pMin = min / aspectRatio;
 
-            _this11.ui.resize.setLimit({
+            _this10.ui.resize.setLimit({
               minWidth: min,
               minHeight: _pMin > min ? _pMin : min,
               maxWidth: _pMax < max ? _pMax : max,
@@ -50657,7 +50655,7 @@ var ImageTracer = /*#__PURE__*/function () {
             });
           }
         } else {
-          _this11.ui.resize.setLimit({
+          _this10.ui.resize.setLimit({
             minWidth: min,
             minHeight: min,
             maxWidth: max,
@@ -50669,17 +50667,17 @@ var ImageTracer = /*#__PURE__*/function () {
         var dimensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
         if (!dimensions) {
-          dimensions = _this11._graphics.getCurrentDimensions();
+          dimensions = _this10._graphics.getCurrentDimensions();
         }
 
-        _this11.resize(dimensions).then(function () {
-          _this11._graphics.setOriginalDimensions(dimensions);
+        _this10.resize(dimensions).then(function () {
+          _this10._graphics.setOriginalDimensions(dimensions);
 
-          _this11.stopDrawingMode();
+          _this10.stopDrawingMode();
 
-          _this11.ui.resizeEditor();
+          _this10.ui.resizeEditor();
 
-          _this11.ui.changeMenu('resize');
+          _this10.ui.changeMenu('resize');
         })['catch'](function (message) {
           return core_js_stable_promise_default().reject(message);
         });
@@ -50687,19 +50685,19 @@ var ImageTracer = /*#__PURE__*/function () {
       reset: function reset() {
         var standByMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-        var dimensions = _this11._graphics.getOriginalDimensions();
+        var dimensions = _this10._graphics.getOriginalDimensions();
 
-        _this11.ui.resize.setWidthValue(dimensions.width, true);
+        _this10.ui.resize.setWidthValue(dimensions.width, true);
 
-        _this11.ui.resize.setHeightValue(dimensions.height, true);
+        _this10.ui.resize.setHeightValue(dimensions.height, true);
 
-        _this11._graphics.resize(dimensions).then(function () {
+        _this10._graphics.resize(dimensions).then(function () {
           if (!standByMode) {
-            _this11.stopDrawingMode();
+            _this10.stopDrawingMode();
 
-            _this11.ui.resizeEditor();
+            _this10.ui.resizeEditor();
 
-            _this11.ui.changeMenu('resize');
+            _this10.ui.changeMenu('resize');
           }
         });
       }
@@ -50712,11 +50710,11 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _flipAction: function _flipAction() {
-    var _this12 = this;
+    var _this11 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       flip: function flip(flipType) {
-        return _this12[flipType]();
+        return _this11[flipType]();
       }
     }, this._commonAction());
   },
@@ -50727,14 +50725,14 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _filterAction: function _filterAction() {
-    var _this13 = this;
+    var _this12 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       applyFilter: function applyFilter(applying, type, options, isSilent) {
         if (applying) {
-          _this13.applyFilter(type, options, isSilent);
-        } else if (_this13.hasFilter(type)) {
-          _this13.removeFilter(type);
+          _this12.applyFilter(type, options, isSilent);
+        } else if (_this12.hasFilter(type)) {
+          _this12.removeFilter(type);
         }
       }
     }, this._commonAction());
@@ -50744,90 +50742,90 @@ var ImageTracer = /*#__PURE__*/function () {
    * Image Editor Event Observer
    */
   setReAction: function setReAction() {
-    var _this14 = this;
+    var _this13 = this;
 
     this.on({
       undoStackChanged: function undoStackChanged(length) {
         if (length) {
-          _this14.ui.changeHelpButtonEnabled('undo', true);
+          _this13.ui.changeHelpButtonEnabled('undo', true);
 
-          _this14.ui.changeHelpButtonEnabled('reset', true);
+          _this13.ui.changeHelpButtonEnabled('reset', true);
         } else {
-          _this14.ui.changeHelpButtonEnabled('undo', false);
+          _this13.ui.changeHelpButtonEnabled('undo', false);
 
-          _this14.ui.changeHelpButtonEnabled('reset', false);
+          _this13.ui.changeHelpButtonEnabled('reset', false);
         }
 
-        _this14.ui.resizeEditor();
+        _this13.ui.resizeEditor();
       },
       redoStackChanged: function redoStackChanged(length) {
         if (length) {
-          _this14.ui.changeHelpButtonEnabled('redo', true);
+          _this13.ui.changeHelpButtonEnabled('redo', true);
         } else {
-          _this14.ui.changeHelpButtonEnabled('redo', false);
+          _this13.ui.changeHelpButtonEnabled('redo', false);
         }
 
-        _this14.ui.resizeEditor();
+        _this13.ui.resizeEditor();
       },
 
       /* eslint-disable complexity */
       objectActivated: function objectActivated(obj) {
-        _this14.activeObjectId = obj.id;
+        _this13.activeObjectId = obj.id;
 
-        _this14.ui.changeHelpButtonEnabled('delete', true);
+        _this13.ui.changeHelpButtonEnabled('delete', true);
 
-        _this14.ui.changeHelpButtonEnabled('deleteAll', true);
+        _this13.ui.changeHelpButtonEnabled('deleteAll', true);
 
         if (obj.type === 'cropzone') {
-          _this14.ui.crop.changeApplyButtonStatus(true);
+          _this13.ui.crop.changeApplyButtonStatus(true);
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this14.stopDrawingMode();
+          _this13.stopDrawingMode();
 
-          if (_this14.ui.submenu !== 'shape') {
-            _this14.ui.changeMenu('shape', false, false);
+          if (_this13.ui.submenu !== 'shape') {
+            _this13.ui.changeMenu('shape', false, false);
           }
 
-          _this14.ui.shape.setShapeStatus({
+          _this13.ui.shape.setShapeStatus({
             strokeColor: obj.stroke,
             strokeWidth: obj.strokeWidth,
             fillColor: fill_default()(obj)
           });
 
-          _this14.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
         } else if (obj.type === 'path' || obj.type === 'line') {
-          if (_this14.ui.submenu !== 'draw') {
-            _this14.ui.changeMenu('draw', false, false);
+          if (_this13.ui.submenu !== 'draw') {
+            _this13.ui.changeMenu('draw', false, false);
 
-            _this14.ui.draw.changeStandbyMode();
+            _this13.ui.draw.changeStandbyMode();
           }
         } else if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          if (_this14.ui.submenu !== 'text') {
-            _this14.ui.changeMenu('text', false, false);
+          if (_this13.ui.submenu !== 'text') {
+            _this13.ui.changeMenu('text', false, false);
           }
 
-          _this14.ui.text.setTextStyleStateOnAction(obj);
+          _this13.ui.text.setTextStyleStateOnAction(obj);
         } else if (obj.type === 'icon') {
-          _this14.stopDrawingMode();
+          _this13.stopDrawingMode();
 
-          if (_this14.ui.submenu !== 'icon') {
-            _this14.ui.changeMenu('icon', false, false);
+          if (_this13.ui.submenu !== 'icon') {
+            _this13.ui.changeMenu('icon', false, false);
           }
 
-          _this14.ui.icon.setIconPickerColor(fill_default()(obj));
+          _this13.ui.icon.setIconPickerColor(fill_default()(obj));
         }
       },
 
       /* eslint-enable complexity */
       addText: function addText(pos) {
-        var _this14$ui$text = _this14.ui.text,
-            fill = _this14$ui$text.textColor,
-            fontSize = _this14$ui$text.fontSize,
-            fontStyle = _this14$ui$text.fontStyle,
-            fontWeight = _this14$ui$text.fontWeight,
-            underline = _this14$ui$text.underline;
-        var fontFamily = _this14.fontFamily;
+        var _this13$ui$text = _this13.ui.text,
+            fill = _this13$ui$text.textColor,
+            fontSize = _this13$ui$text.fontSize,
+            fontStyle = _this13$ui$text.fontStyle,
+            fontWeight = _this13$ui$text.fontWeight,
+            underline = _this13$ui$text.underline;
+        var fontFamily = _this13.fontFamily;
 
-        _this14.addText('Double Click', {
+        _this13.addText('Double Click', {
           position: pos.originPosition,
           styles: {
             fill: fill,
@@ -50838,43 +50836,43 @@ var ImageTracer = /*#__PURE__*/function () {
             underline: underline
           }
         }).then(function () {
-          _this14.changeCursor('default');
+          _this13.changeCursor('default');
         });
       },
       addObjectAfter: function addObjectAfter(obj) {
         if (obj.type === 'icon') {
-          _this14.ui.icon.changeStandbyMode();
+          _this13.ui.icon.changeStandbyMode();
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this14.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
 
-          _this14.ui.shape.changeStandbyMode();
+          _this13.ui.shape.changeStandbyMode();
         }
       },
       objectScaled: function objectScaled(obj) {
         if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          _this14.ui.text.fontSize = toInteger(obj.fontSize);
+          _this13.ui.text.fontSize = toInteger(obj.fontSize);
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
           var width = obj.width,
               height = obj.height;
 
-          var strokeValue = _this14.ui.shape.getStrokeValue();
+          var strokeValue = _this13.ui.shape.getStrokeValue();
 
           if (width < strokeValue) {
-            _this14.ui.shape.setStrokeValue(width);
+            _this13.ui.shape.setStrokeValue(width);
           }
 
           if (height < strokeValue) {
-            _this14.ui.shape.setStrokeValue(height);
+            _this13.ui.shape.setStrokeValue(height);
           }
         }
       },
       selectionCleared: function selectionCleared() {
-        _this14.activeObjectId = null;
+        _this13.activeObjectId = null;
 
-        if (_this14.ui.submenu === 'text') {
-          _this14.changeCursor('text');
-        } else if (!includes(['draw', 'crop', 'resize'], _this14.ui.submenu)) {
-          _this14.stopDrawingMode();
+        if (_this13.ui.submenu === 'text') {
+          _this13.changeCursor('text');
+        } else if (!includes(['draw', 'crop', 'resize'], _this13.ui.submenu)) {
+          _this13.stopDrawingMode();
         }
       }
     });
@@ -50886,14 +50884,14 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _historyAction: function _historyAction() {
-    var _this15 = this;
+    var _this14 = this;
 
     return {
       undo: function undo(count) {
-        return _this15.undo(count);
+        return _this14.undo(count);
       },
       redo: function redo(count) {
-        return _this15.redo(count);
+        return _this14.redo(count);
       }
     };
   },
@@ -50904,7 +50902,7 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _commonAction: function _commonAction() {
-    var _this16 = this;
+    var _this15 = this;
 
     var TEXT = drawingModes.TEXT,
         CROPPER = drawingModes.CROPPER,
@@ -50915,29 +50913,29 @@ var ImageTracer = /*#__PURE__*/function () {
       modeChange: function modeChange(menu) {
         switch (menu) {
           case drawingMenuNames.TEXT:
-            _this16._changeActivateMode(TEXT);
+            _this15._changeActivateMode(TEXT);
 
             break;
 
           case drawingMenuNames.CROP:
-            _this16.startDrawingMode(CROPPER);
+            _this15.startDrawingMode(CROPPER);
 
             break;
 
           case drawingMenuNames.SHAPE:
-            _this16._changeActivateMode(SHAPE);
+            _this15._changeActivateMode(SHAPE);
 
-            _this16.setDrawingShape(_this16.ui.shape.type, _this16.ui.shape.options);
+            _this15.setDrawingShape(_this15.ui.shape.type, _this15.ui.shape.options);
 
             break;
 
           case drawingMenuNames.ZOOM:
-            _this16.startDrawingMode(ZOOM);
+            _this15.startDrawingMode(ZOOM);
 
             break;
 
           case drawingMenuNames.RESIZE:
-            _this16.startDrawingMode(RESIZE);
+            _this15.startDrawingMode(RESIZE);
 
             break;
 
@@ -62302,8 +62300,7 @@ var loadImage_command = {
 
     var objects = filter_default()(_context = graphics.removeAll(true)).call(_context, function (objectItem) {
       return objectItem.type !== 'cropzone';
-    }); //const objects = graphics.filter((objectItem) => objectItem.type !== 'cropzone');
-
+    });
 
     objects.forEach(function (objectItem) {
       objectItem.evented = true;

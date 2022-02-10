@@ -25,7 +25,7 @@ export default {
       flip: this._flipAction(),
       rotate: this._rotateAction(),
       text: this._textAction(),
-      mask: this._maskAction(),
+      //mask: this._maskAction(),
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
@@ -318,26 +318,26 @@ export default {
    * @returns {Object} actions for ui mask
    * @private
    */
-  _maskAction() {
-    return extend(
-      {
-        loadImageFromURL: (imgUrl, file) => {
-          return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
-            this.addImageObject(imgUrl).then(() => {
-              URL.revokeObjectURL(file);
-            });
-            this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
-          });
-        },
-        applyFilter: () => {
-          this.applyFilter('mask', {
-            maskObjId: this.activeObjectId,
-          });
-        },
-      },
-      this._commonAction()
-    );
-  },
+  // _maskAction() {
+  //   return extend(
+  //     {
+  //       loadImageFromURL: (imgUrl, file) => {
+  //         return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+  //           this.addImageObject(imgUrl).then(() => {
+  //             URL.revokeObjectURL(file);
+  //           });
+  //           this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+  //         });
+  //       },
+  //       applyFilter: () => {
+  //         this.applyFilter('mask', {
+  //           maskObjId: this.activeObjectId,
+  //         });
+  //       },
+  //     },
+  //     this._commonAction()
+  //   );
+  // },
 
   /**
    * Image Action
@@ -348,27 +348,29 @@ export default {
     return extend(
       {
         loadImageFromURL: (imgUrl, file) => {
-          return this.loadImageFromURL(this.toDataURL(), `Image${randomString(6)}`).then(() => {
-            this.addImageObject(imgUrl).then(() => {
-              URL.revokeObjectURL(file);
-            });
-            this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+          this.addImageObject(imgUrl).then(() => {
+            URL.revokeObjectURL(file);
           });
+          return this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.ADD_IMAGE_OBJECT);
         },
       },
       this._commonAction()
     );
   },
+
+  /**
+   * Logo Action
+   * @returns {Object} actions for ui mask
+   * @private
+   */
   _logoAction() {
     return extend(
       {
         insertLogo: (imgUrl, file) => {
-          return this.loadImageFromURL(this.toDataURL(), `Logo${randomString(6)}`).then(() => {
-            this.addLogoObject(imgUrl).then(() => {
-              URL.revokeObjectURL(file);
-            });
-            this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+          this.addLogoObject(imgUrl).then(() => {
+            URL.revokeObjectURL(file);
           });
+          return this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.ADD_LOGO);
         },
       },
       this._commonAction()

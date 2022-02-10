@@ -205,8 +205,8 @@ export const selectorNames = {
  */
 export const historyNames = {
   LOAD_IMAGE: 'Load',
-  LOAD_MASK_IMAGE: 'Mask',
-  ADD_MASK_IMAGE: 'Mask',
+  // LOAD_MASK_IMAGE: 'Mask',
+  // ADD_MASK_IMAGE: 'Mask',
   ADD_IMAGE_OBJECT: 'Image',
   ADD_LOGO: 'Logo',
   CROP: 'Crop',
