@@ -41016,7 +41016,7 @@ var historyNames = {
   LOAD_IMAGE: 'Load',
   LOAD_MASK_IMAGE: 'Mask',
   ADD_MASK_IMAGE: 'Mask',
-  ADD_IMAGE_OBJECT: 'Mask',
+  ADD_IMAGE_OBJECT: 'Image',
   ADD_LOGO: 'Logo',
   CROP: 'Crop',
   RESIZE: 'Resize',
@@ -57965,12 +57965,12 @@ var Graphics = /*#__PURE__*/function () {
 
       var canvas = this._canvas;
 
-      var objects = slice_default()(_context2 = canvas.getObjects()).call(_context2);
+      var objects = slice_default()(_context2 = canvas.getObjects()).call(_context2); //canvas.remove(...this._canvas.getObjects());
 
-      canvas.remove.apply(canvas, _toConsumableArray(this._canvas.getObjects()));
 
       if (includesBackground) {
-        canvas.clear();
+        //canvas.clear();
+        canvas.setBackgroundImage(null);
       }
 
       return objects;
@@ -62302,7 +62302,8 @@ var loadImage_command = {
 
     var objects = filter_default()(_context = graphics.removeAll(true)).call(_context, function (objectItem) {
       return objectItem.type !== 'cropzone';
-    });
+    }); //const objects = graphics.filter((objectItem) => objectItem.type !== 'cropzone');
+
 
     objects.forEach(function (objectItem) {
       objectItem.evented = true;

@@ -268,10 +268,11 @@ class Graphics {
   removeAll(includesBackground) {
     const canvas = this._canvas;
     const objects = canvas.getObjects().slice();
-    canvas.remove(...this._canvas.getObjects());
+    //canvas.remove(...this._canvas.getObjects());
 
     if (includesBackground) {
-      canvas.clear();
+      //canvas.clear();
+      canvas.setBackgroundImage(null);
     }
 
     return objects;
