@@ -1230,11 +1230,7 @@ class ImageEditor {
     const caretPositionEnd = activeObj.selectionEnd;
     const newText = text.slice(0, caretPositionStart) + appendText + text.slice(caretPositionEnd);
 
-    await this.execute(commands.CHANGE_TEXT, id, newText);
-
-    activeObj.setSelectionStart(caretPositionStart + appendText.length);
-    activeObj.setSelectionEnd(caretPositionStart + appendText.length);
-    canvas.renderAll();
+    return this.execute(commands.CHANGE_TEXT, id, newText);
   }
 
   /**

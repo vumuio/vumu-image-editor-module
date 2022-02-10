@@ -50262,6 +50262,8 @@ var ImageTracer = /*#__PURE__*/function () {
           w = window.open();
           w.document.body.innerHTML = "<img src='".concat(dataURL, "'>");
         }
+
+        _this._onSaveAndNext();
       },
       history: function history(event) {
         _this.ui.toggleHistoryMenu(event);
@@ -60888,15 +60890,9 @@ var ImageEditor = /*#__PURE__*/function () {
                 caretPositionStart = activeObj.selectionStart;
                 caretPositionEnd = activeObj.selectionEnd;
                 newText = slice_default()(text).call(text, 0, caretPositionStart) + appendText + slice_default()(text).call(text, caretPositionEnd);
-                _context5.next = 8;
-                return this.execute(commandNames.CHANGE_TEXT, id, newText);
+                return _context5.abrupt("return", this.execute(commandNames.CHANGE_TEXT, id, newText));
 
-              case 8:
-                activeObj.setSelectionStart(caretPositionStart + appendText.length);
-                activeObj.setSelectionEnd(caretPositionStart + appendText.length);
-                canvas.renderAll();
-
-              case 11:
+              case 7:
               case "end":
                 return _context5.stop();
             }
