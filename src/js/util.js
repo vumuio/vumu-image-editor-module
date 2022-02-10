@@ -481,9 +481,9 @@ export function getHistoryTitle(command) {
       break;
   }
 
-  if (args[1] === 'mask') {
-    historyInfo = { name: historyNames.LOAD_MASK_IMAGE, detail: 'Apply' };
-  }
+  // if (args[1] === 'mask') {
+  //   historyInfo = { name: historyNames.LOAD_MASK_IMAGE, detail: 'Apply' };
+  // }
 
   return historyInfo;
 }

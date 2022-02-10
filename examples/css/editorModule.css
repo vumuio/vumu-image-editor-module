@@ -68,6 +68,7 @@
   transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
+  max-height: 100% !important;
 }
 .tui-image-editor-container .tui-image-editor-header {
   position: relative;

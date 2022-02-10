@@ -40996,6 +40996,7 @@ var eventNames = {
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
   ADD_LABEL: 'addLabel',
+  SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext'
 };
@@ -41014,9 +41015,9 @@ var selectorNames = {
 
 var historyNames = {
   LOAD_IMAGE: 'Load',
-  LOAD_MASK_IMAGE: 'Mask',
-  ADD_MASK_IMAGE: 'Mask',
-  ADD_IMAGE_OBJECT: 'Mask',
+  // LOAD_MASK_IMAGE: 'Mask',
+  // ADD_MASK_IMAGE: 'Mask',
+  ADD_IMAGE_OBJECT: 'Image',
   ADD_LOGO: 'Logo',
   CROP: 'Crop',
   RESIZE: 'Resize',
@@ -41791,14 +41792,10 @@ function getHistoryTitle(command) {
         name: name
       };
       break;
-  }
+  } // if (args[1] === 'mask') {
+  //   historyInfo = { name: historyNames.LOAD_MASK_IMAGE, detail: 'Apply' };
+  // }
 
-  if (args[1] === 'mask') {
-    historyInfo = {
-      name: historyNames.LOAD_MASK_IMAGE,
-      detail: 'Apply'
-    };
-  }
 
   return historyInfo;
 }
@@ -42482,7 +42479,7 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
 ;// CONCATENATED MODULE: ./src/js/ui/template/mainContainer.js
 
 /* harmony default export */ var mainContainer = (function (_ref) {
-  var _context, _context2, _context3, _context4, _context5, _context6;
+  var _context, _context2, _context3, _context4, _context5, _context6, _context7;
 
   var locale = _ref.locale,
       commonStyle = _ref.commonStyle,
@@ -42490,20 +42487,20 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
       loadButtonStyle = _ref.loadButtonStyle,
       downloadButtonStyle = _ref.downloadButtonStyle,
       submenuStyle = _ref.submenuStyle;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-header\" style=\"")).call(_context6, headerStyle, "\">\n                  <div class=\"tui-image-editor-header-buttons\">\n                      <div style=\"")).call(_context5, loadButtonStyle, "\">\n                          ")).call(_context4, locale.localize('Load'), "\n                          <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                      </div>\n                      <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context3, downloadButtonStyle, "\">\n                          ")).call(_context2, locale.localize('Download'), "\n                      </button>\n                      <button id=\"save-as-template-btn\" class=\"tui-save-as-template-btn hide-btn\" style=\"")).call(_context, downloadButtonStyle, "\">\n                          Save as Template\n                      </button>\n                  </div>\n              </div>\n              <div class=\"tui-image-editor-main\">\n                  <div class=\"tui-image-editor-wrap\">\n                      <div class=\"tui-image-editor-size-wrap\">\n                      <div class=\"tui-image-editor-align-wrap\">\n                          <div class=\"tui-image-editor\">\n                            <input type=\"text\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                          </div>\n                      </div>\n\n                    </div>\n                    <div class=\"save-button\">\n                        <button class=\"btn-primary tui-image-editor-save-btn\">Save & Next</button>\n                    </div>\n                  </div>\n                    <div class=\"tui-image-editor-submenu\"></div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-header\" style=\"")).call(_context7, headerStyle, "\">\n                  <div class=\"tui-image-editor-header-buttons\">\n                      <div style=\"")).call(_context6, loadButtonStyle, "\">\n                          ")).call(_context5, locale.localize('Load'), "\n                          <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                      </div>\n                      <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context4, downloadButtonStyle, "\">\n                          ")).call(_context3, locale.localize('Download'), "\n                      </button>\n                      <button id=\"save-as-template-btn\" class=\"tui-save-as-template-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                          ")).call(_context, locale.localize('Save as Template'), "\n                      </button>\n                  </div>\n              </div>\n              <div class=\"tui-image-editor-main\">\n                  <div class=\"tui-image-editor-wrap\">\n                      <div class=\"tui-image-editor-size-wrap\">\n                      <div class=\"tui-image-editor-align-wrap\">\n                          <div class=\"tui-image-editor\">\n                            <input type=\"text\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                          </div>\n                      </div>\n\n                    </div>\n                    <div class=\"save-button\">\n                        <button class=\"btn-primary tui-image-editor-save-btn\">Save & Next</button>\n                    </div>\n                  </div>\n                    <div class=\"tui-image-editor-submenu\"></div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/template/controls.js
 
 
 /* harmony default export */ var controls = (function (_ref) {
-  var _context, _context2, _context3, _context4;
+  var _context, _context2, _context3, _context4, _context5, _context6;
 
   var locale = _ref.locale,
       biImage = _ref.biImage,
       loadButtonStyle = _ref.loadButtonStyle,
       downloadButtonStyle = _ref.downloadButtonStyle,
       menuBarPosition = _ref.menuBarPosition;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = "\n    <ul class=\"tui-image-editor-help-menu top\"></ul>\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"".concat(biImage, "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\"></ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <div style=\"")).call(_context4, loadButtonStyle, "\">\n                ")).call(_context3, locale.localize('Load'), "\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </div>\n            <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                ")).call(_context, locale.localize('Download'), "\n            </button>\n        </div>\n    </div>\n");
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = "\n    <ul class=\"tui-image-editor-help-menu top\"></ul>\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"".concat(biImage, "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\"></ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <div style=\"")).call(_context6, loadButtonStyle, "\">\n                ")).call(_context5, locale.localize('Load'), "\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </div>\n            <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context4, downloadButtonStyle, "\">\n                ")).call(_context3, locale.localize('Download'), "\n            </button>\n            <button id=\"save-as-template-btn\" class=\"tui-save-as-template-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                ")).call(_context, locale.localize('Save as Template'), "\n            </button>\n        </div>\n    </div>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/template/style.js
 
@@ -47905,6 +47902,7 @@ var Ui = /*#__PURE__*/function () {
       this._subMenuElement = selector('.tui-image-editor-submenu');
       this._buttonElements = {
         download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+        saveAsTemplate: this._selectedElement.querySelectorAll('.tui-save-as-template-btn'),
         bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
         sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
         sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
@@ -48214,6 +48212,38 @@ var Ui = /*#__PURE__*/function () {
       });
     }
     /**
+     * Call save as template event listener
+     * @private
+     */
+
+  }, {
+    key: "_addSaveAsTemplateEvent",
+    value: function _addSaveAsTemplateEvent() {
+      var _this13 = this;
+
+      this.eventHandler.saveAsTemplate = function (event) {
+        return _this13._actions.main.saveAsTemplate();
+      };
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.saveAsTemplate, function (element) {
+        element.addEventListener('click', _this13.eventHandler.saveAsTemplate);
+      });
+    }
+    /**
+     * Removes event listener added to save as template
+     * @private
+     */
+
+  }, {
+    key: "_removeSaveAsTemplateEvent",
+    value: function _removeSaveAsTemplateEvent() {
+      var _this14 = this;
+
+      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this._buttonElements.saveAsTemplate, function (element) {
+        element.removeEventListener('click', _this14.eventHandler.saveAsTemplate);
+      });
+    }
+    /**
      * Add menu event
      * @param {string} menuName - menu name
      * @private
@@ -48222,10 +48252,10 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_addMainMenuEvent",
     value: function _addMainMenuEvent(menuName) {
-      var _this13 = this;
+      var _this15 = this;
 
       this.eventHandler[menuName] = function () {
-        return _this13.changeMenu(menuName);
+        return _this15.changeMenu(menuName);
       };
 
       this._buttonElements[menuName].addEventListener('click', this.eventHandler[menuName]);
@@ -48239,14 +48269,14 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_addSubMenuEvent",
     value: function _addSubMenuEvent(menuName) {
-      var _this14 = this;
+      var _this16 = this;
 
       this[menuName].addEvent(this._actions[menuName]);
       this[menuName].on(eventNames.INPUT_BOX_EDITING_STARTED, function () {
-        return _this14.fire(eventNames.INPUT_BOX_EDITING_STARTED);
+        return _this16.fire(eventNames.INPUT_BOX_EDITING_STARTED);
       });
       this[menuName].on(eventNames.INPUT_BOX_EDITING_STOPPED, function () {
-        return _this14.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
+        return _this16.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
       });
     }
     /**
@@ -48257,12 +48287,12 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_addMenuEvent",
     value: function _addMenuEvent() {
-      var _this15 = this;
+      var _this17 = this;
 
       external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this15._addMainMenuEvent(menuName);
+        _this17._addMainMenuEvent(menuName);
 
-        _this15._addSubMenuEvent(menuName);
+        _this17._addSubMenuEvent(menuName);
       });
     }
     /**
@@ -48273,14 +48303,14 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_removeMainMenuEvent",
     value: function _removeMainMenuEvent() {
-      var _this16 = this;
+      var _this18 = this;
 
       external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this16._buttonElements[menuName].removeEventListener('click', _this16.eventHandler[menuName]);
+        _this18._buttonElements[menuName].removeEventListener('click', _this18.eventHandler[menuName]);
 
-        _this16[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
+        _this18[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
 
-        _this16[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
+        _this18[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
       });
     }
     /**
@@ -48310,6 +48340,8 @@ var Ui = /*#__PURE__*/function () {
 
       this._addDownloadEvent();
 
+      this._addSaveAsTemplateEvent();
+
       this._addSaveEvent();
 
       this._addMenuEvent();
@@ -48332,6 +48364,8 @@ var Ui = /*#__PURE__*/function () {
 
       this._removeDownloadEvent();
 
+      this._removeSaveAsTemplateEvent();
+
       this._removeLoadEvent();
 
       this._removeSaveEvent();
@@ -48348,10 +48382,10 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_destroyAllMenu",
     value: function _destroyAllMenu() {
-      var _this17 = this;
+      var _this19 = this;
 
       external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(this.options.menu, function (menuName) {
-        _this17[menuName].destroy();
+        _this19[menuName].destroy();
       });
 
       this._historyMenu.destroy();
@@ -48364,13 +48398,13 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "initCanvas",
     value: function initCanvas() {
-      var _this18 = this;
+      var _this20 = this;
 
       var loadImageInfo = this._getLoadImage();
 
       if (loadImageInfo.path) {
         this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(function () {
-          _this18.activeMenuEvent();
+          _this20.activeMenuEvent();
         });
       }
 
@@ -50009,7 +50043,7 @@ var ImageTracer = /*#__PURE__*/function () {
       flip: this._flipAction(),
       rotate: this._rotateAction(),
       text: this._textAction(),
-      mask: this._maskAction(),
+      //mask: this._maskAction(),
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
@@ -50182,6 +50216,9 @@ var ImageTracer = /*#__PURE__*/function () {
           return core_js_stable_promise_default().reject(message);
         });
       },
+      saveAsTemplate: function saveAsTemplate() {
+        _this._onSaveAsTemplate();
+      },
       download: function download() {
         var dataURL = _this.toDataURL();
 
@@ -50204,6 +50241,28 @@ var ImageTracer = /*#__PURE__*/function () {
         }
       },
       save: function save() {
+        var dataURL = _this.toDataURL();
+
+        var imageName = _this.getImageName();
+
+        var blob, type, w;
+
+        if (isSupportFileApi() && window.saveAs) {
+          blob = base64ToBlob(dataURL);
+          type = blob.type.split('/')[1];
+
+          if (imageName.split('.').pop() !== type) {
+            imageName += ".".concat(type);
+          }
+
+          var newFile = new File([blob], imageName);
+
+          _this._onSaveAndNext(newFile);
+        } else {
+          w = window.open();
+          w.document.body.innerHTML = "<img src='".concat(dataURL, "'>");
+        }
+
         _this._onSaveAndNext();
       },
       history: function history(event) {
@@ -50345,26 +50404,26 @@ var ImageTracer = /*#__PURE__*/function () {
    * @returns {Object} actions for ui mask
    * @private
    */
-  _maskAction: function _maskAction() {
-    var _this4 = this;
-
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      loadImageFromURL: function loadImageFromURL(imgUrl, file) {
-        return _this4.loadImageFromURL(_this4.toDataURL(), 'FilterImage').then(function () {
-          _this4.addImageObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this4._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
-        });
-      },
-      applyFilter: function applyFilter() {
-        _this4.applyFilter('mask', {
-          maskObjId: _this4.activeObjectId
-        });
-      }
-    }, this._commonAction());
-  },
+  // _maskAction() {
+  //   return extend(
+  //     {
+  //       loadImageFromURL: (imgUrl, file) => {
+  //         return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+  //           this.addImageObject(imgUrl).then(() => {
+  //             URL.revokeObjectURL(file);
+  //           });
+  //           this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+  //         });
+  //       },
+  //       applyFilter: () => {
+  //         this.applyFilter('mask', {
+  //           maskObjId: this.activeObjectId,
+  //         });
+  //       },
+  //     },
+  //     this._commonAction()
+  //   );
+  // },
 
   /**
    * Image Action
@@ -50372,32 +50431,34 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _imageAction: function _imageAction() {
-    var _this5 = this;
+    var _this4 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       loadImageFromURL: function loadImageFromURL(imgUrl, file) {
-        return _this5.loadImageFromURL(_this5.toDataURL(), "Image".concat(randomString(6))).then(function () {
-          _this5.addImageObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this5._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+        _this4.addImageObject(imgUrl).then(function () {
+          url_default().revokeObjectURL(file);
         });
+
+        return _this4._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.ADD_IMAGE_OBJECT);
       }
     }, this._commonAction());
   },
+
+  /**
+   * Logo Action
+   * @returns {Object} actions for ui mask
+   * @private
+   */
   _logoAction: function _logoAction() {
-    var _this6 = this;
+    var _this5 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       insertLogo: function insertLogo(imgUrl, file) {
-        return _this6.loadImageFromURL(_this6.toDataURL(), "Logo".concat(randomString(6))).then(function () {
-          _this6.addLogoObject(imgUrl).then(function () {
-            url_default().revokeObjectURL(file);
-          });
-
-          _this6._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+        _this5.addLogoObject(imgUrl).then(function () {
+          url_default().revokeObjectURL(file);
         });
+
+        return _this5._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.ADD_LOGO);
       }
     }, this._commonAction());
   },
@@ -50408,20 +50469,20 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _textAction: function _textAction() {
-    var _this7 = this;
+    var _this6 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       changeTextStyle: function changeTextStyle(styleObj, isSilent) {
         if (styleObj.fontFamily) {
-          _this7.fontFamily = styleObj.fontFamily;
+          _this6.fontFamily = styleObj.fontFamily;
         }
 
-        if (_this7.activeObjectId) {
-          _this7.changeTextStyle(_this7.activeObjectId, styleObj, isSilent);
+        if (_this6.activeObjectId) {
+          _this6.changeTextStyle(_this6.activeObjectId, styleObj, isSilent);
         }
       },
       clickAddLabel: function clickAddLabel() {
-        return _this7._onAddLabel();
+        return _this6._onAddLabel();
       }
     }, this._commonAction());
   },
@@ -50432,22 +50493,22 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _rotateAction: function _rotateAction() {
-    var _this8 = this;
+    var _this7 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       rotate: function rotate(angle, isSilent) {
-        _this8.rotate(angle, isSilent);
+        _this7.rotate(angle, isSilent);
 
-        _this8.ui.resizeEditor();
+        _this7.ui.resizeEditor();
 
-        _this8.ui.rotate.setRangeBarAngle('rotate', angle);
+        _this7.ui.rotate.setRangeBarAngle('rotate', angle);
       },
       setAngle: function setAngle(angle, isSilent) {
-        _this8.setAngle(angle, isSilent);
+        _this7.setAngle(angle, isSilent);
 
-        _this8.ui.resizeEditor();
+        _this7.ui.resizeEditor();
 
-        _this8.ui.rotate.setRangeBarAngle('setAngle', angle);
+        _this7.ui.rotate.setRangeBarAngle('setAngle', angle);
       }
     }, this._commonAction());
   },
@@ -50458,16 +50519,16 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _shapeAction: function _shapeAction() {
-    var _this9 = this;
+    var _this8 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       changeShape: function changeShape(changeShapeObject, isSilent) {
-        if (_this9.activeObjectId) {
-          _this9.changeShape(_this9.activeObjectId, changeShapeObject, isSilent);
+        if (_this8.activeObjectId) {
+          _this8.changeShape(_this8.activeObjectId, changeShapeObject, isSilent);
         }
       },
       setDrawingShape: function setDrawingShape(shapeType) {
-        _this9.setDrawingShape(shapeType);
+        _this8.setDrawingShape(shapeType);
       }
     }, this._commonAction());
   },
@@ -50478,69 +50539,69 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _cropAction: function _cropAction() {
-    var _this10 = this;
+    var _this9 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       crop: function crop() {
-        var cropRect = _this10.getCropzoneRect();
+        var cropRect = _this9.getCropzoneRect();
 
         if (cropRect && !isEmptyCropzone(cropRect)) {
-          _this10.crop(cropRect).then(function () {
-            _this10.stopDrawingMode();
+          _this9.crop(cropRect).then(function () {
+            _this9.stopDrawingMode();
 
-            _this10.ui.resizeEditor();
+            _this9.ui.resizeEditor();
 
-            _this10.ui.changeMenu('crop');
+            _this9.ui.changeMenu('crop');
 
-            _this10._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
+            _this9._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
           })['catch'](function (message) {
             return core_js_stable_promise_default().reject(message);
           });
         }
       },
       cancel: function cancel() {
-        _this10.stopDrawingMode();
+        _this9.stopDrawingMode();
 
-        _this10.ui.changeMenu('crop');
+        _this9.ui.changeMenu('crop');
       },
 
       /* eslint-disable */
       preset: function preset(presetType) {
         switch (presetType) {
           case 'preset-square':
-            _this10.setCropzoneRect(1 / 1);
+            _this9.setCropzoneRect(1 / 1);
 
             break;
 
           case 'preset-3-2':
-            _this10.setCropzoneRect(3 / 2);
+            _this9.setCropzoneRect(3 / 2);
 
             break;
 
           case 'preset-4-3':
-            _this10.setCropzoneRect(4 / 3);
+            _this9.setCropzoneRect(4 / 3);
 
             break;
 
           case 'preset-5-4':
-            _this10.setCropzoneRect(5 / 4);
+            _this9.setCropzoneRect(5 / 4);
 
             break;
 
           case 'preset-7-5':
-            _this10.setCropzoneRect(7 / 5);
+            _this9.setCropzoneRect(7 / 5);
 
             break;
 
           case 'preset-16-9':
-            _this10.setCropzoneRect(16 / 9);
+            _this9.setCropzoneRect(16 / 9);
 
             break;
 
           default:
-            _this10.setCropzoneRect();
+            _this9.setCropzoneRect();
 
-            _this10.ui.crop.changeApplyButtonStatus(false);
+            _this9.ui.crop.changeApplyButtonStatus(false);
 
             break;
         }
@@ -50554,14 +50615,14 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _resizeAction: function _resizeAction() {
-    var _this11 = this;
+    var _this10 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       getCurrentDimensions: function getCurrentDimensions() {
-        return _this11._graphics.getCurrentDimensions();
+        return _this10._graphics.getCurrentDimensions();
       },
       preview: function preview(actor, value, lockState) {
-        var currentDimensions = _this11._graphics.getCurrentDimensions();
+        var currentDimensions = _this10._graphics.getCurrentDimensions();
 
         var calcAspectRatio = function calcAspectRatio() {
           return currentDimensions.width / currentDimensions.height;
@@ -50596,20 +50657,20 @@ var ImageTracer = /*#__PURE__*/function () {
             dimensions = currentDimensions;
         }
 
-        _this11._graphics.resize(dimensions).then(function () {
-          _this11.ui.resizeEditor();
+        _this10._graphics.resize(dimensions).then(function () {
+          _this10.ui.resizeEditor();
         });
 
         if (lockState) {
-          _this11.ui.resize.setWidthValue(dimensions.width);
+          _this10.ui.resize.setWidthValue(dimensions.width);
 
-          _this11.ui.resize.setHeightValue(dimensions.height);
+          _this10.ui.resize.setHeightValue(dimensions.height);
         }
       },
       lockAspectRatio: function lockAspectRatio(lockState, min, max) {
-        var _this11$_graphics$get = _this11._graphics.getCurrentDimensions(),
-            width = _this11$_graphics$get.width,
-            height = _this11$_graphics$get.height;
+        var _this10$_graphics$get = _this10._graphics.getCurrentDimensions(),
+            width = _this10$_graphics$get.width,
+            height = _this10$_graphics$get.height;
 
         var aspectRatio = width / height;
 
@@ -50618,7 +50679,7 @@ var ImageTracer = /*#__PURE__*/function () {
             var pMax = max / aspectRatio;
             var pMin = min * aspectRatio;
 
-            _this11.ui.resize.setLimit({
+            _this10.ui.resize.setLimit({
               minWidth: pMin > min ? pMin : min,
               minHeight: min,
               maxWidth: max,
@@ -50629,7 +50690,7 @@ var ImageTracer = /*#__PURE__*/function () {
 
             var _pMin = min / aspectRatio;
 
-            _this11.ui.resize.setLimit({
+            _this10.ui.resize.setLimit({
               minWidth: min,
               minHeight: _pMin > min ? _pMin : min,
               maxWidth: _pMax < max ? _pMax : max,
@@ -50637,7 +50698,7 @@ var ImageTracer = /*#__PURE__*/function () {
             });
           }
         } else {
-          _this11.ui.resize.setLimit({
+          _this10.ui.resize.setLimit({
             minWidth: min,
             minHeight: min,
             maxWidth: max,
@@ -50649,17 +50710,17 @@ var ImageTracer = /*#__PURE__*/function () {
         var dimensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
         if (!dimensions) {
-          dimensions = _this11._graphics.getCurrentDimensions();
+          dimensions = _this10._graphics.getCurrentDimensions();
         }
 
-        _this11.resize(dimensions).then(function () {
-          _this11._graphics.setOriginalDimensions(dimensions);
+        _this10.resize(dimensions).then(function () {
+          _this10._graphics.setOriginalDimensions(dimensions);
 
-          _this11.stopDrawingMode();
+          _this10.stopDrawingMode();
 
-          _this11.ui.resizeEditor();
+          _this10.ui.resizeEditor();
 
-          _this11.ui.changeMenu('resize');
+          _this10.ui.changeMenu('resize');
         })['catch'](function (message) {
           return core_js_stable_promise_default().reject(message);
         });
@@ -50667,19 +50728,19 @@ var ImageTracer = /*#__PURE__*/function () {
       reset: function reset() {
         var standByMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-        var dimensions = _this11._graphics.getOriginalDimensions();
+        var dimensions = _this10._graphics.getOriginalDimensions();
 
-        _this11.ui.resize.setWidthValue(dimensions.width, true);
+        _this10.ui.resize.setWidthValue(dimensions.width, true);
 
-        _this11.ui.resize.setHeightValue(dimensions.height, true);
+        _this10.ui.resize.setHeightValue(dimensions.height, true);
 
-        _this11._graphics.resize(dimensions).then(function () {
+        _this10._graphics.resize(dimensions).then(function () {
           if (!standByMode) {
-            _this11.stopDrawingMode();
+            _this10.stopDrawingMode();
 
-            _this11.ui.resizeEditor();
+            _this10.ui.resizeEditor();
 
-            _this11.ui.changeMenu('resize');
+            _this10.ui.changeMenu('resize');
           }
         });
       }
@@ -50692,11 +50753,11 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _flipAction: function _flipAction() {
-    var _this12 = this;
+    var _this11 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       flip: function flip(flipType) {
-        return _this12[flipType]();
+        return _this11[flipType]();
       }
     }, this._commonAction());
   },
@@ -50707,14 +50768,14 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _filterAction: function _filterAction() {
-    var _this13 = this;
+    var _this12 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
       applyFilter: function applyFilter(applying, type, options, isSilent) {
         if (applying) {
-          _this13.applyFilter(type, options, isSilent);
-        } else if (_this13.hasFilter(type)) {
-          _this13.removeFilter(type);
+          _this12.applyFilter(type, options, isSilent);
+        } else if (_this12.hasFilter(type)) {
+          _this12.removeFilter(type);
         }
       }
     }, this._commonAction());
@@ -50724,90 +50785,90 @@ var ImageTracer = /*#__PURE__*/function () {
    * Image Editor Event Observer
    */
   setReAction: function setReAction() {
-    var _this14 = this;
+    var _this13 = this;
 
     this.on({
       undoStackChanged: function undoStackChanged(length) {
         if (length) {
-          _this14.ui.changeHelpButtonEnabled('undo', true);
+          _this13.ui.changeHelpButtonEnabled('undo', true);
 
-          _this14.ui.changeHelpButtonEnabled('reset', true);
+          _this13.ui.changeHelpButtonEnabled('reset', true);
         } else {
-          _this14.ui.changeHelpButtonEnabled('undo', false);
+          _this13.ui.changeHelpButtonEnabled('undo', false);
 
-          _this14.ui.changeHelpButtonEnabled('reset', false);
+          _this13.ui.changeHelpButtonEnabled('reset', false);
         }
 
-        _this14.ui.resizeEditor();
+        _this13.ui.resizeEditor();
       },
       redoStackChanged: function redoStackChanged(length) {
         if (length) {
-          _this14.ui.changeHelpButtonEnabled('redo', true);
+          _this13.ui.changeHelpButtonEnabled('redo', true);
         } else {
-          _this14.ui.changeHelpButtonEnabled('redo', false);
+          _this13.ui.changeHelpButtonEnabled('redo', false);
         }
 
-        _this14.ui.resizeEditor();
+        _this13.ui.resizeEditor();
       },
 
       /* eslint-disable complexity */
       objectActivated: function objectActivated(obj) {
-        _this14.activeObjectId = obj.id;
+        _this13.activeObjectId = obj.id;
 
-        _this14.ui.changeHelpButtonEnabled('delete', true);
+        _this13.ui.changeHelpButtonEnabled('delete', true);
 
-        _this14.ui.changeHelpButtonEnabled('deleteAll', true);
+        _this13.ui.changeHelpButtonEnabled('deleteAll', true);
 
         if (obj.type === 'cropzone') {
-          _this14.ui.crop.changeApplyButtonStatus(true);
+          _this13.ui.crop.changeApplyButtonStatus(true);
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this14.stopDrawingMode();
+          _this13.stopDrawingMode();
 
-          if (_this14.ui.submenu !== 'shape') {
-            _this14.ui.changeMenu('shape', false, false);
+          if (_this13.ui.submenu !== 'shape') {
+            _this13.ui.changeMenu('shape', false, false);
           }
 
-          _this14.ui.shape.setShapeStatus({
+          _this13.ui.shape.setShapeStatus({
             strokeColor: obj.stroke,
             strokeWidth: obj.strokeWidth,
             fillColor: fill_default()(obj)
           });
 
-          _this14.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
         } else if (obj.type === 'path' || obj.type === 'line') {
-          if (_this14.ui.submenu !== 'draw') {
-            _this14.ui.changeMenu('draw', false, false);
+          if (_this13.ui.submenu !== 'draw') {
+            _this13.ui.changeMenu('draw', false, false);
 
-            _this14.ui.draw.changeStandbyMode();
+            _this13.ui.draw.changeStandbyMode();
           }
         } else if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          if (_this14.ui.submenu !== 'text') {
-            _this14.ui.changeMenu('text', false, false);
+          if (_this13.ui.submenu !== 'text') {
+            _this13.ui.changeMenu('text', false, false);
           }
 
-          _this14.ui.text.setTextStyleStateOnAction(obj);
+          _this13.ui.text.setTextStyleStateOnAction(obj);
         } else if (obj.type === 'icon') {
-          _this14.stopDrawingMode();
+          _this13.stopDrawingMode();
 
-          if (_this14.ui.submenu !== 'icon') {
-            _this14.ui.changeMenu('icon', false, false);
+          if (_this13.ui.submenu !== 'icon') {
+            _this13.ui.changeMenu('icon', false, false);
           }
 
-          _this14.ui.icon.setIconPickerColor(fill_default()(obj));
+          _this13.ui.icon.setIconPickerColor(fill_default()(obj));
         }
       },
 
       /* eslint-enable complexity */
       addText: function addText(pos) {
-        var _this14$ui$text = _this14.ui.text,
-            fill = _this14$ui$text.textColor,
-            fontSize = _this14$ui$text.fontSize,
-            fontStyle = _this14$ui$text.fontStyle,
-            fontWeight = _this14$ui$text.fontWeight,
-            underline = _this14$ui$text.underline;
-        var fontFamily = _this14.fontFamily;
+        var _this13$ui$text = _this13.ui.text,
+            fill = _this13$ui$text.textColor,
+            fontSize = _this13$ui$text.fontSize,
+            fontStyle = _this13$ui$text.fontStyle,
+            fontWeight = _this13$ui$text.fontWeight,
+            underline = _this13$ui$text.underline;
+        var fontFamily = _this13.fontFamily;
 
-        _this14.addText('Double Click', {
+        _this13.addText('Double Click', {
           position: pos.originPosition,
           styles: {
             fill: fill,
@@ -50818,43 +50879,43 @@ var ImageTracer = /*#__PURE__*/function () {
             underline: underline
           }
         }).then(function () {
-          _this14.changeCursor('default');
+          _this13.changeCursor('default');
         });
       },
       addObjectAfter: function addObjectAfter(obj) {
         if (obj.type === 'icon') {
-          _this14.ui.icon.changeStandbyMode();
+          _this13.ui.icon.changeStandbyMode();
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this14.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+          _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
 
-          _this14.ui.shape.changeStandbyMode();
+          _this13.ui.shape.changeStandbyMode();
         }
       },
       objectScaled: function objectScaled(obj) {
         if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          _this14.ui.text.fontSize = toInteger(obj.fontSize);
+          _this13.ui.text.fontSize = toInteger(obj.fontSize);
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
           var width = obj.width,
               height = obj.height;
 
-          var strokeValue = _this14.ui.shape.getStrokeValue();
+          var strokeValue = _this13.ui.shape.getStrokeValue();
 
           if (width < strokeValue) {
-            _this14.ui.shape.setStrokeValue(width);
+            _this13.ui.shape.setStrokeValue(width);
           }
 
           if (height < strokeValue) {
-            _this14.ui.shape.setStrokeValue(height);
+            _this13.ui.shape.setStrokeValue(height);
           }
         }
       },
       selectionCleared: function selectionCleared() {
-        _this14.activeObjectId = null;
+        _this13.activeObjectId = null;
 
-        if (_this14.ui.submenu === 'text') {
-          _this14.changeCursor('text');
-        } else if (!includes(['draw', 'crop', 'resize'], _this14.ui.submenu)) {
-          _this14.stopDrawingMode();
+        if (_this13.ui.submenu === 'text') {
+          _this13.changeCursor('text');
+        } else if (!includes(['draw', 'crop', 'resize'], _this13.ui.submenu)) {
+          _this13.stopDrawingMode();
         }
       }
     });
@@ -50866,14 +50927,14 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _historyAction: function _historyAction() {
-    var _this15 = this;
+    var _this14 = this;
 
     return {
       undo: function undo(count) {
-        return _this15.undo(count);
+        return _this14.undo(count);
       },
       redo: function redo(count) {
-        return _this15.redo(count);
+        return _this14.redo(count);
       }
     };
   },
@@ -50884,7 +50945,7 @@ var ImageTracer = /*#__PURE__*/function () {
    * @private
    */
   _commonAction: function _commonAction() {
-    var _this16 = this;
+    var _this15 = this;
 
     var TEXT = drawingModes.TEXT,
         CROPPER = drawingModes.CROPPER,
@@ -50895,29 +50956,29 @@ var ImageTracer = /*#__PURE__*/function () {
       modeChange: function modeChange(menu) {
         switch (menu) {
           case drawingMenuNames.TEXT:
-            _this16._changeActivateMode(TEXT);
+            _this15._changeActivateMode(TEXT);
 
             break;
 
           case drawingMenuNames.CROP:
-            _this16.startDrawingMode(CROPPER);
+            _this15.startDrawingMode(CROPPER);
 
             break;
 
           case drawingMenuNames.SHAPE:
-            _this16._changeActivateMode(SHAPE);
+            _this15._changeActivateMode(SHAPE);
 
-            _this16.setDrawingShape(_this16.ui.shape.type, _this16.ui.shape.options);
+            _this15.setDrawingShape(_this15.ui.shape.type, _this15.ui.shape.options);
 
             break;
 
           case drawingMenuNames.ZOOM:
-            _this16.startDrawingMode(ZOOM);
+            _this15.startDrawingMode(ZOOM);
 
             break;
 
           case drawingMenuNames.RESIZE:
-            _this16.startDrawingMode(RESIZE);
+            _this15.startDrawingMode(RESIZE);
 
             break;
 
@@ -57945,12 +58006,12 @@ var Graphics = /*#__PURE__*/function () {
 
       var canvas = this._canvas;
 
-      var objects = slice_default()(_context2 = canvas.getObjects()).call(_context2);
+      var objects = slice_default()(_context2 = canvas.getObjects()).call(_context2); //canvas.remove(...this._canvas.getObjects());
 
-      canvas.remove.apply(canvas, _toConsumableArray(this._canvas.getObjects()));
 
       if (includesBackground) {
-        canvas.clear();
+        //canvas.clear();
+        canvas.setBackgroundImage(null);
       }
 
       return objects;
@@ -59486,6 +59547,7 @@ var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     SELECTION_CREATED = eventNames.SELECTION_CREATED,
     ADD_OBJECT_AFTER = eventNames.ADD_OBJECT_AFTER,
     ADD_LABEL = eventNames.ADD_LABEL,
+    SAVE_AS_TEMPLATE = eventNames.SAVE_AS_TEMPLATE,
     LOAD_BACKGROUND = eventNames.LOAD_BACKGROUND,
     SAVE_AND_NEXT = eventNames.SAVE_AND_NEXT;
 /**
@@ -60973,14 +61035,20 @@ var ImageEditor = /*#__PURE__*/function () {
       this.fire(ADD_LABEL);
     }
   }, {
+    key: "_onSaveAsTemplate",
+    value: function _onSaveAsTemplate() {
+      console.log('Save as template');
+      this.fire(SAVE_AS_TEMPLATE);
+    }
+  }, {
     key: "_onLoadBackground",
     value: function _onLoadBackground(file) {
       this.fire(LOAD_BACKGROUND, file);
     }
   }, {
     key: "_onSaveAndNext",
-    value: function _onSaveAndNext() {
-      this.fire(SAVE_AND_NEXT);
+    value: function _onSaveAndNext(file) {
+      this.fire(SAVE_AND_NEXT, file);
     }
     /**
      * 'addObject' event handler
