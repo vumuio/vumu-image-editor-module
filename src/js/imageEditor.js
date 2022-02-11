@@ -1235,10 +1235,13 @@ class ImageEditor {
     await this.execute(commands.CHANGE_TEXT, id, newText);
 
     canvas.setActiveObject(activeObj);
+    canvas.renderAll();
+
     activeObj.enterEditing();
     activeObj.setSelectionStart(caretPositionStart + appendText.length);
     activeObj.setSelectionEnd(caretPositionStart + appendText.length);
     canvas.renderAll();
+    this._graphics.fire(TEXT_EDITING);
   }
 
   /**
