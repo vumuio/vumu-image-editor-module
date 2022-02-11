@@ -39,6 +39,7 @@ const {
   SELECTION_CREATED,
   ADD_OBJECT_AFTER,
   ADD_LABEL,
+  ADD_IMAGE,
   SAVE_AS_TEMPLATE,
   LOAD_BACKGROUND,
   SAVE_AND_NEXT,
@@ -1350,6 +1351,10 @@ k   * @param {number} id - object id
       originPosition: event.originPosition,
       clientPosition: event.clientPosition,
     });
+  }
+
+  _onAddImage(file) {
+    this.fire(ADD_IMAGE, file);
   }
 
   _onAddLabel() {

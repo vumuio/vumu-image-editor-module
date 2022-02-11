@@ -335,8 +335,9 @@ export default {
   _imageAction() {
     return extend(
       {
-        loadImageFromURL: (imgUrl, file) => {
+        insertImg: (imgUrl, file) => {
           this.addImageObject(imgUrl).then(() => {
+            this._onAddImage(file);
             URL.revokeObjectURL(file);
           });
           return this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.ADD_IMAGE_OBJECT);

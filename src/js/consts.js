@@ -190,6 +190,7 @@ export const eventNames = {
   SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext',
+  ADD_IMAGE: 'addImage',
 };
 
 /**
