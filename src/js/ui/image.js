@@ -73,7 +73,7 @@ class Image extends Submenu {
 
     if (file) {
       imgUrl = URL.createObjectURL(file);
-      this.actions.loadImageFromURL(imgUrl, file);
+      this.actions.insertImg(imgUrl, file);
     }
   }
 }

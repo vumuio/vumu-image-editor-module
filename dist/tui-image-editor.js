@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 3.17.6
+ * @version 3.17.8
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -40998,7 +40998,8 @@ var eventNames = {
   ADD_LABEL: 'addLabel',
   SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
-  SAVE_AND_NEXT: 'saveAndNext'
+  SAVE_AND_NEXT: 'saveAndNext',
+  ADD_IMAGE: 'addImage'
 };
 /**
  * Selector names
@@ -45855,7 +45856,7 @@ var image_Image = /*#__PURE__*/function (_Submenu) {
 
       if (file) {
         imgUrl = url_default().createObjectURL(file);
-        this.actions.loadImageFromURL(imgUrl, file);
+        this.actions.insertImg(imgUrl, file);
       }
     }
   }]);
@@ -50412,8 +50413,10 @@ var ImageTracer = /*#__PURE__*/function () {
     var _this4 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      loadImageFromURL: function loadImageFromURL(imgUrl, file) {
+      insertImg: function insertImg(imgUrl, file) {
         _this4.addImageObject(imgUrl).then(function () {
+          _this4._onAddImage(file);
+
           url_default().revokeObjectURL(file);
         });
 
@@ -59525,6 +59528,7 @@ var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     SELECTION_CREATED = eventNames.SELECTION_CREATED,
     ADD_OBJECT_AFTER = eventNames.ADD_OBJECT_AFTER,
     ADD_LABEL = eventNames.ADD_LABEL,
+    ADD_IMAGE = eventNames.ADD_IMAGE,
     SAVE_AS_TEMPLATE = eventNames.SAVE_AS_TEMPLATE,
     LOAD_BACKGROUND = eventNames.LOAD_BACKGROUND,
     SAVE_AND_NEXT = eventNames.SAVE_AND_NEXT;
@@ -61015,6 +61019,11 @@ var ImageEditor = /*#__PURE__*/function () {
         originPosition: event.originPosition,
         clientPosition: event.clientPosition
       });
+    }
+  }, {
+    key: "_onAddImage",
+    value: function _onAddImage(file) {
+      this.fire(ADD_IMAGE, file);
     }
   }, {
     key: "_onAddLabel",
