@@ -164,6 +164,22 @@ class Text extends Submenu {
   }
 
   /**
+   * Get font family
+   * @returns {string} - font family
+   */
+  get fontFamily() {
+    return this._els.textFontFamly.value;
+  }
+
+  /**
+   * Set font family
+   * @param {string} value - font family
+   */
+  set fontFamily(value) {
+    this._els.textFontFamly.value = value;
+  }
+
+  /**
    * get font style
    * @returns {string} - font style
    */
@@ -188,10 +204,12 @@ class Text extends Submenu {
   }
 
   setTextStyleStateOnAction(textStyle = {}) {
-    const { fill, fontSize, fontStyle, fontWeight, textDecoration, textAlign } = textStyle;
+    const { fill, fontFamily, fontSize, fontStyle, fontWeight, textDecoration, textAlign } =
+      textStyle;
 
     this.textColor = fill;
     this.fontSize = fontSize;
+    this.fontFamily = fontFamily;
     this.setEffectState('italic', fontStyle);
     this.setEffectState('bold', fontWeight);
     this.setEffectState('underline', textDecoration);
