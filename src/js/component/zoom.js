@@ -98,8 +98,8 @@ class Zoom extends Component {
       moveHand: this._onMouseMoveWithHandMode.bind(this),
       stopHand: this._onMouseUpWithHandMode.bind(this),
       zoomChanged: this._changeScrollState.bind(this),
-      keydown: this._startHandModeWithSpaceBar.bind(this),
-      keyup: this._endHandModeWithSpaceBar.bind(this),
+      // keydown: this._startHandModeWithSpaceBar.bind(this),
+      // keyup: this._endHandModeWithSpaceBar.bind(this),
     };
 
     const canvas = this.getCanvas();
@@ -168,28 +168,28 @@ class Zoom extends Component {
    * @param {KeyboardEvent} e - Event object
    * @private
    */
-  _startHandModeWithSpaceBar(e) {
-    if (this.withSpace || this.isTextEditing) {
-      return;
-    }
+  // _startHandModeWithSpaceBar(e) {
+  //   if (this.withSpace || this.isTextEditing) {
+  //     return;
+  //   }
 
-    if (e.keyCode === keyCodes.SPACE) {
-      this.withSpace = true;
-      this.startHandMode();
-    }
-  }
+  //   if (e.keyCode === keyCodes.SPACE) {
+  //     this.withSpace = true;
+  //     this.startHandMode();
+  //   }
+  // }
 
   /**
    * Handler who turns off hand mode when space bar is up
    * @param {KeyboardEvent} e - Event object
    * @private
    */
-  _endHandModeWithSpaceBar(e) {
-    if (e.keyCode === keyCodes.SPACE) {
-      this.withSpace = false;
-      this.endHandMode();
-    }
-  }
+  // _endHandModeWithSpaceBar(e) {
+  //   if (e.keyCode === keyCodes.SPACE) {
+  //     this.withSpace = false;
+  //     this.endHandMode();
+  //   }
+  // }
 
   /**
    * Start zoom-in mode
