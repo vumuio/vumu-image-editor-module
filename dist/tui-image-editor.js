@@ -45394,6 +45394,24 @@ var Text = /*#__PURE__*/function (_Submenu) {
       this._els.textRange.value = value;
     }
     /**
+     * Get font family
+     * @returns {string} - font family
+     */
+
+  }, {
+    key: "fontFamily",
+    get: function get() {
+      return this._els.textFontFamly.value;
+    }
+    /**
+     * Set font family
+     * @param {string} value - font family
+     */
+    ,
+    set: function set(value) {
+      this._els.textFontFamly.value = value;
+    }
+    /**
      * get font style
      * @returns {string} - font style
      */
@@ -45429,6 +45447,7 @@ var Text = /*#__PURE__*/function (_Submenu) {
       var textStyle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       var fill = fill_default()(textStyle),
+          fontFamily = textStyle.fontFamily,
           fontSize = textStyle.fontSize,
           fontStyle = textStyle.fontStyle,
           fontWeight = textStyle.fontWeight,
@@ -45437,6 +45456,7 @@ var Text = /*#__PURE__*/function (_Submenu) {
 
       this.textColor = fill;
       this.fontSize = fontSize;
+      this.fontFamily = fontFamily;
       this.setEffectState('italic', fontStyle);
       this.setEffectState('bold', fontWeight);
       this.setEffectState('underline', textDecoration);
