@@ -826,6 +826,7 @@ class Graphics {
    */
   setSelectionStyle(styles) {
     extend(fObjectOptions.SELECTION_STYLE, styles);
+    extend(fObjectOptions.LOGO_STYLE, styles);
   }
 
   /**

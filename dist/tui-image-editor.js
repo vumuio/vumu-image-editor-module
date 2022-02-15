@@ -41084,9 +41084,6 @@ var keyCodes = {
 
 var fObjectOptions = {
   SELECTION_STYLE: {
-    borderColor: 'red',
-    cornerColor: 'green',
-    cornerSize: 10,
     originX: 'center',
     originY: 'center',
     transparentCorners: false
@@ -56094,9 +56091,9 @@ var Zoom = /*#__PURE__*/function (_Component) {
       startHand: _this._onMouseDownWithHandMode.bind(_assertThisInitialized(_this)),
       moveHand: _this._onMouseMoveWithHandMode.bind(_assertThisInitialized(_this)),
       stopHand: _this._onMouseUpWithHandMode.bind(_assertThisInitialized(_this)),
-      zoomChanged: _this._changeScrollState.bind(_assertThisInitialized(_this)),
-      keydown: _this._startHandModeWithSpaceBar.bind(_assertThisInitialized(_this)),
-      keyup: _this._endHandModeWithSpaceBar.bind(_assertThisInitialized(_this))
+      zoomChanged: _this._changeScrollState.bind(_assertThisInitialized(_this)) // keydown: this._startHandModeWithSpaceBar.bind(this),
+      // keyup: this._endHandModeWithSpaceBar.bind(this),
+
     };
 
     var canvas = _this.getCanvas();
@@ -56177,33 +56174,28 @@ var Zoom = /*#__PURE__*/function (_Component) {
      * @param {KeyboardEvent} e - Event object
      * @private
      */
+    // _startHandModeWithSpaceBar(e) {
+    //   if (this.withSpace || this.isTextEditing) {
+    //     return;
+    //   }
+    //   if (e.keyCode === keyCodes.SPACE) {
+    //     this.withSpace = true;
+    //     this.startHandMode();
+    //   }
+    // }
 
-  }, {
-    key: "_startHandModeWithSpaceBar",
-    value: function _startHandModeWithSpaceBar(e) {
-      if (this.withSpace || this.isTextEditing) {
-        return;
-      }
-
-      if (e.keyCode === keyCodes.SPACE) {
-        this.withSpace = true;
-        this.startHandMode();
-      }
-    }
     /**
      * Handler who turns off hand mode when space bar is up
      * @param {KeyboardEvent} e - Event object
      * @private
      */
+    // _endHandModeWithSpaceBar(e) {
+    //   if (e.keyCode === keyCodes.SPACE) {
+    //     this.withSpace = false;
+    //     this.endHandMode();
+    //   }
+    // }
 
-  }, {
-    key: "_endHandModeWithSpaceBar",
-    value: function _endHandModeWithSpaceBar(e) {
-      if (e.keyCode === keyCodes.SPACE) {
-        this.withSpace = false;
-        this.endHandMode();
-      }
-    }
     /**
      * Start zoom-in mode
      */
@@ -58642,6 +58634,7 @@ var Graphics = /*#__PURE__*/function () {
     key: "setSelectionStyle",
     value: function setSelectionStyle(styles) {
       extend(fObjectOptions.SELECTION_STYLE, styles);
+      extend(fObjectOptions.LOGO_STYLE, styles);
     }
     /**
      * Set object properties

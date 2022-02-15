@@ -285,9 +285,6 @@ export const keyCodes = {
  */
 export const fObjectOptions = {
   SELECTION_STYLE: {
-    borderColor: 'red',
-    cornerColor: 'green',
-    cornerSize: 10,
     originX: 'center',
     originY: 'center',
     transparentCorners: false,
