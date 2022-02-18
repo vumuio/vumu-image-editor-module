@@ -218,23 +218,27 @@ body {
 }
 .breadcrumbs li {
   position: relative;
-  border-bottom: 2px solid #8492a6;
+  /*border-bottom: 2px solid #8492a6;*/
   margin-right: 40px;
 }
 .breadcrumbs li.active {
   border-color: transparent;
 }
 .breadcrumbs li.active:after {
-  background: url('../../assets/images/seperator.png') no-repeat;
-  background-size: 100% 100%;
+  /*background: url('../../assets/images/seperator.png') no-repeat;*/
+  /*background-size: 100% 100%;*/
 }
 .breadcrumbs li:after {
   width: 10px;
   height: 16px;
   position: absolute;
-  content: '';
+  font-size: 20px;
+  content: '>';
   right: -26px;
-  top: 1px;
+  top: -3px;
+}
+.breadcrumbs li:last-child:after {
+  content:'';
 }
 .breadcrumbs a {
   color: #b1b1b1;
@@ -247,16 +251,14 @@ body {
   text-align: left;
 }
 input.project-title {
-  border-radius: 4px;
-  background: #f3f6f9;
   border: none;
-  color: #bcbcbc;
+  border-bottom: 2px dotted #494e78;
+  color: #8492A6;
   font-size: 20px;
   padding: 5px 10px;
   height: 37px;
   outline: none;
   font-family: 'Inter';
-  margin: 0 0 10px;
 }
 input.project-title::placeholder {
   color: #bcbcbc;
