@@ -41868,6 +41868,21 @@ function randomString(length) {
 
   return result;
 }
+/**
+ * return new selection style style for new background image
+ *  @param {object} imageDimension - cropRect top position value
+ * @returns {object} new selection style obj
+ */
+
+function getNewBorderStyle(newImgDimesion) {
+  var newWidth = newImgDimesion.newWidth,
+      newHeight = newImgDimesion.newHeight;
+  var largestDimension = newWidth > newHeight ? newWidth : newHeight;
+  return {
+    cornerSize: 16 * Math.ceil(largestDimension / 1000),
+    borderScaleFactor: 3 + Math.floor(largestDimension / 1000)
+  };
+}
 ;// CONCATENATED MODULE: ./src/js/factory/errorMessage.js
 /**
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
@@ -50230,6 +50245,16 @@ var ImageTracer = /*#__PURE__*/function () {
           _this._clearHistory();
 
           _this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
+
+          var canvas = _this.getCanvasInstance();
+
+          var allObject = canvas.getObjects();
+          var newSelectionStyle = getNewBorderStyle(sizeValue);
+          allObject.forEach(function (item) {
+            item.set(newSelectionStyle);
+          });
+
+          _this._graphics.setSelectionStyle(newSelectionStyle);
         })['catch'](function (message) {
           return core_js_stable_promise_default().reject(message);
         });
@@ -57999,8 +58024,9 @@ var Graphics = /*#__PURE__*/function () {
 
       var canvas = this._canvas;
 
-      var objects = slice_default()(_context2 = canvas.getObjects()).call(_context2); //canvas.remove(...this._canvas.getObjects());
+      var objects = slice_default()(_context2 = canvas.getObjects()).call(_context2);
 
+      canvas.remove.apply(canvas, _toConsumableArray(this._canvas.getObjects()));
 
       if (includesBackground) {
         //canvas.clear();

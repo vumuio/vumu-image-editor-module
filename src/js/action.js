@@ -7,6 +7,7 @@ import {
   isEmptyCropzone,
   includes,
   randomString,
+  getNewBorderStyle,
 } from '@/util';
 import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
 
@@ -153,6 +154,14 @@ export default {
               this.ui.resizeEditor({ imageSize: sizeValue });
               this._clearHistory();
               this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
+
+              const canvas = this.getCanvasInstance();
+              const allObject = canvas.getObjects();
+              const newSelectionStyle = getNewBorderStyle(sizeValue);
+              allObject.forEach((item) => {
+                item.set(newSelectionStyle);
+              });
+              this._graphics.setSelectionStyle(newSelectionStyle);
             })
             ['catch']((message) => Promise.reject(message));
         },
