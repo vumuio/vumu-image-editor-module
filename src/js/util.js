@@ -547,3 +547,19 @@ export function randomString(length) {
   }
   return result;
 }
+
+/**
+ * return new selection style style for new background image
+ *  @param {object} imageDimension - cropRect top position value
+ * @returns {object} new selection style obj
+ */
+
+export function getNewBorderStyle(newImgDimesion) {
+  const { newWidth, newHeight } = newImgDimesion;
+
+  const largestDimension = newWidth > newHeight ? newWidth : newHeight;
+  return {
+    cornerSize: 16 * Math.ceil(largestDimension / 1000),
+    borderScaleFactor: 3 + Math.floor(largestDimension / 1000),
+  };
+}
