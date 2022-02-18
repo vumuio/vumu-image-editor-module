@@ -560,6 +560,6 @@ export function getNewBorderStyle(newImgDimesion) {
   const largestDimension = newWidth > newHeight ? newWidth : newHeight;
   return {
     cornerSize: 16 * Math.ceil(largestDimension / 1000),
-    borderScaleFactor: 3 + Math.floor(largestDimension / 1000),
+    borderScaleFactor: 3 + Math.floor(largestDimension / 500),
   };
 }

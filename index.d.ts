@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.17.8
+// Type definitions for TOAST UI Image Editor v3.18.1
 // TypeScript Version: 3.2.2
 // TypeScript Version: 3.2.2
 declare module 'vumu-image-editor' {
@@ -187,6 +187,7 @@ declare module 'vumu-image-editor' {
     lineWidth?: number;
     borderColor?: string;
     rotatingPointOffset?: number;
+    borderScaleFactor?: number;
   }
 
   export interface IObjectProps {
@@ -327,6 +328,7 @@ declare module 'vumu-image-editor' {
       public setObjectPosition(id: number, posInfo?: IPositionConfig): Promise<void>;
       public setObjectProperties(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
       public setObjectPropertiesQuietly(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
+      public setDefaultSelectionStyle(style: ISelectionStyleConfig): void;
       public startDrawingMode(mode: string, option?: { width?: number; color?: string }): boolean;
       public stopDrawingMode(): void;
       public toDataURL(options?: IToDataURLOptions): string;
