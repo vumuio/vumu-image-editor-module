@@ -24,6 +24,7 @@ const { isUndefined, forEach, CustomEvents } = snippet;
 const {
   MOUSE_DOWN,
   OBJECT_MOVED,
+  OBJECT_END_MOVE,
   OBJECT_SCALED,
   OBJECT_ACTIVATED,
   OBJECT_ROTATED,
@@ -220,6 +221,7 @@ class ImageEditor {
       mousedown: this._onMouseDown.bind(this),
       objectActivated: this._onObjectActivated.bind(this),
       objectMoved: this._onObjectMoved.bind(this),
+      objectEndMove: this._onObjectEndMove.bind(this),
       objectScaled: this._onObjectScaled.bind(this),
       objectRotated: this._onObjectRotated.bind(this),
       objectAdded: this._onObjectAdded.bind(this),
@@ -352,6 +354,7 @@ class ImageEditor {
     this._graphics.on({
       [MOUSE_DOWN]: this._handlers.mousedown,
       [OBJECT_MOVED]: this._handlers.objectMoved,
+      [OBJECT_END_MOVE]: this._handlers.objectEndMove,
       [OBJECT_SCALED]: this._handlers.objectScaled,
       [OBJECT_ROTATED]: this._handlers.objectRotated,
       [OBJECT_ACTIVATED]: this._handlers.objectActivated,
@@ -526,6 +529,24 @@ class ImageEditor {
     this.fire(events.OBJECT_MOVED, props);
   }
 
+  /**
+   * 'objectEndMove' event handler
+   * @param {ObjectProps} props - object properties
+   * @private
+   */
+  _onObjectEndMove(props) {
+    /**
+     * The event when object is moved
+     * @event ImageEditor#objectEndMove
+     * @param {ObjectProps} props - object properties
+     * @example
+     * imageEditor.on('objectEndMove', function(props) {
+     *     console.log(props);
+     *     console.log(props.type);
+     * });
+     */
+    this.fire(OBJECT_END_MOVE, props);
+  }
   /**
    * 'objectScaled' event handler
    * @param {ObjectProps} props - object properties
@@ -1770,6 +1791,14 @@ k   * @param {number} id - object id
     return this._graphics.getCanvas();
   }
 
+  /**
+   * Update the canvas selection default style
+   * @example
+   imageEditor.setDefaultSelectionStyle({ cornerSize: 16 });
+   */
+  setDefaultSelectionStyle(updatedStyle) {
+    return this._graphics.setSelectionStyle(updatedStyle);
+  }
   /**
    * Get object position by originX, originY
    * @param {number} id - object id

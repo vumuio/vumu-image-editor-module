@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 3.17.8
+ * @version 3.18.1
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -40962,6 +40962,7 @@ var commandNames = {
 var eventNames = {
   OBJECT_ACTIVATED: 'objectActivated',
   OBJECT_MOVED: 'objectMoved',
+  OBJECT_END_MOVE: 'objectEndMove',
   OBJECT_SCALED: 'objectScaled',
   OBJECT_CREATED: 'objectCreated',
   OBJECT_ROTATED: 'objectRotated',
@@ -41880,7 +41881,7 @@ function getNewBorderStyle(newImgDimesion) {
   var largestDimension = newWidth > newHeight ? newWidth : newHeight;
   return {
     cornerSize: 16 * Math.ceil(largestDimension / 1000),
-    borderScaleFactor: 3 + Math.floor(largestDimension / 1000)
+    borderScaleFactor: 3 + Math.floor(largestDimension / 500)
   };
 }
 ;// CONCATENATED MODULE: ./src/js/factory/errorMessage.js
@@ -57866,6 +57867,7 @@ var Graphics = /*#__PURE__*/function () {
       onObjectAdded: this._onObjectAdded.bind(this),
       onObjectRemoved: this._onObjectRemoved.bind(this),
       onObjectMoved: this._onObjectMoved.bind(this),
+      onObjectEndMove: this._onObjectEndMove.bind(this),
       onObjectScaled: this._onObjectScaled.bind(this),
       onObjectModified: this._onObjectModified.bind(this),
       onObjectRotated: this._onObjectRotated.bind(this),
@@ -59022,6 +59024,7 @@ var Graphics = /*#__PURE__*/function () {
         'object:added': handler.onObjectAdded,
         'object:removed': handler.onObjectRemoved,
         'object:moving': handler.onObjectMoved,
+        'object:moved': handler.onObjectEndMove,
         'object:scaling': handler.onObjectScaled,
         'object:modified': handler.onObjectModified,
         'object:rotating': handler.onObjectRotated,
@@ -59102,6 +59105,15 @@ var Graphics = /*#__PURE__*/function () {
         return _this4.createObjectProperties(object);
       }, fEvent.target);
     }
+  }, {
+    key: "_onObjectEndMove",
+    value: function _onObjectEndMove(fEvent) {
+      var _this5 = this;
+
+      this._lazyFire(eventNames.OBJECT_END_MOVE, function (object) {
+        return _this5.createObjectProperties(object);
+      }, fEvent.target);
+    }
     /**
      * "object:scaling" canvas event handler
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
@@ -59111,10 +59123,10 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_onObjectScaled",
     value: function _onObjectScaled(fEvent) {
-      var _this5 = this;
+      var _this6 = this;
 
       this._lazyFire(eventNames.OBJECT_SCALED, function (object) {
-        return _this5.createObjectProperties(object);
+        return _this6.createObjectProperties(object);
       }, fEvent.target);
     }
     /**
@@ -59146,10 +59158,10 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_onObjectRotated",
     value: function _onObjectRotated(fEvent) {
-      var _this6 = this;
+      var _this7 = this;
 
       this._lazyFire(eventNames.OBJECT_ROTATED, function (object) {
-        return _this6.createObjectProperties(object);
+        return _this7.createObjectProperties(object);
       }, fEvent.target);
     }
     /**
@@ -59163,14 +59175,14 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_lazyFire",
     value: function _lazyFire(eventName, paramsMaker, target) {
-      var _this7 = this;
+      var _this8 = this;
 
       var existEventDelegation = target && target.canvasEventDelegation;
       var delegationState = existEventDelegation ? target.canvasEventDelegation(eventName) : 'none';
 
       if (delegationState === 'unregistered') {
         target.canvasEventRegister(eventName, function (object) {
-          _this7.fire(eventName, paramsMaker(object));
+          _this8.fire(eventName, paramsMaker(object));
         });
       }
 
@@ -59345,7 +59357,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "pasteObject",
     value: function pasteObject() {
-      var _this8 = this;
+      var _this9 = this;
 
       if (!this.targetObjectForCopyPaste) {
         return core_js_stable_promise_default().resolve([]);
@@ -59358,16 +59370,16 @@ var Graphics = /*#__PURE__*/function () {
       this.discardSelection();
       return this._cloneObject(targetObjects).then(function (addedObjects) {
         if (addedObjects.length > 1) {
-          newTargetObject = _this8.getActiveSelectionFromObjects(addedObjects);
+          newTargetObject = _this9.getActiveSelectionFromObjects(addedObjects);
         } else {
           var _addedObjects = _slicedToArray(addedObjects, 1);
 
           newTargetObject = _addedObjects[0];
         }
 
-        _this8.targetObjectForCopyPaste = newTargetObject;
+        _this9.targetObjectForCopyPaste = newTargetObject;
 
-        _this8.setActiveObject(newTargetObject);
+        _this9.setActiveObject(newTargetObject);
       });
     }
     /**
@@ -59380,10 +59392,10 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_cloneObject",
     value: function _cloneObject(targetObjects) {
-      var _this9 = this;
+      var _this10 = this;
 
       var addedObjects = map_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), targetObjects, function (targetObject) {
-        return _this9._cloneObjectItem(targetObject);
+        return _this10._cloneObjectItem(targetObject);
       });
 
       return core_js_stable_promise_default().all(addedObjects);
@@ -59398,14 +59410,14 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_cloneObjectItem",
     value: function _cloneObjectItem(targetObject) {
-      var _this10 = this;
+      var _this11 = this;
 
       return this._copyFabricObjectForPaste(targetObject).then(function (clonedObject) {
-        var objectProperties = _this10.createObjectProperties(clonedObject);
+        var objectProperties = _this11.createObjectProperties(clonedObject);
 
-        _this10.add(clonedObject);
+        _this11.add(clonedObject);
 
-        _this10.fire(eventNames.ADD_OBJECT, objectProperties);
+        _this11.fire(eventNames.ADD_OBJECT, objectProperties);
 
         return clonedObject;
       });
@@ -59420,7 +59432,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_copyFabricObjectForPaste",
     value: function _copyFabricObjectForPaste(targetObject) {
-      var _this11 = this;
+      var _this12 = this;
 
       var addExtraPx = function addExtraPx(value, isReverse) {
         return isReverse ? value - EXTRA_PX_FOR_PASTE : value + EXTRA_PX_FOR_PASTE;
@@ -59432,9 +59444,9 @@ var Graphics = /*#__PURE__*/function () {
             width = clonedObject.width,
             height = clonedObject.height;
 
-        var _this11$getCanvasSize = _this11.getCanvasSize(),
-            canvasWidth = _this11$getCanvasSize.width,
-            canvasHeight = _this11$getCanvasSize.height;
+        var _this12$getCanvasSize = _this12.getCanvasSize(),
+            canvasWidth = _this12$getCanvasSize.width,
+            canvasHeight = _this12$getCanvasSize.height;
 
         var rightEdge = left + width / 2;
         var bottomEdge = top + height / 2;
@@ -59455,11 +59467,11 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_copyFabricObject",
     value: function _copyFabricObject(targetObject) {
-      var _this12 = this;
+      var _this13 = this;
 
       return new (core_js_stable_promise_default())(function (resolve) {
         targetObject.clone(function (cloned) {
-          var shapeComp = _this12.getComponent(componentNames.SHAPE);
+          var shapeComp = _this13.getComponent(componentNames.SHAPE);
 
           if (isShape(cloned)) {
             shapeComp.processForCopiedObject(cloned, targetObject);
@@ -59552,6 +59564,7 @@ var isUndefined = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet
     imageEditor_CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
 var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     OBJECT_MOVED = eventNames.OBJECT_MOVED,
+    OBJECT_END_MOVE = eventNames.OBJECT_END_MOVE,
     OBJECT_SCALED = eventNames.OBJECT_SCALED,
     OBJECT_ACTIVATED = eventNames.OBJECT_ACTIVATED,
     OBJECT_ROTATED = eventNames.OBJECT_ROTATED,
@@ -59746,6 +59759,7 @@ var ImageEditor = /*#__PURE__*/function () {
       mousedown: this._onMouseDown.bind(this),
       objectActivated: this._onObjectActivated.bind(this),
       objectMoved: this._onObjectMoved.bind(this),
+      objectEndMove: this._onObjectEndMove.bind(this),
       objectScaled: this._onObjectScaled.bind(this),
       objectRotated: this._onObjectRotated.bind(this),
       objectAdded: this._onObjectAdded.bind(this),
@@ -59910,7 +59924,7 @@ var ImageEditor = /*#__PURE__*/function () {
     value: function _attachGraphicsEvents() {
       var _this$_graphics$on;
 
-      this._graphics.on((_this$_graphics$on = {}, _defineProperty(_this$_graphics$on, MOUSE_DOWN, this._handlers.mousedown), _defineProperty(_this$_graphics$on, OBJECT_MOVED, this._handlers.objectMoved), _defineProperty(_this$_graphics$on, OBJECT_SCALED, this._handlers.objectScaled), _defineProperty(_this$_graphics$on, OBJECT_ROTATED, this._handlers.objectRotated), _defineProperty(_this$_graphics$on, OBJECT_ACTIVATED, this._handlers.objectActivated), _defineProperty(_this$_graphics$on, OBJECT_ADDED, this._handlers.objectAdded), _defineProperty(_this$_graphics$on, imageEditor_OBJECT_MODIFIED, this._handlers.objectModified), _defineProperty(_this$_graphics$on, imageEditor_ADD_TEXT, this._handlers.addText), _defineProperty(_this$_graphics$on, ADD_OBJECT, this._handlers.addObject), _defineProperty(_this$_graphics$on, imageEditor_TEXT_EDITING, this._handlers.textEditing), _defineProperty(_this$_graphics$on, TEXT_CHANGED, this._handlers.textChanged), _defineProperty(_this$_graphics$on, ICON_CREATE_RESIZE, this._handlers.iconCreateResize), _defineProperty(_this$_graphics$on, ICON_CREATE_END, this._handlers.iconCreateEnd), _defineProperty(_this$_graphics$on, SELECTION_CLEARED, this._handlers.selectionCleared), _defineProperty(_this$_graphics$on, SELECTION_CREATED, this._handlers.selectionCreated), _this$_graphics$on));
+      this._graphics.on((_this$_graphics$on = {}, _defineProperty(_this$_graphics$on, MOUSE_DOWN, this._handlers.mousedown), _defineProperty(_this$_graphics$on, OBJECT_MOVED, this._handlers.objectMoved), _defineProperty(_this$_graphics$on, OBJECT_END_MOVE, this._handlers.objectEndMove), _defineProperty(_this$_graphics$on, OBJECT_SCALED, this._handlers.objectScaled), _defineProperty(_this$_graphics$on, OBJECT_ROTATED, this._handlers.objectRotated), _defineProperty(_this$_graphics$on, OBJECT_ACTIVATED, this._handlers.objectActivated), _defineProperty(_this$_graphics$on, OBJECT_ADDED, this._handlers.objectAdded), _defineProperty(_this$_graphics$on, imageEditor_OBJECT_MODIFIED, this._handlers.objectModified), _defineProperty(_this$_graphics$on, imageEditor_ADD_TEXT, this._handlers.addText), _defineProperty(_this$_graphics$on, ADD_OBJECT, this._handlers.addObject), _defineProperty(_this$_graphics$on, imageEditor_TEXT_EDITING, this._handlers.textEditing), _defineProperty(_this$_graphics$on, TEXT_CHANGED, this._handlers.textChanged), _defineProperty(_this$_graphics$on, ICON_CREATE_RESIZE, this._handlers.iconCreateResize), _defineProperty(_this$_graphics$on, ICON_CREATE_END, this._handlers.iconCreateEnd), _defineProperty(_this$_graphics$on, SELECTION_CLEARED, this._handlers.selectionCleared), _defineProperty(_this$_graphics$on, SELECTION_CREATED, this._handlers.selectionCreated), _this$_graphics$on));
     }
     /**
      * Attach dom events
@@ -60094,6 +60108,27 @@ var ImageEditor = /*#__PURE__*/function () {
        * });
        */
       this.fire(eventNames.OBJECT_MOVED, props);
+    }
+    /**
+     * 'objectEndMove' event handler
+     * @param {ObjectProps} props - object properties
+     * @private
+     */
+
+  }, {
+    key: "_onObjectEndMove",
+    value: function _onObjectEndMove(props) {
+      /**
+       * The event when object is moved
+       * @event ImageEditor#objectEndMove
+       * @param {ObjectProps} props - object properties
+       * @example
+       * imageEditor.on('objectEndMove', function(props) {
+       *     console.log(props);
+       *     console.log(props.type);
+       * });
+       */
+      this.fire(OBJECT_END_MOVE, props);
     }
     /**
      * 'objectScaled' event handler
@@ -61541,6 +61576,17 @@ var ImageEditor = /*#__PURE__*/function () {
     key: "getCanvasInstance",
     value: function getCanvasInstance() {
       return this._graphics.getCanvas();
+    }
+    /**
+     * Update the canvas selection default style
+     * @example
+     imageEditor.setDefaultSelectionStyle({ cornerSize: 16 });
+     */
+
+  }, {
+    key: "setDefaultSelectionStyle",
+    value: function setDefaultSelectionStyle(updatedStyle) {
+      return this._graphics.setSelectionStyle(updatedStyle);
     }
     /**
      * Get object position by originX, originY

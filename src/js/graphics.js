@@ -143,6 +143,7 @@ class Graphics {
       onObjectAdded: this._onObjectAdded.bind(this),
       onObjectRemoved: this._onObjectRemoved.bind(this),
       onObjectMoved: this._onObjectMoved.bind(this),
+      onObjectEndMove: this._onObjectEndMove.bind(this),
       onObjectScaled: this._onObjectScaled.bind(this),
       onObjectModified: this._onObjectModified.bind(this),
       onObjectRotated: this._onObjectRotated.bind(this),
@@ -1124,6 +1125,7 @@ class Graphics {
       'object:added': handler.onObjectAdded,
       'object:removed': handler.onObjectRemoved,
       'object:moving': handler.onObjectMoved,
+      'object:moved': handler.onObjectEndMove,
       'object:scaling': handler.onObjectScaled,
       'object:modified': handler.onObjectModified,
       'object:rotating': handler.onObjectRotated,
@@ -1188,6 +1190,14 @@ class Graphics {
   _onObjectMoved(fEvent) {
     this._lazyFire(
       events.OBJECT_MOVED,
+      (object) => this.createObjectProperties(object),
+      fEvent.target
+    );
+  }
+
+  _onObjectEndMove(fEvent) {
+    this._lazyFire(
+      events.OBJECT_END_MOVE,
       (object) => this.createObjectProperties(object),
       fEvent.target
     );

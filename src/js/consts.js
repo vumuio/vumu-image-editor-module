@@ -153,6 +153,7 @@ export const commandNames = {
 export const eventNames = {
   OBJECT_ACTIVATED: 'objectActivated',
   OBJECT_MOVED: 'objectMoved',
+  OBJECT_END_MOVE: 'objectEndMove',
   OBJECT_SCALED: 'objectScaled',
   OBJECT_CREATED: 'objectCreated',
   OBJECT_ROTATED: 'objectRotated',
