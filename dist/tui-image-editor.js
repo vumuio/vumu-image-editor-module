@@ -52,6 +52,13 @@ module.exports = __webpack_require__(2073);
 
 /***/ }),
 
+/***/ 7302:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(2856);
+
+/***/ }),
+
 /***/ 2762:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -623,6 +630,17 @@ module.exports = entryVirtual('Array').slice;
 
 /***/ }),
 
+/***/ 2948:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(4115);
+var entryVirtual = __webpack_require__(5703);
+
+module.exports = entryVirtual('Array').sort;
+
+
+/***/ }),
+
 /***/ 8209:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -721,6 +739,22 @@ var ArrayPrototype = Array.prototype;
 module.exports = function (it) {
   var own = it.slice;
   return it === ArrayPrototype || (isPrototypeOf(ArrayPrototype, it) && own === ArrayPrototype.slice) ? method : own;
+};
+
+
+/***/ }),
+
+/***/ 9355:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var isPrototypeOf = __webpack_require__(7046);
+var method = __webpack_require__(2948);
+
+var ArrayPrototype = Array.prototype;
+
+module.exports = function (it) {
+  var own = it.sort;
+  return it === ArrayPrototype || (isPrototypeOf(ArrayPrototype, it) && own === ArrayPrototype.sort) ? method : own;
 };
 
 
@@ -1363,6 +1397,24 @@ module.exports = function (METHOD_NAME) {
 
 /***/ }),
 
+/***/ 4194:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var fails = __webpack_require__(5981);
+
+module.exports = function (METHOD_NAME, argument) {
+  var method = [][METHOD_NAME];
+  return !!method && fails(function () {
+    // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
+    method.call(null, argument || function () { throw 1; }, 1);
+  });
+};
+
+
+/***/ }),
+
 /***/ 5790:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -1937,10 +1989,32 @@ module.exports = {
 
 /***/ }),
 
+/***/ 4342:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var userAgent = __webpack_require__(2861);
+
+var firefox = userAgent.match(/firefox\/(\d+)/i);
+
+module.exports = !!firefox && +firefox[1];
+
+
+/***/ }),
+
 /***/ 3321:
 /***/ (function(module) {
 
 module.exports = typeof window == 'object';
+
+
+/***/ }),
+
+/***/ 7797:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var UA = __webpack_require__(2861);
+
+module.exports = /MSIE|Trident/.test(UA);
 
 
 /***/ }),
@@ -2027,6 +2101,18 @@ if (!version && userAgent) {
 }
 
 module.exports = version;
+
+
+/***/ }),
+
+/***/ 8938:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var userAgent = __webpack_require__(2861);
+
+var webkit = userAgent.match(/AppleWebKit\/(\d+)\./);
+
+module.exports = !!webkit && +webkit[1];
 
 
 /***/ }),
@@ -5088,6 +5174,119 @@ $({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT }, {
     for (n = 0; k < fin; k++, n++) if (k in O) createProperty(result, n, O[k]);
     result.length = n;
     return result;
+  }
+});
+
+
+/***/ }),
+
+/***/ 4115:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(6887);
+var uncurryThis = __webpack_require__(5329);
+var aCallable = __webpack_require__(4883);
+var toObject = __webpack_require__(9678);
+var lengthOfArrayLike = __webpack_require__(623);
+var toString = __webpack_require__(5803);
+var fails = __webpack_require__(5981);
+var internalSort = __webpack_require__(1388);
+var arrayMethodIsStrict = __webpack_require__(4194);
+var FF = __webpack_require__(4342);
+var IE_OR_EDGE = __webpack_require__(7797);
+var V8 = __webpack_require__(3385);
+var WEBKIT = __webpack_require__(8938);
+
+var test = [];
+var un$Sort = uncurryThis(test.sort);
+var push = uncurryThis(test.push);
+
+// IE8-
+var FAILS_ON_UNDEFINED = fails(function () {
+  test.sort(undefined);
+});
+// V8 bug
+var FAILS_ON_NULL = fails(function () {
+  test.sort(null);
+});
+// Old WebKit
+var STRICT_METHOD = arrayMethodIsStrict('sort');
+
+var STABLE_SORT = !fails(function () {
+  // feature detection can be too slow, so check engines versions
+  if (V8) return V8 < 70;
+  if (FF && FF > 3) return;
+  if (IE_OR_EDGE) return true;
+  if (WEBKIT) return WEBKIT < 603;
+
+  var result = '';
+  var code, chr, value, index;
+
+  // generate an array with more 512 elements (Chakra and old V8 fails only in this case)
+  for (code = 65; code < 76; code++) {
+    chr = String.fromCharCode(code);
+
+    switch (code) {
+      case 66: case 69: case 70: case 72: value = 3; break;
+      case 68: case 71: value = 4; break;
+      default: value = 2;
+    }
+
+    for (index = 0; index < 47; index++) {
+      test.push({ k: chr + index, v: value });
+    }
+  }
+
+  test.sort(function (a, b) { return b.v - a.v; });
+
+  for (index = 0; index < test.length; index++) {
+    chr = test[index].k.charAt(0);
+    if (result.charAt(result.length - 1) !== chr) result += chr;
+  }
+
+  return result !== 'DGBEFHACIJK';
+});
+
+var FORCED = FAILS_ON_UNDEFINED || !FAILS_ON_NULL || !STRICT_METHOD || !STABLE_SORT;
+
+var getSortCompare = function (comparefn) {
+  return function (x, y) {
+    if (y === undefined) return -1;
+    if (x === undefined) return 1;
+    if (comparefn !== undefined) return +comparefn(x, y) || 0;
+    return toString(x) > toString(y) ? 1 : -1;
+  };
+};
+
+// `Array.prototype.sort` method
+// https://tc39.es/ecma262/#sec-array.prototype.sort
+$({ target: 'Array', proto: true, forced: FORCED }, {
+  sort: function sort(comparefn) {
+    if (comparefn !== undefined) aCallable(comparefn);
+
+    var array = toObject(this);
+
+    if (STABLE_SORT) return comparefn === undefined ? un$Sort(array) : un$Sort(array, comparefn);
+
+    var items = [];
+    var arrayLength = lengthOfArrayLike(array);
+    var itemsLength, index;
+
+    for (index = 0; index < arrayLength; index++) {
+      if (index in array) push(items, array[index]);
+    }
+
+    internalSort(items, getSortCompare(comparefn));
+
+    itemsLength = items.length;
+    index = 0;
+
+    while (index < itemsLength) array[index] = items[index++];
+    while (index < arrayLength) delete array[index++];
+
+    return array;
   }
 });
 
@@ -8184,6 +8383,16 @@ module.exports = parent;
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var parent = __webpack_require__(9601);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 2856:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(9355);
 
 module.exports = parent;
 
@@ -40822,8 +41031,13 @@ function _slicedToArray(arr, i) {
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/fill.js
 var instance_fill = __webpack_require__(4494);
 var fill_default = /*#__PURE__*/__webpack_require__.n(instance_fill);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/sort.js
+var sort = __webpack_require__(7302);
+var sort_default = /*#__PURE__*/__webpack_require__.n(sort);
 ;// CONCATENATED MODULE: ./src/js/consts.js
-var _context;
+var _context, _context2, _context3;
+
+
 
 
 
@@ -41212,7 +41426,9 @@ var defaultResizePixelValues = {
   max: 4088,
   value: 800
 };
-var commonFonts = ['Alef', 'Alegreya', 'Alegreya Sans', 'Allerta Stencil', 'Anonymous Pro', 'Archivo Narrow', 'Arvo', 'Audiowide', 'ITC Avant Garde Gothic', 'AvenirLTStd65Medium', 'AvenirLTStd45Book', 'AvenirLTStd55Roman', 'Barlow', 'Bitter', 'Bryndan Write', 'Bungee', 'Bungee Inline', 'Bungee Shade', 'Cabin', 'Cardo', 'Caveat', 'Caveat Brush', 'cheeseusaceu', 'Chivo', 'Codystar', 'Cormorant', 'Covered By Your Grace', 'OpenSans', 'Creepster', 'Crimson Text', 'DMSans', 'Domine', 'Eczar', 'EmbossingTape1BRK', 'EmbossingTape2BRK', 'EmbossingTape3BRK', 'Eraser', 'Ewert', 'Faster One', 'Fira Sans', 'Gochi Hand', 'Hammersmith One', 'Heebo', 'Homemade Apple', 'Inconsolata', 'Inknut Antiqua', 'Inter', 'Just Me Again Down Here', 'Karla', 'Kranky', 'Krub', 'Lato', 'Libre Baskerville', 'Libre Franklin', 'Londrina Outline', 'Londrina Shadow', 'Lora', 'Lovedbythe King', 'Megrim', 'Merriweather', 'Monoton', 'Montserrat', 'Montserrat Subrayada', 'Motorway', 'Mountainsof Christmas', 'Neuton', 'Nosifer', 'Nothing You Could Do', 'NotoSans', 'NotoSansSC', 'OpenSans', 'Oswald', 'Patrick HandSC', 'Permanent Marker', 'Playfair Display', 'Poppins', 'Prompt', 'Proza Libre', 'PT Sans', 'PT Serif', 'Raleway', 'Raleway Dots', 'Ransom Note', 'Reenie Beanie', 'Rock Salt', 'Roboto', 'Roboto Slab', 'Rye', 'Sriracha', 'Sriracha Cyrillic', 'Source Sans Pro', 'Source Serif Pro', 'SpaceMono', 'Spectral', 'Tangerine', 'TimesNewRoman', 'VastShadow', 'Waiting for the Sunrise', 'Work Sans', 'Yeon Sung'];
+var googleFonts = ['Alef', 'Alegreya', 'Alegreya Sans', 'Allerta Stencil', 'Anonymous Pro', 'Archivo Narrow', 'Arvo', 'Audiowide', 'Barlow', 'Bitter', 'Bungee', 'Bungee Inline', 'Bungee Shade', 'Cabin', 'Cardo', 'Caveat', 'Caveat Brush', 'cheeseusaceu', 'Chivo', 'Codystar', 'Cormorant', 'Covered By Your Grace', 'OpenSans', 'Creepster', 'Crimson Text', 'DM Sans', 'Domine', 'Eczar', 'EB Garamond', 'Eraser', 'Ewert', 'Faster One', 'Fira Sans', 'Gochi Hand', 'Hammersmith One', 'Heebo', 'Homemade Apple', 'Inconsolata', 'Inknut Antiqua', 'Inter', 'Just Me Again Down Here', 'Karla', 'Kranky', 'Krub', 'Lato', 'Libre Baskerville', 'Libre Franklin', 'Londrina Outline', 'Londrina Shadow', 'Lora', 'Loved by the King', 'Megrim', 'Merriweather', 'Monoton', 'Montserrat', 'Montserrat Subrayada', 'Motorway', 'Mountains of Christmas', 'Neuton', 'Nosifer', 'Nothing You Could Do', 'Noto Sans', 'Noto Sans SC', 'Open Sans', 'Oswald', 'Patrick Hand SC', 'Permanent Marker', 'Playfair Display', 'Poppins', 'Prompt', 'Proza Libre', 'PT Sans', 'PT Serif', 'Raleway', 'Raleway Dots', 'Reenie Beanie', 'Rock Salt', 'Roboto', 'Roboto Slab', 'Rye', 'Sriracha', 'Source Sans Pro', 'Space Mono', 'Spectral', 'Tangerine', 'Vast Shadow', 'Waiting for the Sunrise', 'Work Sans', 'Yeon Sung']; // We need this to load default font without fetch them from Google Font
+
+var displayFonts = sort_default()(_context2 = concat_default()(_context3 = slice_default()(googleFonts).call(googleFonts)).call(_context3, 'Times New Roman')).call(_context2);
 ;// CONCATENATED MODULE: ./src/js/util.js
 
 
@@ -45196,7 +45412,7 @@ var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context10, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <select class=\"tie-font-family-select\">\n                ")).call(_context9, map_default()(commonFonts).call(commonFonts, function (fontName) {
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context10, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <select class=\"tie-font-family-select\">\n                ")).call(_context9, map_default()(displayFonts).call(displayFonts, function (fontName) {
     var _context15, _context16;
 
     return concat_default()(_context15 = concat_default()(_context16 = "<option style=\"font-family: ".concat(fontName, "\" value=\"")).call(_context16, fontName, "\">")).call(_context15, fontName, "</option>");
@@ -62848,13 +63064,12 @@ var fonts_context;
 
 
 var step = 20;
-var actions = Math.ceil(commonFonts.length / step);
+var actions = Math.ceil(googleFonts.length / step);
 
 fill_default()(fonts_context = Array(actions)).call(fonts_context, 1).forEach(function (_, index) {
-  console.log(index);
   webfontloader.load({
     google: {
-      families: slice_default()(commonFonts).call(commonFonts, index * step, index * step + step)
+      families: slice_default()(googleFonts).call(googleFonts, index * step, index * step + step)
     }
   });
 });
