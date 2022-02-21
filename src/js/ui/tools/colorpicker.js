@@ -28,7 +28,7 @@ const PICKER_COLOR = [
 class Colorpicker {
   constructor(
     colorpickerElement,
-    { defaultColor = '#7e7e7e', toggleDirection = 'up', usageStatistics }
+    { defaultColor = '#000000', toggleDirection = 'up', usageStatistics }
   ) {
     this.colorpickerElement = colorpickerElement;
     this.usageStatistics = usageStatistics;

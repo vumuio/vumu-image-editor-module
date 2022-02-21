@@ -32,7 +32,7 @@ class Text extends Submenu {
       textFontFamly: this.selector('.tie-font-family-select'),
       textAlignButton: this.selector('.tie-text-align-button'),
       textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
-        defaultColor: '#ffbb3b',
+        defaultColor: '#000000',
         toggleDirection: this.toggleDirection,
         usageStatistics: this.usageStatistics,
       }),

@@ -1,4 +1,4 @@
-import { commonFonts } from '@/consts';
+import { displayFonts } from '@/consts';
 
 /**
  * @param {Object} submenuInfo - submenu info for make template
@@ -35,8 +35,11 @@ export default ({ locale, makeSvgIcon }) => `
           <div class="tie-font-family-container">
             <svg width="7" height="6" viewBox="0 0 7 6" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M7 0.5H0L3.5 5.5L7 0.5Z" fill="#C4C4C4"/></svg>
             <select class="tie-font-family-select">
-                ${commonFonts
-                  .map((fontName) => `<option value="${fontName}">${fontName}</option>`)
+                ${displayFonts
+                  .map(
+                    (fontName) =>
+                      `<option style="font-family: ${fontName}" value="${fontName}">${fontName}</option>`
+                  )
                   .join('')}
             </select>
           </div>
