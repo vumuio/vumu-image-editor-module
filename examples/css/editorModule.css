@@ -360,11 +360,13 @@ ul.tui-image-editor-submenu-item {
   /*margin-top: -40px;*/
   position: relative;
 }
-.tui-image-editor-container .tui-image-editor-main {
+.editor-area{
+  width: 100%;
   display: flex;
   align-items: center;
+}
+.tui-image-editor-container .tui-image-editor-main {
   padding: 60px 64px 0 0;
-  width: 100%;
 }
 
 .tui-image-editor-submenu {
@@ -454,6 +456,24 @@ main.ant-layout-content > div {
 }
 .tui-image-editor-container{
   min-height: 800px;
+}
+.breadcrumbs-area {
+  width: 100%;
+  position: sticky;
+  top: -1px;
+  z-index: 1;
+  background: #fff;
+}
+.buttons-area{
+  margin-left: auto !important;
+}
+.buttons-area .btn-primary {
+  height: 40px;
+  width: auto;
+  padding: 0 23px;
+}
+.buttons-area .btn-primary img {
+  margin-left: 6px;
 }
 @media (max-width: 1200px) {
   .tui-image-editor-controls {
