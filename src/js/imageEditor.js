@@ -17,6 +17,7 @@ import {
   keyCodes,
   rejectMessages,
   OBJ_TYPE,
+  fObjectOptions,
 } from '@/consts';
 
 const { isUndefined, forEach, CustomEvents } = snippet;
@@ -39,7 +40,7 @@ const {
   SELECTION_CLEARED,
   SELECTION_CREATED,
   ADD_OBJECT_AFTER,
-  ADD_LABEL,
+  ADD_NEW_TEXT,
   ADD_IMAGE,
   SAVE_AS_TEMPLATE,
   LOAD_BACKGROUND,
@@ -179,7 +180,7 @@ class ImageEditor {
     );
 
     this.mode = null;
-    this.fontFamily = 'Noto Sans';
+    this.fontFamily = 'Alef';
     this.activeObjectId = null;
 
     /**
@@ -235,7 +236,6 @@ class ImageEditor {
       iconCreateEnd: this._onIconCreateEnd.bind(this),
       selectionCleared: this._selectionCleared.bind(this),
       selectionCreated: this._selectionCreated.bind(this),
-      addLabel: this._onAddLabel.bind(this),
     };
 
     this._attachInvokerEvents();
@@ -495,7 +495,7 @@ class ImageEditor {
    * @param {ObjectProps} props - object properties
    * @private
    */
-  _onObjectActivated(props) {
+  _onObjectActivated(props, event) {
     /**
      * The event when object is selected(aka activated).
      * @event ImageEditor#objectActivated
@@ -507,7 +507,7 @@ class ImageEditor {
      *     console.log(props.id);
      * });
      */
-    this.fire(events.OBJECT_ACTIVATED, props);
+    this.fire(events.OBJECT_ACTIVATED, props, event);
   }
 
   /**
@@ -649,7 +649,7 @@ class ImageEditor {
    */
   _initHistory() {
     if (this.ui) {
-      this.ui.initHistory();
+      // this.ui.initHistory();
     }
   }
 
@@ -658,7 +658,7 @@ class ImageEditor {
    */
   _clearHistory() {
     if (this.ui) {
-      this.ui.clearHistory();
+      // this.ui.clearHistory();
     }
   }
 
@@ -1381,8 +1381,27 @@ k   * @param {number} id - object id
     this.fire(ADD_IMAGE, file);
   }
 
-  _onAddLabel() {
-    this.fire(ADD_LABEL);
+  async _onAddNewText() {
+    const { textColor: fill, fontSize, fontStyle, fontWeight, underline } = this.ui.text;
+    const { fontFamily } = this;
+    const canvas = this.getCanvasInstance();
+    await this.addText('Double Click', {
+      styles: { fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
+    }).then((newText) => {
+      const { left, top, width, height } = newText;
+      const activeObj = canvas.getActiveObject();
+      activeObj.set({
+        left: left - Math.floor(width / 2),
+        top: top - Math.floor(height / 2),
+      });
+      const selection = new fabric.ActiveSelection([activeObj], {
+        canvas,
+        ...fObjectOptions.SELECTION_STYLE,
+      });
+      canvas.setActiveObject(selection);
+      canvas.requestRenderAll();
+      this.fire(ADD_NEW_TEXT, newText);
+    });
   }
 
   _onSaveAsTemplate() {
@@ -1812,7 +1831,6 @@ k   * @param {number} id - object id
   getObjectPosition(id, originX, originY) {
     return this._graphics.getObjectPosition(id, originX, originY);
   }
-
   /**
    * Set object position  by originX, originY
    * @param {number} id - object id
@@ -1868,6 +1886,79 @@ k   * @param {number} id - object id
    */
   resize(dimensions) {
     return this.execute(commands.RESIZE_IMAGE, dimensions);
+  }
+  bringForward() {
+    const canvas = this._graphics.getCanvas();
+    const myObject = canvas.getActiveObject();
+    canvas.bringForward(myObject);
+    canvas.renderAll();
+  }
+  sendBackwards() {
+    const canvas = this._graphics.getCanvas();
+    const myObject = canvas.getActiveObject();
+    canvas.sendBackwards(myObject);
+    canvas.renderAll();
+  }
+  sendToBack() {
+    const canvas = this._graphics.getCanvas();
+    const myObject = canvas.getActiveObject();
+    canvas.sendToBack(myObject);
+    canvas.renderAll();
+  }
+  bringToFront() {
+    const canvas = this._graphics.getCanvas();
+    const myObject = canvas.getActiveObject();
+    canvas.bringToFront(myObject);
+    canvas.renderAll();
+  }
+
+  dupplicateObject() {
+    const canvas = this._graphics.getCanvas();
+    const activeObj = canvas.getActiveObject();
+    activeObj.clone((clonedObj) => {
+      canvas.discardActiveObject();
+      clonedObj.set({
+        left: clonedObj.left + 20,
+        top: clonedObj.top + 20,
+        evented: true,
+      });
+      // this only support text obj rightnow
+      const {
+        fill,
+        fontFamily,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        textAlign,
+        textDecoration,
+        left,
+        top,
+        autofocus,
+        text,
+      } = clonedObj;
+      this.addText(text, {
+        styles: {
+          fill,
+          fontFamily,
+          fontSize,
+          fontStyle,
+          fontWeight,
+          textAlign,
+          textDecoration,
+        },
+        position: {
+          x: left,
+          y: top,
+        },
+        autofocus,
+      });
+    });
+    const newObj = canvas.getActiveObject();
+    const selection = new fabric.ActiveSelection([newObj], {
+      canvas,
+      ...fObjectOptions.SELECTION_STYLE,
+    });
+    canvas.setActiveObject(selection);
   }
 }
 

@@ -1,9 +1,9 @@
 import snippet from 'tui-code-snippet';
 import { getSelector, assignmentForDestroy, cls, getHistoryTitle, isSilentCommand } from '@/util';
 import {
-  ZOOM_HELP_MENUS,
+  // ZOOM_HELP_MENUS,
   COMMAND_HELP_MENUS,
-  DELETE_HELP_MENUS,
+  // DELETE_HELP_MENUS,
   eventNames,
   HELP_MENUS,
 } from '@/consts';
@@ -23,7 +23,7 @@ import Logo from '@/ui/logo';
 import Icon from '@/ui/icon';
 import Draw from '@/ui/draw';
 import Filter from '@/ui/filter';
-import History from '@/ui/history';
+// import History from '@/ui/history';
 import Locale from '@/ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
@@ -44,8 +44,8 @@ const SUB_UI_COMPONENT = {
 const { CustomEvents } = snippet;
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
-const HISTORY_MENU = 'history';
-const HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
+// const HISTORY_MENU = 'history';
+// const HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
 
 const CLASS_NAME_ON = 'on';
 const ZOOM_BUTTON_TYPE = {
@@ -91,8 +91,8 @@ class Ui {
 
     this._makeSubMenu();
 
-    this._attachHistoryEvent();
-    this._attachZoomEvent();
+    // this._attachHistoryEvent();
+    // this._attachZoomEvent();
   }
 
   /**
@@ -320,23 +320,23 @@ class Ui {
    * Attach history event
    * @private
    */
-  _attachHistoryEvent() {
-    this.on(eventNames.EXECUTE_COMMAND, this._addHistory.bind(this));
-    this.on(eventNames.AFTER_UNDO, this._selectPrevHistory.bind(this));
-    this.on(eventNames.AFTER_REDO, this._selectNextHistory.bind(this));
-  }
+  // _attachHistoryEvent() {
+  //   this.on(eventNames.EXECUTE_COMMAND, this._addHistory.bind(this));
+  //   this.on(eventNames.AFTER_UNDO, this._selectPrevHistory.bind(this));
+  //   this.on(eventNames.AFTER_REDO, this._selectNextHistory.bind(this));
+  // }
 
   /**
    * Attach zoom event
    * @private
    */
-  _attachZoomEvent() {
-    this.on(eventNames.HAND_STARTED, () => {
-      this.offZoomInButtonStatus();
-      this.changeHandButtonStatus(true);
-    });
-    this.on(eventNames.HAND_STOPPED, () => this.changeHandButtonStatus(false));
-  }
+  // _attachZoomEvent() {
+  //   this.on(eventNames.HAND_STARTED, () => {
+  //     this.offZoomInButtonStatus();
+  //     this.changeHandButtonStatus(true);
+  //   });
+  //   this.on(eventNames.HAND_STOPPED, () => this.changeHandButtonStatus(false));
+  // }
 
   /**
    * Make primary ui dom element
@@ -386,33 +386,29 @@ class Ui {
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
       saveAsTemplate: this._selectedElement.querySelectorAll('.tui-save-as-template-btn'),
-      bringForward: this._selectedElement.querySelectorAll('.tie-btn-bringForward'),
-      sendBackwards: this._selectedElement.querySelectorAll('.tie-btn-sendBackwards'),
-      sendToBack: this._selectedElement.querySelectorAll('.tie-btn-sendToBack'),
-      bringToFront: this._selectedElement.querySelectorAll('.tie-btn-bringToFront'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
       save: this._selectedElement.querySelectorAll('.tui-image-editor-save-btn'),
     };
 
     this._addHelpMenus();
 
-    this._historyMenu = new History(this._buttonElements[HISTORY_MENU], {
-      locale: this._locale,
-      makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
-    });
+    // this._historyMenu = new History(this._buttonElements[HISTORY_MENU], {
+    //   locale: this._locale,
+    //   makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
+    // });
 
-    this._activateZoomMenus();
+    // this._activateZoomMenus();
   }
 
   /**
    * Activate help menus for zoom.
    * @private
    */
-  _activateZoomMenus() {
-    snippet.forEach(ZOOM_HELP_MENUS, (menu) => {
-      this.changeHelpButtonEnabled(menu, true);
-    });
-  }
+  // _activateZoomMenus() {
+  //   snippet.forEach(ZOOM_HELP_MENUS, (menu) => {
+  //     this.changeHelpButtonEnabled(menu, true);
+  //   });
+  // }
 
   /**
    * make array for help menu output, including partitions.
@@ -420,7 +416,11 @@ class Ui {
    * @private
    */
   _makeHelpMenuWithPartition() {
-    return [...ZOOM_HELP_MENUS, '', ...COMMAND_HELP_MENUS, '', ...DELETE_HELP_MENUS];
+    return [
+      // ...ZOOM_HELP_MENUS, '',
+      ...COMMAND_HELP_MENUS,
+      //  '', ...DELETE_HELP_MENUS
+    ];
   }
 
   /**
@@ -504,59 +504,58 @@ class Ui {
    * Add history
    * @param {Command|string} command - command or command name
    */
-  _addHistory(command) {
-    if (!isSilentCommand(command)) {
-      const historyTitle =
-        typeof command === 'string' ? { name: command } : getHistoryTitle(command);
-
-      this._historyMenu.add(historyTitle);
-    }
-  }
+  // _addHistory(command) {
+  // if (!isSilentCommand(command)) {
+  //   const historyTitle =
+  //     typeof command === 'string' ? { name: command } : getHistoryTitle(command);
+  //   this._historyMenu.add(historyTitle);
+  // }
+  // }
 
   /**
    * Init history
    */
-  initHistory() {
-    this._historyMenu.init();
-  }
+  // initHistory() {
+  //   this._historyMenu.init();
+  // }
 
   /**
    * Clear history
    */
-  clearHistory() {
-    this._historyMenu.clear();
-  }
+  // clearHistory() {
+  //   this._historyMenu.clear();
+  // }
 
   /**
    * Select prev history
    */
-  _selectPrevHistory() {
-    this._historyMenu.prev();
-  }
+  // _selectPrevHistory() {
+  //   this._historyMenu.prev();
+  // }
 
   /**
    * Select next history
    */
-  _selectNextHistory() {
-    this._historyMenu.next();
-  }
+  // _selectNextHistory() {
+  //   this._historyMenu.next();
+  // }
 
   /**
    * Toggle history menu
    * @param {object} event - event object
    */
-  toggleHistoryMenu(event) {
-    const { target } = event;
-    const item = target.closest(`.${HISTORY_PANEL_CLASS_NAME}`);
+  // toggleHistoryMenu(event) {
+  //   const { target } = event;
+  //   const item = target.closest(`.${HISTORY_PANEL_CLASS_NAME}`);
 
-    if (item) {
-      return;
-    }
+  //   if (item) {
+  //     return;
+  //   }
 
-    const historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
+  //   const historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
 
-    historyButtonClassList.toggle('opened');
-  }
+  //   historyButtonClassList.toggle('opened');
+  // }
 
   /**
    * Add attribute for menu tooltip
@@ -713,7 +712,7 @@ class Ui {
     this._addSaveEvent();
     this._addMenuEvent();
     this._initMenu();
-    this._historyMenu.addEvent(this._actions.history);
+    // this._historyMenu.addEvent(this._actions.history);
     this._initMenuEvent = true;
   }
 
@@ -728,7 +727,7 @@ class Ui {
     this._removeLoadEvent();
     this._removeSaveEvent();
     this._removeMainMenuEvent();
-    this._historyMenu.removeEvent();
+    // this._historyMenu.removeEvent();
   }
 
   /**
@@ -740,7 +739,7 @@ class Ui {
       this[menuName].destroy();
     });
 
-    this._historyMenu.destroy();
+    // this._historyMenu.destroy();
   }
 
   /**

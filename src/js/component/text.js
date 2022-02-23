@@ -108,7 +108,7 @@ class Text extends Component {
     canvas.selection = false;
     canvas.defaultCursor = 'text';
     canvas.on({
-      'mouse:down': this._listeners.mousedown,
+      // 'mouse:down': this._listeners.mousedown,
       'selection:created': this._listeners.select,
       'selection:updated': this._listeners.select,
       'before:selection:cleared': this._listeners.selectClear,
@@ -145,7 +145,7 @@ class Text extends Component {
     });
 
     canvas.off({
-      'mouse:down': this._listeners.mousedown,
+      // 'mouse:down': this._listeners.mousedown,
       'selection:created': this._listeners.select,
       'selection:updated': this._listeners.select,
       'before:selection:cleared': this._listeners.selectClear,

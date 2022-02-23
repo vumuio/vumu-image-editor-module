@@ -1198,7 +1198,7 @@ class Graphics {
   _onObjectEndMove(fEvent) {
     this._lazyFire(
       events.OBJECT_END_MOVE,
-      (object) => this.createObjectProperties(object),
+      (object) => [this.createObjectProperties(object), fEvent],
       fEvent.target
     );
   }
@@ -1276,7 +1276,7 @@ class Graphics {
     const { target } = fEvent;
     const params = this.createObjectProperties(target);
 
-    this.fire(events.OBJECT_ACTIVATED, params);
+    this.fire(events.OBJECT_ACTIVATED, params, fEvent);
   }
 
   /**
@@ -1318,7 +1318,7 @@ class Graphics {
     const { target } = fEvent;
     const params = this.createObjectProperties(target);
 
-    this.fire(events.OBJECT_ACTIVATED, params);
+    this.fire(events.OBJECT_ACTIVATED, params, fEvent);
     this.fire(events.SELECTION_CREATED, fEvent.target);
   }
 

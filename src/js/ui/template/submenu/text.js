@@ -82,7 +82,7 @@ export default ({ locale, makeSvgIcon }) => `
             <div></div>
         </li>
         <li>
-            <button class="tie-add-label-button">Add Labels</button>
+            <button class="tie-add-new-text-button">Add New Text</button>
         </li>
     </ul>
 `;
