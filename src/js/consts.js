@@ -96,8 +96,8 @@ export const componentNames = keyMirror(
  * @type {Object}
  */
 export const SHAPE_DEFAULT_OPTIONS = {
-  lockSkewingX: true,
-  lockSkewingY: true,
+  lockSkewingX: false,
+  lockSkewingY: false,
   bringForward: true,
   sendToBack: true,
   bringToFront: true,
@@ -113,8 +113,8 @@ export const CROPZONE_DEFAULT_OPTIONS = {
   hasBorders: false,
   lockScalingFlip: true,
   lockRotation: true,
-  lockSkewingX: true,
-  lockSkewingY: true,
+  lockSkewingX: false,
+  lockSkewingY: false,
 };
 
 /**
@@ -365,6 +365,12 @@ export const defaultTextRangeValues = {
   min: 10,
   max: 100,
   value: 50,
+};
+export const defaultSkewRangeValues = {
+  realTimeEvent: true,
+  min: -50,
+  max: 50,
+  value: 0,
 };
 
 export const defaultFilterRangeValues = {

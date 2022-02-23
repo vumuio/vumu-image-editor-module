@@ -3,7 +3,12 @@ import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/text';
 import { assignmentForDestroy } from '@/util';
-import { defaultTextRangeValues, eventNames, selectorNames } from '@/consts';
+import {
+  defaultSkewRangeValues,
+  defaultTextRangeValues,
+  eventNames,
+  selectorNames,
+} from '@/consts';
 
 /**
  * Crop ui class
@@ -43,6 +48,20 @@ class Text extends Submenu {
         },
         defaultTextRangeValues
       ),
+      skewX: new Range(
+        {
+          slider: this.selector('.tie-skewx-range'),
+          input: this.selector('.tie-skewx-range-value'),
+        },
+        defaultSkewRangeValues
+      ),
+      skewY: new Range(
+        {
+          slider: this.selector('.tie-skewy-range'),
+          input: this.selector('.tie-skewy-range-value'),
+        },
+        defaultSkewRangeValues
+      ),
     };
 
     this.colorPickerInputBox = this._els.textColorpicker.colorpickerElement.querySelector(
@@ -57,6 +76,8 @@ class Text extends Submenu {
     this._removeEvent();
     this._els.textColorpicker.destroy();
     this._els.textRange.destroy();
+    this._els.skewX.destroy();
+    this._els.skewY.destroy();
 
     assignmentForDestroy(this);
   }
@@ -85,6 +106,8 @@ class Text extends Submenu {
     this._els.textAddLabelButton.addEventListener('click', callAddLabel);
     this._els.textFontFamly.addEventListener('change', setFontFamily);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
+    this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
+    this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this));
     this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
 
     this.colorPickerInputBox.addEventListener(
@@ -156,6 +179,20 @@ class Text extends Submenu {
   }
 
   /**
+   * Set Skew size
+   * @param {Number} value - text size
+   */
+  set skewX(value) {
+    this._els.skewX.value = value;
+  }
+  /**
+   * Set skew size
+   * @param {Number} value - text size
+   */
+  set skewY(value) {
+    this._els.skewY.value = value;
+  }
+  /**
    * Set text size
    * @param {Number} value - text size
    */
@@ -204,12 +241,23 @@ class Text extends Submenu {
   }
 
   setTextStyleStateOnAction(textStyle = {}) {
-    const { fill, fontFamily, fontSize, fontStyle, fontWeight, textDecoration, textAlign } =
-      textStyle;
-
+    const {
+      fill,
+      fontFamily,
+      fontSize,
+      fontStyle,
+      fontWeight,
+      textDecoration,
+      textAlign,
+      skewX,
+      skewY,
+    } = textStyle;
+    console.log({ textStyle });
     this.textColor = fill;
     this.fontSize = fontSize;
     this.fontFamily = fontFamily;
+    this.skewX = skewX || 0;
+    this.skewY = skewY || 0;
     this.setEffectState('italic', fontStyle);
     this.setEffectState('bold', fontWeight);
     this.setEffectState('underline', textDecoration);
@@ -289,6 +337,28 @@ class Text extends Submenu {
       },
       !isLast
     );
+  }
+  /**
+   * text align set handler
+   * @param {number} value - range value
+   * @param {boolean} isLast - Is last change
+   * @private
+   */
+  _changeSkewXRangeHandler(value, isLast) {
+    this.actions.changeTextStyle({
+      skewX: value,
+    });
+  }
+  /**
+   * text align set handler
+   * @param {number} value - range value
+   * @param {boolean} isLast - Is last change
+   * @private
+   */
+  _changeSkewYRangeHandler(value, isLast) {
+    this.actions.changeTextStyle({
+      skewY: value,
+    });
   }
 
   /**

@@ -18,6 +18,8 @@ const resetStyles = {
   fontWeight: 'normal',
   textAlign: 'tie-text-align-left',
   underline: false,
+  skewX: 0,
+  skewY: 0,
 };
 const DBCLICK_TIME = 500;
 
@@ -268,7 +270,8 @@ class Text extends Component {
       snippet.forEach(
         styleObj,
         (val, key) => {
-          if (activeObj[key] === val && key !== 'fontSize') {
+          if (activeObj[key] === val && !['fontSize', 'skewX', 'skewY'].includes(key)) {
+            console.log('other than skew, fontSize', key, styleObj, val);
             styleObj[key] = resetStyles[key] || '';
           }
         },
