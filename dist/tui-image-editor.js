@@ -50109,9 +50109,6 @@ var ImageTracer = /*#__PURE__*/function () {
         _this._onSaveAndNext();
       },
       preview: function preview() {
-        // const canvas = this._graphics.getCanvas();
-        // console.log(canvas.toDataURL());
-        // document.getElementById('banner').src = canvas.toDataURL();
         _this._previewImage();
       },
       // history: (event) => {
