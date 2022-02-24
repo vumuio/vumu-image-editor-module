@@ -44,9 +44,9 @@
 }
 
 .tui-image-editor-container
-  .tui-image-editor-wrap
-  .tui-image-editor-size-wrap
-  .tui-image-editor-align-wrap {
+.tui-image-editor-wrap
+.tui-image-editor-size-wrap
+.tui-image-editor-align-wrap {
   width: 72%;
   vertical-align: top;
   position: relative;
@@ -595,4 +595,19 @@ main.ant-layout-content > div {
 }
 .tui-image-editor-submenu-style {
   display: none !important;
+}
+li.tie-text-effect-button .active svg use {
+  stroke: #0057ff !important;
+  fill: #0057ff !important;
+}
+li.tie-text-effect-button .active label,
+.tui-image-editor-container .tui-image-editor-virtual-range-pointer{
+  color: #0057ff !important;
+}
+.tui-image-editor-container .tui-image-editor-virtual-range-subbar,
+.tui-image-editor-container .tui-image-editor-virtual-range-pointer{
+  background: #0057ff !important;
+}
+.tui-image-editor-container .tui-colorpicker-palette-preview{
+  font-size: 0;
 }
