@@ -21,7 +21,7 @@ export const ZOOM_HELP_MENUS = [
  * Help features for command
  * @type {Array.<string>}
  */
-export const COMMAND_HELP_MENUS = ['undo', 'redo'];
+export const COMMAND_HELP_MENUS = ['undo', 'redo', 'preview'];
 
 /**
  * Help features for delete
@@ -196,6 +196,7 @@ export const eventNames = {
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext',
   ADD_IMAGE: 'addImage',
+  PREVIEW_IMAGE: 'previewImage',
 };
 
 /**

@@ -45,6 +45,7 @@ const {
   SAVE_AS_TEMPLATE,
   LOAD_BACKGROUND,
   SAVE_AND_NEXT,
+  PREVIEW_IMAGE,
 } = events;
 
 /**
@@ -1414,6 +1415,9 @@ k   * @param {number} id - object id
 
   _onSaveAndNext() {
     this.fire(SAVE_AND_NEXT);
+  }
+  _previewImage() {
+    this.fire(PREVIEW_IMAGE);
   }
 
   /**

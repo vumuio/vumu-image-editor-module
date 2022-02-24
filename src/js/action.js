@@ -185,6 +185,12 @@ export default {
         save: () => {
           this._onSaveAndNext();
         },
+        preview: () => {
+          // const canvas = this._graphics.getCanvas();
+          // console.log(canvas.toDataURL());
+          // document.getElementById('banner').src = canvas.toDataURL();
+          this._previewImage();
+        },
         // history: (event) => {
         //   this.ui.toggleHistoryMenu(event);
         // },

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;400;500;600;700;900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;400;500;600;700;900&display=swap');
 
 * {
   box-sizing: border-box;
@@ -43,7 +43,10 @@
   height: calc(100% - 110px);
 }
 
-.tui-image-editor-container .tui-image-editor-wrap .tui-image-editor-size-wrap .tui-image-editor-align-wrap {
+.tui-image-editor-container
+  .tui-image-editor-wrap
+  .tui-image-editor-size-wrap
+  .tui-image-editor-align-wrap {
   width: 72%;
   vertical-align: top;
   position: relative;
@@ -273,13 +276,13 @@ body {
   height: 16px;
   position: absolute;
   font-size: 20px;
-  content: ">";
+  content: '>';
   right: -26px;
   top: -3px;
 }
 
 .breadcrumbs li:last-child::after {
-  content: "";
+  content: '';
 }
 
 .breadcrumbs a {
@@ -474,14 +477,6 @@ main.ant-layout-content > div {
   overflow: inherit !important;
 }
 
-.breadcrumbs-area {
-  width: 100%;
-  position: sticky;
-  top: -1px;
-  z-index: 1;
-  background: #fff;
-}
-
 .buttons-area {
   margin-left: auto !important;
 }
@@ -604,17 +599,17 @@ main.ant-layout-content > div {
 }
 
 .tie-btn-sendBackwards {
-  background: url("../img/backward.png") no-repeat center center;
+  background: url('../img/backward.png') no-repeat center center;
 }
 
 .tie-btn-bringForward {
-  background: url("../img/forward.png") no-repeat center center;
+  background: url('../img/forward.png') no-repeat center center;
 }
 
 .tie-btn-sendToBack {
-  background: url("../img/backward-all.png") no-repeat center center;
+  background: url('../img/backward-all.png') no-repeat center center;
 }
 
 .tie-btn-bringToFront {
-  background: url("../img/forward-all.png") no-repeat center center;
+  background: url('../img/forward-all.png') no-repeat center center;
 }
