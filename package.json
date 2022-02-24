@@ -49,6 +49,7 @@
   "dependencies": {
     "@babel/core": "^7.16.10",
     "fabric": "^4.2.0",
+    "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.5.2",
     "mkdirp": "^1.0.4",
     "svgstore": "*",

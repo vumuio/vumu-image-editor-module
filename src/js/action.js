@@ -1,15 +1,8 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
-import {
-  isSupportFileApi,
-  base64ToBlob,
-  toInteger,
-  isEmptyCropzone,
-  includes,
-  randomString,
-  getNewBorderStyle,
-} from '@/util';
+import { isSupportFileApi, toInteger, isEmptyCropzone, includes, getNewBorderStyle } from '@/util';
 import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
+import _throttle from 'lodash/throttle';
 
 export default {
   /**
@@ -366,7 +359,7 @@ export default {
             this.changeTextStyle(this.activeObjectId, styleObj, isSilent);
           }
         },
-        clickAddNewText: () => this._onAddNewText(),
+        clickAddNewText: _throttle(() => this._onAddNewText(), 1000, { trailing: false }),
       },
       this._commonAction()
     );
