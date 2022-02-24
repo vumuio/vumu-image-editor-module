@@ -597,19 +597,3 @@ main.ant-layout-content > div {
 .tui-image-editor-submenu-style {
   display: none !important;
 }
-
-.tie-btn-sendBackwards {
-  background: url('../img/backward.png') no-repeat center center;
-}
-
-.tie-btn-bringForward {
-  background: url('../img/forward.png') no-repeat center center;
-}
-
-.tie-btn-sendToBack {
-  background: url('../img/backward-all.png') no-repeat center center;
-}
-
-.tie-btn-bringToFront {
-  background: url('../img/forward-all.png') no-repeat center center;
-}
