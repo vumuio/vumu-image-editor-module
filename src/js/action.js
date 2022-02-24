@@ -367,6 +367,7 @@ export default {
           }
         },
         clickAddNewText: () => this._onAddNewText(),
+        clickSelectFallbackLabels: () => this._onSelectFallbackLabels(),
       },
       this._commonAction()
     );

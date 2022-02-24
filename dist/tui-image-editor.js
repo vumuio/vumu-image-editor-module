@@ -45500,7 +45500,7 @@ var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
     var _context15, _context16;
 
     return concat_default()(_context15 = concat_default()(_context16 = "<option style=\"font-family: ".concat(fontName, "\" value=\"")).call(_context16, fontName, "\">")).call(_context15, fontName, "</option>");
-  }).join(''), "\n            </select>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context4, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context3, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context2, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n        </li>\n    </ul>\n");
+  }).join(''), "\n            </select>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context4, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context3, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context2, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-add-fallback-labels-button\">Add Fallback Labels</button>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/text.js
 
@@ -45562,6 +45562,7 @@ var Text = /*#__PURE__*/function (_Submenu) {
       textAddNewTextButton: _this.selector('.tie-add-new-text-button'),
       textFontFamily: _this.selector('.tie-font-family-select'),
       textAlignButton: _this.selector('.tie-text-align-button'),
+      selectFallbacks: _this.selector('.tie-add-fallback-labels-button'),
       textColorpicker: new colorpicker(_this.selector('.tie-text-color'), {
         defaultColor: '#000000',
         toggleDirection: _this.toggleDirection,
@@ -50303,6 +50304,9 @@ var ImageTracer = /*#__PURE__*/function () {
       },
       clickAddNewText: function clickAddNewText() {
         return _this6._onAddNewText();
+      },
+      clickSelectFallbackLabels: function clickSelectFallbackLabels() {
+        return _this6._onSelectFallbackLabels();
       }
     }, this._commonAction());
   },
@@ -59383,6 +59387,7 @@ var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     ADD_NEW_TEXT = eventNames.ADD_NEW_TEXT,
     ADD_IMAGE = eventNames.ADD_IMAGE,
     SAVE_AS_TEMPLATE = eventNames.SAVE_AS_TEMPLATE,
+    SELECT_FALLBACKS = eventNames.SELECT_FALLBACKS,
     LOAD_BACKGROUND = eventNames.LOAD_BACKGROUND,
     SAVE_AND_NEXT = eventNames.SAVE_AND_NEXT,
     PREVIEW_IMAGE = eventNames.PREVIEW_IMAGE;
@@ -60963,6 +60968,11 @@ var ImageEditor = /*#__PURE__*/function () {
     key: "_onSaveAsTemplate",
     value: function _onSaveAsTemplate() {
       this.fire(SAVE_AS_TEMPLATE);
+    }
+  }, {
+    key: "_onSelectFallbackLabels",
+    value: function _onSelectFallbackLabels() {
+      this.fire(SELECT_FALLBACKS);
     }
   }, {
     key: "_onLoadBackground",

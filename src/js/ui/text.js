@@ -31,6 +31,7 @@ class Text extends Submenu {
       textAddNewTextButton: this.selector('.tie-add-new-text-button'),
       textFontFamily: this.selector('.tie-font-family-select'),
       textAlignButton: this.selector('.tie-text-align-button'),
+      selectFallbacks: this.selector('.tie-add-fallback-labels-button'),
       textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
         defaultColor: '#000000',
         toggleDirection: this.toggleDirection,

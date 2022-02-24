@@ -84,5 +84,11 @@ export default ({ locale, makeSvgIcon }) => `
         <li>
             <button class="tie-add-new-text-button">Add New Text</button>
         </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
+        <li>
+            <button class="tie-add-fallback-labels-button">Add Fallback Labels</button>
+        </li>
     </ul>
 `;

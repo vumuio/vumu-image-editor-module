@@ -43,6 +43,7 @@ const {
   ADD_NEW_TEXT,
   ADD_IMAGE,
   SAVE_AS_TEMPLATE,
+  SELECT_FALLBACKS,
   LOAD_BACKGROUND,
   SAVE_AND_NEXT,
   PREVIEW_IMAGE,
@@ -1407,6 +1408,10 @@ k   * @param {number} id - object id
 
   _onSaveAsTemplate() {
     this.fire(SAVE_AS_TEMPLATE);
+  }
+
+  _onSelectFallbackLabels() {
+    this.fire(SELECT_FALLBACKS);
   }
 
   _onLoadBackground(file) {
