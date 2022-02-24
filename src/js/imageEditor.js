@@ -1386,8 +1386,10 @@ k   * @param {number} id - object id
     const { textColor: fill, fontSize, fontStyle, fontWeight, underline } = this.ui.text;
     const { fontFamily } = this;
     const canvas = this.getCanvasInstance();
+    canvas.discardActiveObject();
     await this.addText('Double Click', {
       styles: { fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
+      autofocus: false,
     }).then((newText) => {
       const { left, top, width, height } = newText;
       const activeObj = canvas.getActiveObject();
@@ -1395,11 +1397,6 @@ k   * @param {number} id - object id
         left: left - Math.floor(width / 2),
         top: top - Math.floor(height / 2),
       });
-      const selection = new fabric.ActiveSelection([activeObj], {
-        canvas,
-        ...fObjectOptions.SELECTION_STYLE,
-      });
-      canvas.setActiveObject(selection);
       canvas.requestRenderAll();
       this.fire(ADD_NEW_TEXT, newText);
     });
@@ -1919,6 +1916,7 @@ k   * @param {number} id - object id
   dupplicateObject() {
     const canvas = this._graphics.getCanvas();
     const activeObj = canvas.getActiveObject();
+    canvas.discardActiveObject();
     activeObj.clone((clonedObj) => {
       canvas.discardActiveObject();
       clonedObj.set({
@@ -1954,15 +1952,9 @@ k   * @param {number} id - object id
           x: left,
           y: top,
         },
-        autofocus,
+        autofocus: false,
       });
     });
-    const newObj = canvas.getActiveObject();
-    const selection = new fabric.ActiveSelection([newObj], {
-      canvas,
-      ...fObjectOptions.SELECTION_STYLE,
-    });
-    canvas.setActiveObject(selection);
   }
 }
 
