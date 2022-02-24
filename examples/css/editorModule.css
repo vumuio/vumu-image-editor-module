@@ -44,9 +44,9 @@
 }
 
 .tui-image-editor-container
-.tui-image-editor-wrap
-.tui-image-editor-size-wrap
-.tui-image-editor-align-wrap {
+  .tui-image-editor-wrap
+  .tui-image-editor-size-wrap
+  .tui-image-editor-align-wrap {
   width: 72%;
   vertical-align: top;
   position: relative;
@@ -349,20 +349,6 @@ input.project-title::placeholder {
 
 /* custom buttons ends */
 
-.btn-primary {
-  width: 167px;
-  height: 45px;
-  background: #0057ff;
-  border-radius: 5px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  font-family: Inter;
-  border: none;
-  margin: 0 auto;
-  display: block;
-}
-
 .save-button {
   position: relative;
   width: 100%;
@@ -601,13 +587,13 @@ li.tie-text-effect-button .active svg use {
   fill: #0057ff !important;
 }
 li.tie-text-effect-button .active label,
-.tui-image-editor-container .tui-image-editor-virtual-range-pointer{
+.tui-image-editor-container .tui-image-editor-virtual-range-pointer {
   color: #0057ff !important;
 }
 .tui-image-editor-container .tui-image-editor-virtual-range-subbar,
-.tui-image-editor-container .tui-image-editor-virtual-range-pointer{
+.tui-image-editor-container .tui-image-editor-virtual-range-pointer {
   background: #0057ff !important;
 }
-.tui-image-editor-container .tui-colorpicker-palette-preview{
+.tui-image-editor-container .tui-colorpicker-palette-preview {
   font-size: 0;
 }
