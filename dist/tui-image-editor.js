@@ -42002,6 +42002,7 @@ var eventNames = {
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
   ADD_NEW_TEXT: 'addNewText',
+  ADD_FALLBACK_LABEL: 'addFallbackLabels',
   SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext',
@@ -46214,7 +46215,7 @@ var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
     var _context17, _context18;
 
     return concat_default()(_context17 = concat_default()(_context18 = "<option style=\"font-family: ".concat(fontName, "\" value=\"")).call(_context18, fontName, "\">")).call(_context17, fontName, "</option>");
-  }).join(''), "\n            </select>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context10, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context9, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context4, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context3, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li>\n            <div class=\"font-centered-class\">Font Size</div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context2, locale.localize('Skew X'), "</label> \n            <span class=\"font-centered-class\">X</span>        \n            <div class=\"tie-skewx-range\"></div>\n            <input class=\"tie-skewx-range-value tui-image-editor-range-value\" value=\"0\" />\n           \n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Skew Y'), "</label>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-range\"></div>\n            <input class=\"tie-skewy-range-value tui-image-editor-range-value\" value=\"0\" />\n           \n        </li>\n        <li>\n            <div class=\"font-centered-class\">Skew</div>\n        </li>\n        \n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n        </li>\n    </ul>\n");
+  }).join(''), "\n            </select>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context10, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context9, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context4, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context3, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li>\n            <div class=\"font-centered-class\">Font Size</div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context2, locale.localize('Skew X'), "</label> \n            <span class=\"font-centered-class\">X</span>        \n            <div class=\"tie-skewx-range\"></div>\n            <input class=\"tie-skewx-range-value tui-image-editor-range-value\" value=\"0\" />\n           \n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Skew Y'), "</label>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-range\"></div>\n            <input class=\"tie-skewy-range-value tui-image-editor-range-value\" value=\"0\" />\n           \n        </li>\n        <li>\n            <div class=\"font-centered-class\">Skew</div>\n        </li>\n        \n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-fallback-label\">Add Fallback Labels</button>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/text.js
 
@@ -46274,6 +46275,7 @@ var Text = /*#__PURE__*/function (_Submenu) {
     _this._els = {
       textEffectButton: _this.selector('.tie-text-effect-button'),
       textAddNewTextButton: _this.selector('.tie-add-new-text-button'),
+      addFallbackLabels: _this.selector('.tie-fallback-label'),
       textFontFamily: _this.selector('.tie-font-family-select'),
       textAlignButton: _this.selector('.tie-text-align-button'),
       textColorpicker: new colorpicker(_this.selector('.tie-text-color'), {
@@ -46336,11 +46338,14 @@ var Text = /*#__PURE__*/function (_Submenu) {
 
       var callAddNewText = this._addNewTextHandler.bind(this);
 
+      var callAddFallbackLabels = this._addFallbackLabels.bind(this);
+
       this.eventHandler = {
         setTextEffect: setTextEffect,
         setTextAlign: setTextAlign,
         setFontFamily: setFontFamily,
-        callAddNewText: callAddNewText
+        callAddNewText: callAddNewText,
+        callAddFallbackLabels: callAddFallbackLabels
       };
       this.actions = actions;
 
@@ -46349,6 +46354,8 @@ var Text = /*#__PURE__*/function (_Submenu) {
       this._els.textAlignButton.addEventListener('click', setTextAlign);
 
       this._els.textAddNewTextButton.addEventListener('click', callAddNewText);
+
+      this._els.addFallbackLabels.addEventListener('click', callAddFallbackLabels);
 
       this._els.textFontFamily.addEventListener('change', setFontFamily);
 
@@ -46375,13 +46382,16 @@ var Text = /*#__PURE__*/function (_Submenu) {
           setTextEffect = _this$eventHandler.setTextEffect,
           setTextAlign = _this$eventHandler.setTextAlign,
           setFontFamily = _this$eventHandler.setFontFamily,
-          callAddNewText = _this$eventHandler.callAddNewText;
+          callAddNewText = _this$eventHandler.callAddNewText,
+          callAddFallbackLabels = _this$eventHandler.callAddFallbackLabels;
 
       this._els.textEffectButton.removeEventListener('click', setTextEffect);
 
       this._els.textAlignButton.removeEventListener('click', setTextAlign);
 
       this._els.textAddNewTextButton.removeEventListener('click', callAddNewText);
+
+      this._els.addFallbackLabels.removeEventListener('click', callAddFallbackLabels);
 
       this._els.textFontFamily.removeEventListener('change', setFontFamily);
 
@@ -46681,6 +46691,11 @@ var Text = /*#__PURE__*/function (_Submenu) {
     key: "_addNewTextHandler",
     value: function _addNewTextHandler() {
       this.actions.clickAddNewText();
+    }
+  }, {
+    key: "_addFallbackLabels",
+    value: function _addFallbackLabels() {
+      this.actions.clickAddFallback();
     }
   }]);
 
@@ -48592,6 +48607,7 @@ var Ui = /*#__PURE__*/function () {
       this._buttonElements = {
         download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
         saveAsTemplate: this._selectedElement.querySelectorAll('.tui-save-as-template-btn'),
+        addFallbackLabels: this._selectedElement.querySelectorAll('.tie-fallback-label'),
         load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
         save: this._selectedElement.querySelectorAll('.tui-image-editor-save-btn')
       };
@@ -50878,6 +50894,9 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
       saveAsTemplate: function saveAsTemplate() {
         _this._onSaveAsTemplate();
       },
+      selectFallbackLabel: function selectFallbackLabel() {
+        _this._onSelectFallbackLabel();
+      },
       // download: () => {
       //   const dataURL = this.toDataURL();
       //   let imageName = this.getImageName();
@@ -51092,6 +51111,11 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
       },
       clickAddNewText: throttle_default()(function () {
         return _this6._onAddNewText();
+      }, 1000, {
+        trailing: false
+      }),
+      clickAddFallback: throttle_default()(function () {
+        return _this6._onAddFallback();
       }, 1000, {
         trailing: false
       })
@@ -60172,6 +60196,7 @@ var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     ADD_NEW_TEXT = eventNames.ADD_NEW_TEXT,
     ADD_IMAGE = eventNames.ADD_IMAGE,
     SAVE_AS_TEMPLATE = eventNames.SAVE_AS_TEMPLATE,
+    ADD_FALLBACK_LABEL = eventNames.ADD_FALLBACK_LABEL,
     LOAD_BACKGROUND = eventNames.LOAD_BACKGROUND,
     SAVE_AND_NEXT = eventNames.SAVE_AND_NEXT,
     PREVIEW_IMAGE = eventNames.PREVIEW_IMAGE;
@@ -61750,6 +61775,11 @@ var ImageEditor = /*#__PURE__*/function () {
     key: "_onSaveAsTemplate",
     value: function _onSaveAsTemplate() {
       this.fire(SAVE_AS_TEMPLATE);
+    }
+  }, {
+    key: "_onAddFallback",
+    value: function _onAddFallback() {
+      this.fire(ADD_FALLBACK_LABEL);
     }
   }, {
     key: "_onLoadBackground",

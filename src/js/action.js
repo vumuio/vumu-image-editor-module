@@ -158,6 +158,9 @@ export default {
         saveAsTemplate: () => {
           this._onSaveAsTemplate();
         },
+        selectFallbackLabel: () => {
+          this._onSelectFallbackLabel();
+        },
         // download: () => {
         //   const dataURL = this.toDataURL();
         //   let imageName = this.getImageName();
@@ -360,6 +363,7 @@ export default {
           }
         },
         clickAddNewText: _throttle(() => this._onAddNewText(), 1000, { trailing: false }),
+        clickAddFallback: _throttle(() => this._onAddFallback(), 1000, { trailing: false }),
       },
       this._commonAction()
     );
