@@ -11,14 +11,6 @@ export default ({
       <div class="page-container">
         <div id="content">
           <div class="main-container">
-              <div class="tui-image-editor-header" style="${headerStyle}">
-                  <div class="tui-image-editor-header-buttons">
-                      <div style="${loadButtonStyle}">
-                          ${locale.localize('Set Background')}
-                          <input type="file" class="tui-image-editor-load-btn" />
-                      </div>
-                  </div>
-              </div>
               <div class="tui-image-editor-main">
                 <div class="flex items-center breadcrumbs-area">
                   <ul class="breadcrumbs list-none flex items-center">
@@ -31,7 +23,11 @@ export default ({
                   </ul>
                   <div class="buttons-area">
                       <ul class="tui-image-editor-help-menu top"></ul>
-                      <button class="btn-primary tui-image-editor-save-btn">Save & Next <img src="./img/next-arrow.svg" alt="#" /> </button>
+                      <button class="btn-primary relative setBgButton">
+                        ${locale.localize('Set Background')}
+                        <input type="file" class="tui-image-editor-load-btn" id="setBg" />
+                      </button>
+                      <button class="btn-primary tui-image-editor-save-btn pointer">Save & Next <img src="./img/next-arrow.svg" alt="#" /> </button>
                   </div>
                 </div>
                 <div class="editor-area">
