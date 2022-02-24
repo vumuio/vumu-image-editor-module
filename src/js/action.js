@@ -185,6 +185,9 @@ export default {
         save: () => {
           this._onSaveAndNext();
         },
+        preview: () => {
+          this._previewImage();
+        },
         // history: (event) => {
         //   this.ui.toggleHistoryMenu(event);
         // },
