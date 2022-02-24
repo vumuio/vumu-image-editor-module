@@ -192,6 +192,7 @@ export const eventNames = {
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
   ADD_NEW_TEXT: 'addNewText',
+  ADD_FALLBACK_LABEL: 'addFallbackLabels',
   SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext',

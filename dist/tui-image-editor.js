@@ -41832,6 +41832,7 @@ var eventNames = {
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
   ADD_NEW_TEXT: 'addNewText',
+  ADD_FALLBACK_LABEL: 'addFallbackLabels',
   SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext',
@@ -46098,6 +46099,7 @@ var Text = /*#__PURE__*/function (_Submenu) {
     _this._els = {
       textEffectButton: _this.selector('.tie-text-effect-button'),
       textAddNewTextButton: _this.selector('.tie-add-new-text-button'),
+      addFallbackLabels: _this.selector('.tie-fallback-label'),
       textFontFamily: _this.selector('.tie-font-family-select'),
       textAlignButton: _this.selector('.tie-text-align-button'),
       textColorpicker: new colorpicker(_this.selector('.tie-text-color'), {
@@ -46148,11 +46150,14 @@ var Text = /*#__PURE__*/function (_Submenu) {
 
       var callAddNewText = this._addNewTextHandler.bind(this);
 
+      var callAddFallbackLabels = this._addFallbackLabels.bind(this);
+
       this.eventHandler = {
         setTextEffect: setTextEffect,
         setTextAlign: setTextAlign,
         setFontFamily: setFontFamily,
-        callAddNewText: callAddNewText
+        callAddNewText: callAddNewText,
+        callAddFallbackLabels: callAddFallbackLabels
       };
       this.actions = actions;
 
@@ -46161,6 +46166,8 @@ var Text = /*#__PURE__*/function (_Submenu) {
       this._els.textAlignButton.addEventListener('click', setTextAlign);
 
       this._els.textAddNewTextButton.addEventListener('click', callAddNewText);
+
+      this._els.addFallbackLabels.addEventListener('click', callAddFallbackLabels);
 
       this._els.textFontFamily.addEventListener('change', setFontFamily);
 
@@ -46183,13 +46190,16 @@ var Text = /*#__PURE__*/function (_Submenu) {
           setTextEffect = _this$eventHandler.setTextEffect,
           setTextAlign = _this$eventHandler.setTextAlign,
           setFontFamily = _this$eventHandler.setFontFamily,
-          callAddNewText = _this$eventHandler.callAddNewText;
+          callAddNewText = _this$eventHandler.callAddNewText,
+          callAddFallbackLabels = _this$eventHandler.callAddFallbackLabels;
 
       this._els.textEffectButton.removeEventListener('click', setTextEffect);
 
       this._els.textAlignButton.removeEventListener('click', setTextAlign);
 
       this._els.textAddNewTextButton.removeEventListener('click', callAddNewText);
+
+      this._els.addFallbackLabels.removeEventListener('click', callAddFallbackLabels);
 
       this._els.textFontFamily.removeEventListener('change', setFontFamily);
 
@@ -46437,6 +46447,11 @@ var Text = /*#__PURE__*/function (_Submenu) {
     key: "_addNewTextHandler",
     value: function _addNewTextHandler() {
       this.actions.clickAddNewText();
+    }
+  }, {
+    key: "_addFallbackLabels",
+    value: function _addFallbackLabels() {
+      this.actions.clickAddFallback();
     }
   }]);
 
@@ -48348,7 +48363,7 @@ var Ui = /*#__PURE__*/function () {
       this._buttonElements = {
         download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
         saveAsTemplate: this._selectedElement.querySelectorAll('.tui-save-as-template-btn'),
-        selectFallbackLabels: this._selectedElement.querySelectorAll('.tie-fallback-label'),
+        addFallbackLabels: this._selectedElement.querySelectorAll('.tie-fallback-label'),
         load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
         save: this._selectedElement.querySelectorAll('.tui-image-editor-save-btn')
       };
@@ -50852,6 +50867,11 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
       },
       clickAddNewText: throttle_default()(function () {
         return _this6._onAddNewText();
+      }, 1000, {
+        trailing: false
+      }),
+      clickAddFallback: throttle_default()(function () {
+        return _this6._onAddFallback();
       }, 1000, {
         trailing: false
       })
@@ -59924,7 +59944,7 @@ var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     ADD_NEW_TEXT = eventNames.ADD_NEW_TEXT,
     ADD_IMAGE = eventNames.ADD_IMAGE,
     SAVE_AS_TEMPLATE = eventNames.SAVE_AS_TEMPLATE,
-    SELECT_FALLBACK_LABEL = eventNames.SELECT_FALLBACK_LABEL,
+    ADD_FALLBACK_LABEL = eventNames.ADD_FALLBACK_LABEL,
     LOAD_BACKGROUND = eventNames.LOAD_BACKGROUND,
     SAVE_AND_NEXT = eventNames.SAVE_AND_NEXT,
     PREVIEW_IMAGE = eventNames.PREVIEW_IMAGE;
@@ -61505,9 +61525,9 @@ var ImageEditor = /*#__PURE__*/function () {
       this.fire(SAVE_AS_TEMPLATE);
     }
   }, {
-    key: "_onSelectFallbackLabel",
-    value: function _onSelectFallbackLabel() {
-      this.fire(SELECT_FALLBACK_LABEL);
+    key: "_onAddFallback",
+    value: function _onAddFallback() {
+      this.fire(ADD_FALLBACK_LABEL);
     }
   }, {
     key: "_onLoadBackground",
