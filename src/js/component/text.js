@@ -271,7 +271,6 @@ class Text extends Component {
         styleObj,
         (val, key) => {
           if (activeObj[key] === val && !['fontSize', 'skewX', 'skewY'].includes(key)) {
-            console.log('other than skew, fontSize', key, styleObj, val);
             styleObj[key] = resetStyles[key] || '';
           }
         },

@@ -252,7 +252,6 @@ class Text extends Submenu {
       skewX,
       skewY,
     } = textStyle;
-    console.log({ textStyle });
     this.textColor = fill;
     this.fontSize = fontSize;
     this.fontFamily = fontFamily;
@@ -345,9 +344,12 @@ class Text extends Submenu {
    * @private
    */
   _changeSkewXRangeHandler(value, isLast) {
-    this.actions.changeTextStyle({
-      skewX: value,
-    });
+    this.actions.changeTextStyle(
+      {
+        skewX: value,
+      },
+      !isLast
+    );
   }
   /**
    * text align set handler
@@ -356,9 +358,12 @@ class Text extends Submenu {
    * @private
    */
   _changeSkewYRangeHandler(value, isLast) {
-    this.actions.changeTextStyle({
-      skewY: value,
-    });
+    this.actions.changeTextStyle(
+      {
+        skewY: value,
+      },
+      !isLast
+    );
   }
 
   /**

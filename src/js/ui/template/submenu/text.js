@@ -78,16 +78,30 @@ export default ({ locale, makeSvgIcon }) => `
             <div class="tie-text-range"></div>
             <input class="tie-text-range-value tui-image-editor-range-value" value="0" />
         </li>
+        <li>
+            <div class="font-centered-class">Font Size</div>
+        </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
-            <label class="range">${locale.localize('Skew X')}</label>
+            <label class="range">${locale.localize('Skew X')}</label> 
+            <span class="font-centered-class">X</span>        
             <div class="tie-skewx-range"></div>
             <input class="tie-skewx-range-value tui-image-editor-range-value" value="0" />
+           
         </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">${locale.localize('Skew Y')}</label>
+            <span class="font-centered-class">Y</span>
             <div class="tie-skewy-range"></div>
             <input class="tie-skewy-range-value tui-image-editor-range-value" value="0" />
+           
         </li>
+        <li>
+            <div class="font-centered-class">Skew</div>
+        </li>
+        
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
