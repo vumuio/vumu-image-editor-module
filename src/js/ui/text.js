@@ -33,8 +33,8 @@ class Text extends Submenu {
     this.align = 'tie-text-align-left';
     this._els = {
       textEffectButton: this.selector('.tie-text-effect-button'),
-      textAddLabelButton: this.selector('.tie-add-label-button'),
-      textFontFamly: this.selector('.tie-font-family-select'),
+      textAddNewTextButton: this.selector('.tie-add-new-text-button'),
+      textFontFamily: this.selector('.tie-font-family-select'),
       textAlignButton: this.selector('.tie-text-align-button'),
       textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
         defaultColor: '#000000',
@@ -67,6 +67,7 @@ class Text extends Submenu {
     this.colorPickerInputBox = this._els.textColorpicker.colorpickerElement.querySelector(
       selectorNames.COLOR_PICKER_INPUT_BOX
     );
+    this._els.textFontFamily.style.fontFamily = 'Alef'; // init style for select
   }
 
   /**
@@ -91,20 +92,20 @@ class Text extends Submenu {
     const setTextEffect = this._setTextEffectHandler.bind(this);
     const setTextAlign = this._setTextAlignHandler.bind(this);
     const setFontFamily = this._changeFontFamilyHandler.bind(this);
-    const callAddLabel = this._addLabelHandler.bind(this);
+    const callAddNewText = this._addNewTextHandler.bind(this);
 
     this.eventHandler = {
       setTextEffect,
       setTextAlign,
       setFontFamily,
-      callAddLabel,
+      callAddNewText,
     };
 
     this.actions = actions;
     this._els.textEffectButton.addEventListener('click', setTextEffect);
     this._els.textAlignButton.addEventListener('click', setTextAlign);
-    this._els.textAddLabelButton.addEventListener('click', callAddLabel);
-    this._els.textFontFamly.addEventListener('change', setFontFamily);
+    this._els.textAddNewTextButton.addEventListener('click', callAddNewText);
+    this._els.textFontFamily.addEventListener('change', setFontFamily);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
     this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this));
@@ -125,12 +126,12 @@ class Text extends Submenu {
    * @private
    */
   _removeEvent() {
-    const { setTextEffect, setTextAlign, setFontFamily, callAddLabel } = this.eventHandler;
+    const { setTextEffect, setTextAlign, setFontFamily, callAddNewText } = this.eventHandler;
 
     this._els.textEffectButton.removeEventListener('click', setTextEffect);
     this._els.textAlignButton.removeEventListener('click', setTextAlign);
-    this._els.textAddLabelButton.removeEventListener('click', callAddLabel);
-    this._els.textFontFamly.removeEventListener('change', setFontFamily);
+    this._els.textAddNewTextButton.removeEventListener('click', callAddNewText);
+    this._els.textFontFamily.removeEventListener('change', setFontFamily);
     this._els.textRange.off();
     this._els.textColorpicker.off();
 
@@ -205,7 +206,7 @@ class Text extends Submenu {
    * @returns {string} - font family
    */
   get fontFamily() {
-    return this._els.textFontFamly.value;
+    return this._els.textFontFamily.value;
   }
 
   /**
@@ -213,7 +214,7 @@ class Text extends Submenu {
    * @param {string} value - font family
    */
   set fontFamily(value) {
-    this._els.textFontFamly.value = value;
+    this._els.textFontFamily.value = value;
   }
 
   /**
@@ -255,8 +256,9 @@ class Text extends Submenu {
     this.textColor = fill;
     this.fontSize = fontSize;
     this.fontFamily = fontFamily;
-    this.skewX = skewX || 0;
-    this.skewY = skewY || 0;
+    this._els.textFontFamily.style.fontFamily = fontFamily;
+    this.skewX = skewX;
+    this.skewY = skewY;
     this.setEffectState('italic', fontStyle);
     this.setEffectState('bold', fontWeight);
     this.setEffectState('underline', textDecoration);
@@ -338,7 +340,7 @@ class Text extends Submenu {
     );
   }
   /**
-   * text align set handler
+   * skew x set handler
    * @param {number} value - range value
    * @param {boolean} isLast - Is last change
    * @private
@@ -352,7 +354,7 @@ class Text extends Submenu {
     );
   }
   /**
-   * text align set handler
+   * skew y align set handler
    * @param {number} value - range value
    * @param {boolean} isLast - Is last change
    * @private
@@ -381,13 +383,14 @@ class Text extends Submenu {
   _changeFontFamilyHandler(event) {
     const { target } = event;
     const font = target.value;
+    this._els.textFontFamily.style.fontFamily = font;
     this.actions.changeTextStyle({
       fontFamily: font,
     });
   }
 
-  _addLabelHandler() {
-    this.actions.clickAddLabel();
+  _addNewTextHandler() {
+    this.actions.clickAddNewText();
   }
 }
 

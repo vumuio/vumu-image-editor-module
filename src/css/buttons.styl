@@ -100,17 +100,75 @@
             display: none;
         svg > use.active
             display: block;
-.tie-add-label-button
+.tie-add-new-text-button
     background: hsl(0, 0%, 100%);
     border: 1px solid #C4C4C4;
     color: #6B7C94;
     font-size: 14px;
     padding: 10px 40px;
     &:hover
-        background: hsl(0, 0%, 90%);
+        background: hsl(0, 0%, 95%);
     &:focus
         outline: none
+.tie-font-family-select
+    -o-appearance: none;
+    -ms-appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: transparent;
+    padding: 7px 36px 7px 13px;
+    border: 1px solid #f2f2f2;
+    width: 215px;
+    height: 42px;
+    line-height: 18px;
+    font-size: 14px;
+    color: #6b7c94;
+    text-overflow: ellipsis;
+    &:active, &:focus
+        outline: none;
+    &::-webkit-scrollbar
+        width: 0;
+    // &::-webkit-scrollbar-track
+    //     background: #f1f1f1;
+    // &::-webkit-scrollbar-thumb
+    //     background: #aaa;
+    // &::-webkit-scrollbar-thumb:hover
+    //     background: #555;
+
+.tie-font-family-container
+    position: relative;
+    background: #fff;
+    & svg
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+
+.buttons-area
+    display: flex;
+.tui-image-editor-help-menu li
+    margin-left:25px !important;
+.tui-image-editor-help-menu use
+    stroke: none !important;
+.tui-image-editor-help-menu
+    display:flex !important;
+.tie-btn-preview
+    width: 54px;
+    background: #fafafa;
+    height: 42px;
+    border-radius: 5px;
+.tie-btn-preview svg
+    margin: 6px auto 0;
+.buttons-area .btn-primary
+    margin-left 12px;
+.breadcrumbs-area
+    width: 100%;
+    position: sticky;
+    top: -1px;
+    z-index: 3;
+    background: #fff;
 
 .font-centered-class
-  font-size: 12px;
-  color: #6B7C94;
+    font-size: 12px;
+    color: #6B7C94;

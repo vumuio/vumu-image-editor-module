@@ -1,7 +1,6 @@
 import { getHelpMenuBarPosition } from '@/util';
 
 export default ({ locale, biImage, loadButtonStyle, downloadButtonStyle, menuBarPosition }) => `
-    <ul class="tui-image-editor-help-menu top"></ul>
     <div class="tui-image-editor-controls">
         <div class="tui-image-editor-controls-logo">
             <img src="${biImage}" />

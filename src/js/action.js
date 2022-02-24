@@ -1,15 +1,8 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
-import {
-  isSupportFileApi,
-  base64ToBlob,
-  toInteger,
-  isEmptyCropzone,
-  includes,
-  randomString,
-  getNewBorderStyle,
-} from '@/util';
+import { isSupportFileApi, toInteger, isEmptyCropzone, includes, getNewBorderStyle } from '@/util';
 import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
+import _throttle from 'lodash/throttle';
 
 export default {
   /**
@@ -116,18 +109,17 @@ export default {
             this.redo().then(onEndUndoRedo);
           }
         },
-        reset: () => {
-          exitCropOnAction();
-          this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then((sizeValue) => {
-            exitCropOnAction();
-            initFilterState();
-            this.ui.resizeEditor({ imageSize: sizeValue });
-            this.clearUndoStack();
-            this._initHistory();
-          });
-        },
+        // reset: () => {
+        //   exitCropOnAction();
+        //   this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then((sizeValue) => {
+        //     exitCropOnAction();
+        //     initFilterState();
+        //     this.ui.resizeEditor({ imageSize: sizeValue });
+        //     this.clearUndoStack();
+        //     this._initHistory();
+        //   });
+        // },
         delete: () => {
-          this.ui.changeHelpButtonEnabled('delete', false);
           exitCropOnAction();
           this.removeActiveObject();
           this.activeObjectId = null;
@@ -135,8 +127,6 @@ export default {
         deleteAll: () => {
           exitCropOnAction();
           this.clearObjects();
-          this.ui.changeHelpButtonEnabled('delete', false);
-          this.ui.changeHelpButtonEnabled('deleteAll', false);
         },
         load: (file) => {
           if (!isSupportFileApi()) {
@@ -168,29 +158,32 @@ export default {
         saveAsTemplate: () => {
           this._onSaveAsTemplate();
         },
-        download: () => {
-          const dataURL = this.toDataURL();
-          let imageName = this.getImageName();
-          let blob, type, w;
+        // download: () => {
+        //   const dataURL = this.toDataURL();
+        //   let imageName = this.getImageName();
+        //   let blob, type, w;
 
-          if (isSupportFileApi() && window.saveAs) {
-            blob = base64ToBlob(dataURL);
-            type = blob.type.split('/')[1];
-            if (imageName.split('.').pop() !== type) {
-              imageName += `.${type}`;
-            }
-            saveAs(blob, imageName); // eslint-disable-line
-          } else {
-            w = window.open();
-            w.document.body.innerHTML = `<img src='${dataURL}'>`;
-          }
-        },
+        //   if (isSupportFileApi() && window.saveAs) {
+        //     blob = base64ToBlob(dataURL);
+        //     type = blob.type.split('/')[1];
+        //     if (imageName.split('.').pop() !== type) {
+        //       imageName += `.${type}`;
+        //     }
+        //     saveAs(blob, imageName); // eslint-disable-line
+        //   } else {
+        //     w = window.open();
+        //     w.document.body.innerHTML = `<img src='${dataURL}'>`;
+        //   }
+        // },
         save: () => {
           this._onSaveAndNext();
         },
-        history: (event) => {
-          this.ui.toggleHistoryMenu(event);
+        preview: () => {
+          this._previewImage();
         },
+        // history: (event) => {
+        //   this.ui.toggleHistoryMenu(event);
+        // },
         zoomIn: () => {
           this.ui.toggleZoomButtonStatus('zoomIn');
           this.deactivateAll();
@@ -204,30 +197,6 @@ export default {
           this.ui.toggleZoomButtonStatus('hand');
           this.deactivateAll();
           toggleHandMode();
-        },
-        bringForward: () => {
-          const canvas = this._graphics.getCanvas();
-          const myObject = canvas.getActiveObject();
-          canvas.bringForward(myObject);
-          canvas.renderAll();
-        },
-        sendBackwards: () => {
-          const canvas = this._graphics.getCanvas();
-          const myObject = canvas.getActiveObject();
-          canvas.sendBackwards(myObject);
-          canvas.renderAll();
-        },
-        sendToBack: () => {
-          const canvas = this._graphics.getCanvas();
-          const myObject = canvas.getActiveObject();
-          canvas.sendToBack(myObject);
-          canvas.renderAll();
-        },
-        bringToFront: () => {
-          const canvas = this._graphics.getCanvas();
-          const myObject = canvas.getActiveObject();
-          canvas.bringToFront(myObject);
-          canvas.renderAll();
         },
       },
       this._commonAction()
@@ -390,7 +359,7 @@ export default {
             this.changeTextStyle(this.activeObjectId, styleObj, isSilent);
           }
         },
-        clickAddLabel: () => this._onAddLabel(),
+        clickAddNewText: _throttle(() => this._onAddNewText(), 1000, { trailing: false }),
       },
       this._commonAction()
     );
@@ -648,10 +617,10 @@ export default {
       undoStackChanged: (length) => {
         if (length) {
           this.ui.changeHelpButtonEnabled('undo', true);
-          this.ui.changeHelpButtonEnabled('reset', true);
+          // this.ui.changeHelpButtonEnabled('reset', true);
         } else {
           this.ui.changeHelpButtonEnabled('undo', false);
-          this.ui.changeHelpButtonEnabled('reset', false);
+          // this.ui.changeHelpButtonEnabled('reset', false);
         }
         this.ui.resizeEditor();
       },
@@ -666,9 +635,6 @@ export default {
       /* eslint-disable complexity */
       objectActivated: (obj) => {
         this.activeObjectId = obj.id;
-
-        this.ui.changeHelpButtonEnabled('delete', true);
-        this.ui.changeHelpButtonEnabled('deleteAll', true);
 
         if (obj.type === 'cropzone') {
           this.ui.crop.changeApplyButtonStatus(true);

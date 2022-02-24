@@ -30,6 +30,7 @@ export default ({
                     </li>
                   </ul>
                   <div class="buttons-area">
+                      <ul class="tui-image-editor-help-menu top"></ul>
                       <button class="btn-primary tui-image-editor-save-btn">Save & Next <img src="./img/next-arrow.svg" alt="#" /> </button>
                   </div>
                 </div>

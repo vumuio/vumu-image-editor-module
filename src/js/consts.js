@@ -21,7 +21,7 @@ export const ZOOM_HELP_MENUS = [
  * Help features for command
  * @type {Array.<string>}
  */
-export const COMMAND_HELP_MENUS = ['history', 'undo', 'redo', 'reset'];
+export const COMMAND_HELP_MENUS = ['undo', 'redo', 'preview'];
 
 /**
  * Help features for delete
@@ -33,7 +33,11 @@ export const DELETE_HELP_MENUS = ['delete', 'deleteAll'];
  * Editor help features
  * @type {Array.<string>}
  */
-export const HELP_MENUS = [...ZOOM_HELP_MENUS, ...COMMAND_HELP_MENUS, ...DELETE_HELP_MENUS];
+export const HELP_MENUS = [
+  // ...ZOOM_HELP_MENUS,
+  ...COMMAND_HELP_MENUS,
+  //  ...DELETE_HELP_MENUS
+];
 
 /**
  * Fill type for shape
@@ -187,11 +191,12 @@ export const eventNames = {
   FOCUS: 'focus',
   BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
-  ADD_LABEL: 'addLabel',
+  ADD_NEW_TEXT: 'addNewText',
   SAVE_AS_TEMPLATE: 'saveAsTemplate',
   LOAD_BACKGROUND: 'loadBackground',
   SAVE_AND_NEXT: 'saveAndNext',
   ADD_IMAGE: 'addImage',
+  PREVIEW_IMAGE: 'previewImage',
 };
 
 /**
@@ -219,7 +224,7 @@ export const historyNames = {
   CHANGE_SHAPE: 'Shape',
   CHANGE_ICON_COLOR: 'Icon',
   ADD_TEXT: 'Text',
-  ADD_LABEL: 'Text',
+  ADD_NEW_TEXT: 'Text',
   CHANGE_TEXT_STYLE: 'Text',
   REMOVE_OBJECT: 'Delete',
   CLEAR_OBJECTS: 'Delete',
@@ -451,7 +456,6 @@ export const googleFonts = [
   'Cardo',
   'Caveat',
   'Caveat Brush',
-  'cheeseusaceu',
   'Chivo',
   'Codystar',
   'Cormorant',
