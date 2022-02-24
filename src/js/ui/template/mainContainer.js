@@ -27,7 +27,7 @@ export default ({
                         ${locale.localize('Set Background')}
                         <input type="file" class="tui-image-editor-load-btn" id="setBg" />
                       </button>
-                      <button class="btn-primary tui-image-editor-save-btn pointer">Save & Next <img src="./img/next-arrow.svg" alt="#" /> </button>
+                      <button class="btn-primary tui-image-editor-save-btn pointer">Save & Next <img src="https://pcontent.vumu.io/assets/next-arrow.svg" alt="#" /> </button>
                   </div>
                 </div>
                 <div class="editor-area">
