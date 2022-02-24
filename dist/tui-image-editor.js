@@ -38,6 +38,13 @@ module.exports = __webpack_require__(1955);
 
 /***/ }),
 
+/***/ 8580:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(3778);
+
+/***/ }),
+
 /***/ 2991:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -601,6 +608,17 @@ module.exports = entryVirtual('Array').filter;
 
 /***/ }),
 
+/***/ 991:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(7690);
+var entryVirtual = __webpack_require__(5703);
+
+module.exports = entryVirtual('Array').includes;
+
+
+/***/ }),
+
 /***/ 3866:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -700,6 +718,27 @@ var ArrayPrototype = Array.prototype;
 module.exports = function (it) {
   var own = it.filter;
   return it === ArrayPrototype || (isPrototypeOf(ArrayPrototype, it) && own === ArrayPrototype.filter) ? method : own;
+};
+
+
+/***/ }),
+
+/***/ 8557:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var isPrototypeOf = __webpack_require__(7046);
+var arrayMethod = __webpack_require__(991);
+var stringMethod = __webpack_require__(1631);
+
+var ArrayPrototype = Array.prototype;
+var StringPrototype = String.prototype;
+
+module.exports = function (it) {
+  var own = it.includes;
+  if (it === ArrayPrototype || (isPrototypeOf(ArrayPrototype, it) && own === ArrayPrototype.includes)) return arrayMethod;
+  if (typeof it == 'string' || it === StringPrototype || (isPrototypeOf(StringPrototype, it) && own === StringPrototype.includes)) {
+    return stringMethod;
+  } return own;
 };
 
 
@@ -876,6 +915,17 @@ __webpack_require__(7453);
 var path = __webpack_require__(4058);
 
 module.exports = path.Reflect.construct;
+
+
+/***/ }),
+
+/***/ 1631:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(1035);
+var entryVirtual = __webpack_require__(5703);
+
+module.exports = entryVirtual('String').includes;
 
 
 /***/ }),
@@ -1679,6 +1729,28 @@ module.exports = function (target, source, exceptions) {
       defineProperty(target, key, getOwnPropertyDescriptor(source, key));
     }
   }
+};
+
+
+/***/ }),
+
+/***/ 7772:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var wellKnownSymbol = __webpack_require__(9813);
+
+var MATCH = wellKnownSymbol('match');
+
+module.exports = function (METHOD_NAME) {
+  var regexp = /./;
+  try {
+    '/./'[METHOD_NAME](regexp);
+  } catch (error1) {
+    try {
+      regexp[MATCH] = false;
+      return '/./'[METHOD_NAME](regexp);
+    } catch (error2) { /* empty */ }
+  } return false;
 };
 
 
@@ -2873,6 +2945,25 @@ module.exports = true;
 
 /***/ }),
 
+/***/ 685:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var isObject = __webpack_require__(941);
+var classof = __webpack_require__(2532);
+var wellKnownSymbol = __webpack_require__(9813);
+
+var MATCH = wellKnownSymbol('match');
+
+// `IsRegExp` abstract operation
+// https://tc39.es/ecma262/#sec-isregexp
+module.exports = function (it) {
+  var isRegExp;
+  return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classof(it) == 'RegExp');
+};
+
+
+/***/ }),
+
 /***/ 6664:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -3286,6 +3377,23 @@ var toString = __webpack_require__(5803);
 
 module.exports = function (argument, $default) {
   return argument === undefined ? arguments.length < 2 ? '' : $default : toString(argument);
+};
+
+
+/***/ }),
+
+/***/ 344:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var global = __webpack_require__(1899);
+var isRegExp = __webpack_require__(685);
+
+var TypeError = global.TypeError;
+
+module.exports = function (it) {
+  if (isRegExp(it)) {
+    throw TypeError("The method doesn't accept regular expressions");
+  } return it;
 };
 
 
@@ -4968,6 +5076,29 @@ $({ target: 'Array', stat: true, forced: INCORRECT_ITERATION }, {
 
 /***/ }),
 
+/***/ 7690:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(6887);
+var $includes = (__webpack_require__(1692).includes);
+var addToUnscopables = __webpack_require__(8479);
+
+// `Array.prototype.includes` method
+// https://tc39.es/ecma262/#sec-array.prototype.includes
+$({ target: 'Array', proto: true }, {
+  includes: function includes(el /* , fromIndex = 0 */) {
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+addToUnscopables('includes');
+
+
+/***/ }),
+
 /***/ 2737:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -6077,6 +6208,35 @@ $({ target: 'Reflect', stat: true, forced: FORCED, sham: FORCED }, {
 /***/ (function() {
 
 // empty
+
+
+/***/ }),
+
+/***/ 1035:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(6887);
+var uncurryThis = __webpack_require__(5329);
+var notARegExp = __webpack_require__(344);
+var requireObjectCoercible = __webpack_require__(8219);
+var toString = __webpack_require__(5803);
+var correctIsRegExpLogic = __webpack_require__(7772);
+
+var stringIndexOf = uncurryThis(''.indexOf);
+
+// `String.prototype.includes` method
+// https://tc39.es/ecma262/#sec-string.prototype.includes
+$({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, {
+  includes: function includes(searchString /* , position = 0 */) {
+    return !!~stringIndexOf(
+      toString(requireObjectCoercible(this)),
+      toString(notARegExp(searchString)),
+      arguments.length > 1 ? arguments[1] : undefined
+    );
+  }
+});
 
 
 /***/ }),
@@ -8300,6 +8460,16 @@ module.exports = parent;
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var parent = __webpack_require__(2480);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 3778:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(8557);
 
 module.exports = parent;
 
@@ -41740,8 +41910,8 @@ var componentNames = keyMirror('IMAGE_LOADER', 'CROPPER', 'FLIP', 'ROTATION', 'F
  */
 
 var SHAPE_DEFAULT_OPTIONS = {
-  lockSkewingX: true,
-  lockSkewingY: true,
+  lockSkewingX: false,
+  lockSkewingY: false,
   bringForward: true,
   sendToBack: true,
   bringToFront: true,
@@ -41757,8 +41927,8 @@ var CROPZONE_DEFAULT_OPTIONS = {
   hasBorders: false,
   lockScalingFlip: true,
   lockRotation: true,
-  lockSkewingX: true,
-  lockSkewingY: true
+  lockSkewingX: false,
+  lockSkewingY: false
 };
 /**
  * Command names
@@ -41990,6 +42160,12 @@ var defaultTextRangeValues = {
   min: 10,
   max: 100,
   value: 50
+};
+var defaultSkewRangeValues = {
+  realTimeEvent: true,
+  min: -50,
+  max: 50,
+  value: 0
 };
 var defaultFilterRangeValues = {
   tintOpacityRange: {
@@ -46030,15 +46206,15 @@ var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
  */
 
 /* harmony default export */ var submenu_text = (function (_ref) {
-  var _context, _context2, _context3, _context4, _context5, _context6, _context7, _context8, _context9, _context10, _context11, _context12, _context13, _context14;
+  var _context, _context2, _context3, _context4, _context5, _context6, _context7, _context8, _context9, _context10, _context11, _context12, _context13, _context14, _context15, _context16;
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context10, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <select class=\"tie-font-family-select\">\n                ")).call(_context9, map_default()(displayFonts).call(displayFonts, function (fontName) {
-    var _context15, _context16;
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = concat_default()(_context15 = concat_default()(_context16 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context16, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context15, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <select class=\"tie-font-family-select\">\n                ")).call(_context11, map_default()(displayFonts).call(displayFonts, function (fontName) {
+    var _context17, _context18;
 
-    return concat_default()(_context15 = concat_default()(_context16 = "<option style=\"font-family: ".concat(fontName, "\" value=\"")).call(_context16, fontName, "\">")).call(_context15, fontName, "</option>");
-  }).join(''), "\n            </select>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context4, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context3, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context2, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n        </li>\n    </ul>\n");
+    return concat_default()(_context17 = concat_default()(_context18 = "<option style=\"font-family: ".concat(fontName, "\" value=\"")).call(_context18, fontName, "\">")).call(_context17, fontName, "</option>");
+  }).join(''), "\n            </select>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context10, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context9, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context4, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context3, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li>\n            <div class=\"font-centered-class\">Font Size</div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context2, locale.localize('Skew X'), "</label> \n            <span class=\"font-centered-class\">X</span>        \n            <div class=\"tie-skewx-range\"></div>\n            <input class=\"tie-skewx-range-value tui-image-editor-range-value\" value=\"0\" />\n           \n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Skew Y'), "</label>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-range\"></div>\n            <input class=\"tie-skewy-range-value tui-image-editor-range-value\" value=\"0\" />\n           \n        </li>\n        <li>\n            <div class=\"font-centered-class\">Skew</div>\n        </li>\n        \n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li>\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/text.js
 
@@ -46108,7 +46284,15 @@ var Text = /*#__PURE__*/function (_Submenu) {
       textRange: new range({
         slider: _this.selector('.tie-text-range'),
         input: _this.selector('.tie-text-range-value')
-      }, defaultTextRangeValues)
+      }, defaultTextRangeValues),
+      skewX: new range({
+        slider: _this.selector('.tie-skewx-range'),
+        input: _this.selector('.tie-skewx-range-value')
+      }, defaultSkewRangeValues),
+      skewY: new range({
+        slider: _this.selector('.tie-skewy-range'),
+        input: _this.selector('.tie-skewy-range-value')
+      }, defaultSkewRangeValues)
     };
     _this.colorPickerInputBox = _this._els.textColorpicker.colorpickerElement.querySelector(selectorNames.COLOR_PICKER_INPUT_BOX);
     _this._els.textFontFamily.style.fontFamily = 'Alef'; // init style for select
@@ -46128,6 +46312,10 @@ var Text = /*#__PURE__*/function (_Submenu) {
       this._els.textColorpicker.destroy();
 
       this._els.textRange.destroy();
+
+      this._els.skewX.destroy();
+
+      this._els.skewY.destroy();
 
       assignmentForDestroy(this);
     }
@@ -46165,6 +46353,10 @@ var Text = /*#__PURE__*/function (_Submenu) {
       this._els.textFontFamily.addEventListener('change', setFontFamily);
 
       this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
+
+      this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
+
+      this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this));
 
       this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
 
@@ -46242,11 +46434,16 @@ var Text = /*#__PURE__*/function (_Submenu) {
       return this._els.textRange.value;
     }
     /**
-     * Set text size
+     * Set Skew size
      * @param {Number} value - text size
      */
     ,
-    set: function set(value) {
+    set:
+    /**
+     * Set text size
+     * @param {Number} value - text size
+     */
+    function set(value) {
       this._els.textRange.value = value;
     }
     /**
@@ -46254,6 +46451,21 @@ var Text = /*#__PURE__*/function (_Submenu) {
      * @returns {string} - font family
      */
 
+  }, {
+    key: "skewX",
+    set: function set(value) {
+      this._els.skewX.value = value;
+    }
+    /**
+     * Set skew size
+     * @param {Number} value - text size
+     */
+
+  }, {
+    key: "skewY",
+    set: function set(value) {
+      this._els.skewY.value = value;
+    }
   }, {
     key: "fontFamily",
     get: function get() {
@@ -46308,12 +46520,16 @@ var Text = /*#__PURE__*/function (_Submenu) {
           fontStyle = textStyle.fontStyle,
           fontWeight = textStyle.fontWeight,
           textDecoration = textStyle.textDecoration,
-          textAlign = textStyle.textAlign;
+          textAlign = textStyle.textAlign,
+          skewX = textStyle.skewX,
+          skewY = textStyle.skewY;
 
       this.textColor = fill;
       this.fontSize = fontSize;
       this.fontFamily = fontFamily;
       this._els.textFontFamily.style.fontFamily = fontFamily;
+      this.skewX = skewX;
+      this.skewY = skewY;
       this.setEffectState('italic', fontStyle);
       this.setEffectState('bold', fontWeight);
       this.setEffectState('underline', textDecoration);
@@ -46407,6 +46623,34 @@ var Text = /*#__PURE__*/function (_Submenu) {
     value: function _changeTextRnageHandler(value, isLast) {
       this.actions.changeTextStyle({
         fontSize: value
+      }, !isLast);
+    }
+    /**
+     * skew x set handler
+     * @param {number} value - range value
+     * @param {boolean} isLast - Is last change
+     * @private
+     */
+
+  }, {
+    key: "_changeSkewXRangeHandler",
+    value: function _changeSkewXRangeHandler(value, isLast) {
+      this.actions.changeTextStyle({
+        skewX: value
+      }, !isLast);
+    }
+    /**
+     * skew y align set handler
+     * @param {number} value - range value
+     * @param {boolean} isLast - Is last change
+     * @private
+     */
+
+  }, {
+    key: "_changeSkewYRangeHandler",
+    value: function _changeSkewYRangeHandler(value, isLast) {
+      this.actions.changeTextStyle({
+        skewY: value
       }, !isLast);
     }
     /**
@@ -53576,7 +53820,11 @@ var Line = /*#__PURE__*/function (_Component) {
 }(component);
 
 /* harmony default export */ var line = (Line);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/includes.js
+var instance_includes = __webpack_require__(8580);
+var includes_default = /*#__PURE__*/__webpack_require__.n(instance_includes);
 ;// CONCATENATED MODULE: ./src/js/component/text.js
+
 
 
 
@@ -53608,7 +53856,9 @@ var resetStyles = {
   fontStyle: 'normal',
   fontWeight: 'normal',
   textAlign: 'tie-text-align-left',
-  underline: false
+  underline: false,
+  skewX: 0,
+  skewY: 0
 };
 var DBCLICK_TIME = 500;
 /**
@@ -53889,7 +54139,9 @@ var text_Text = /*#__PURE__*/function (_Component) {
 
       return new (core_js_stable_promise_default())(function (resolve) {
         external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEach(styleObj, function (val, key) {
-          if (activeObj[key] === val && key !== 'fontSize') {
+          var _context;
+
+          if (activeObj[key] === val && !includes_default()(_context = ['fontSize', 'skewX', 'skewY']).call(_context, key)) {
             styleObj[key] = resetStyles[key] || '';
           }
         }, _this6);
@@ -59645,7 +59897,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_createTextProperties",
     value: function _createTextProperties(obj) {
-      var predefinedKeys = ['text', 'fontFamily', 'fontSize', 'fontStyle', 'textAlign', 'textDecoration', 'fontWeight'];
+      var predefinedKeys = ['text', 'fontFamily', 'fontSize', 'fontStyle', 'textAlign', 'textDecoration', 'fontWeight', 'skewX', 'skewY'];
       var props = {};
       extend(props, getProperties(obj, predefinedKeys));
       return props;

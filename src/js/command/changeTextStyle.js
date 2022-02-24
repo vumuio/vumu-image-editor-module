@@ -29,7 +29,6 @@ function makeUndoData(styles, targetObj) {
     const undoValue = targetObj[key];
     undoData.styles[key] = undoValue;
   });
-
   return undoData;
 }
 
