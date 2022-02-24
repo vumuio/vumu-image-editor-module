@@ -158,6 +158,9 @@ export default {
         saveAsTemplate: () => {
           this._onSaveAsTemplate();
         },
+        selectFallbackLabel: () => {
+          this._onSelectFallbackLabel();
+        },
         // download: () => {
         //   const dataURL = this.toDataURL();
         //   let imageName = this.getImageName();
