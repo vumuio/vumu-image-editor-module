@@ -34,6 +34,7 @@ class Text extends Submenu {
     this._els = {
       textEffectButton: this.selector('.tie-text-effect-button'),
       textAddNewTextButton: this.selector('.tie-add-new-text-button'),
+      addFallbackLabels: this.selector('.tie-fallback-label'),
       textFontFamily: this.selector('.tie-font-family-select'),
       textAlignButton: this.selector('.tie-text-align-button'),
       textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
@@ -93,18 +94,21 @@ class Text extends Submenu {
     const setTextAlign = this._setTextAlignHandler.bind(this);
     const setFontFamily = this._changeFontFamilyHandler.bind(this);
     const callAddNewText = this._addNewTextHandler.bind(this);
+    const callAddFallbackLabels = this._addFallbackLabels.bind(this);
 
     this.eventHandler = {
       setTextEffect,
       setTextAlign,
       setFontFamily,
       callAddNewText,
+      callAddFallbackLabels,
     };
 
     this.actions = actions;
     this._els.textEffectButton.addEventListener('click', setTextEffect);
     this._els.textAlignButton.addEventListener('click', setTextAlign);
     this._els.textAddNewTextButton.addEventListener('click', callAddNewText);
+    this._els.addFallbackLabels.addEventListener('click', callAddFallbackLabels);
     this._els.textFontFamily.addEventListener('change', setFontFamily);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
@@ -126,11 +130,13 @@ class Text extends Submenu {
    * @private
    */
   _removeEvent() {
-    const { setTextEffect, setTextAlign, setFontFamily, callAddNewText } = this.eventHandler;
+    const { setTextEffect, setTextAlign, setFontFamily, callAddNewText, callAddFallbackLabels } =
+      this.eventHandler;
 
     this._els.textEffectButton.removeEventListener('click', setTextEffect);
     this._els.textAlignButton.removeEventListener('click', setTextAlign);
     this._els.textAddNewTextButton.removeEventListener('click', callAddNewText);
+    this._els.addFallbackLabels.removeEventListener('click', callAddFallbackLabels);
     this._els.textFontFamily.removeEventListener('change', setFontFamily);
     this._els.textRange.off();
     this._els.textColorpicker.off();
@@ -391,6 +397,9 @@ class Text extends Submenu {
 
   _addNewTextHandler() {
     this.actions.clickAddNewText();
+  }
+  _addFallbackLabels() {
+    this.actions.clickAddFallback();
   }
 }
 

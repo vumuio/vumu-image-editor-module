@@ -386,6 +386,7 @@ class Ui {
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
       saveAsTemplate: this._selectedElement.querySelectorAll('.tui-save-as-template-btn'),
+      addFallbackLabels: this._selectedElement.querySelectorAll('.tie-fallback-label'),
       load: this._selectedElement.querySelectorAll('.tui-image-editor-load-btn'),
       save: this._selectedElement.querySelectorAll('.tui-image-editor-save-btn'),
     };
