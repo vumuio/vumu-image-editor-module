@@ -288,19 +288,25 @@
     <path stroke="none" fill="inherit" d="M14.706 8H21a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-4h1v4h12V9h-5.706l-.588-1z"/>
     <path fill="none" stroke="inherit" stroke-linecap="round" stroke-linejoin="round" d="M8.5 1.5l7.5 13H1z"/>
 </symbol>
-<symbol id="ic-text-align-center" viewBox="0 0 32 32">
-    <path stroke="none" fill="none" d="M0 0h32v32H0z"/>
-    <path stroke="none" fill="inherit" d="M2 5h28v1H2zM8 12h16v1H8zM2 19h28v1H2zM8 26h16v1H8z"/>
+<symbol width="28" height="22" viewBox="0 0 28 22" id="ic-text-align-center">
+    <path d="M28 0.999969H0" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M28 13H0" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M22 6.99997H5" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M22 21H5" stroke="#6B7C94" stroke-width="2"/>
 </symbol>
-<symbol id="ic-text-align-left" viewBox="0 0 32 32">
-    <path stroke="none" fill="none" d="M0 0h32v32H0z"/>
-    <path stroke="none" fill="inherit" d="M2 5h28v1H2zM2 12h16v1H2zM2 19h28v1H2zM2 26h16v1H2z"/>
+<symbol width="28" height="22" viewBox="0 0 28 22" id="ic-text-align-left">
+    <path d="M28 0.999969H0" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M28 13H0" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M17 6.99997H0" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M17 21H0" stroke="#6B7C94" stroke-width="2"/>
 </symbol>
-<symbol id="ic-text-align-right" viewBox="0 0 32 32">
-    <path stroke="none" fill="none" d="M0 0h32v32H0z"/>
-    <path stroke="none" fill="inherit" d="M2 5h28v1H2zM14 12h16v1H14zM2 19h28v1H2zM14 26h16v1H14z"/>
+<symbol width="28" height="22" viewBox="0 0 28 22" id="ic-text-align-right">
+    <path d="M28 0.999969H0" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M28 13H0" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M28 6.99997H11" stroke="#6B7C94" stroke-width="2"/>
+    <path d="M28 21H11" stroke="#6B7C94" stroke-width="2"/>
 </symbol>
-<symbol id="ic-text-bold" viewBox="0 0 32 32">
+<symbol  width="33" height="48" id="ic-text-bold" viewBox="0 0 33 48">
     <path fill="none" stroke="none" d="M0 0h32v32H0z"/>
     <path stroke="none" fill="inherit" d="M7 2h2v2H7zM7 28h2v2H7z"/>
     <path fill="none" stroke="inherit" stroke-width="2" d="M9 3v12h9a6 6 0 1 0 0-12H9zM9 15v14h10a7 7 0 0 0 0-14H9z"/>

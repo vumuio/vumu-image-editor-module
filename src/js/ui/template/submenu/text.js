@@ -76,37 +76,25 @@ export default ({ locale, makeSvgIcon }) => `
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">${locale.localize('Text size')}</label>
             <div class="tie-text-range"></div>
-            <input class="tie-text-range-value tui-image-editor-range-value" value="0" />
-        </li>
-        <li>
-            <div class="font-centered-class">Font Size</div>
+            <input class="tie-text-range-value tui-image-editor-range-value range-value" value="0" />
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
-            <span class="font-centered-class">X</span>        
+            <span class="font-centered-class ">Skew X</span>        
             <div class="tie-skewx-range"></div>
-            <input class="tie-skewx-range-value tui-image-editor-range-value" value="0" />
+            <input class="tie-skewx-range-value tui-image-editor-range-value range-value" value="0" />
             <br/>
-            <span class="font-centered-class">Y</span>
+            <span class="font-centered-class">Skew Y</span>
             <div class="tie-skewy-range"></div>
-            <input class="tie-skewy-range-value tui-image-editor-range-value" value="0" />
+            <input class="tie-skewy-range-value tui-image-editor-range-value range-value" value="0" />
         </li>
-        <li>
-            <div class="font-centered-class">Skew</div>
-        </li>
-        
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
-        <li>
+        <li class="submenu-buttons">
             <button class="tie-add-new-text-button">Add New Text</button>
-        </li>
-        <li class="tui-image-editor-partition only-left-right">
-            <div></div>
-        </li>
-        <li>
             <button class="tie-fallback-label">Add Fallback Labels</button>
         </li>
     </ul>
