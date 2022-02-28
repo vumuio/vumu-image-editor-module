@@ -1253,17 +1253,16 @@ class ImageEditor {
     const caretPositionStart = activeObj.selectionStart;
     const caretPositionEnd = activeObj.selectionEnd;
     const newText = text.slice(0, caretPositionStart) + appendText + text.slice(caretPositionEnd);
-    this.discardSelection();
 
     await this.execute(commands.CHANGE_TEXT, id, newText);
 
+    this.discardSelection(); // this make sure everything wont break
     canvas.setActiveObject(activeObj);
-    canvas.renderAll();
 
     activeObj.enterEditing();
     activeObj.setSelectionStart(caretPositionStart + appendText.length);
     activeObj.setSelectionEnd(caretPositionStart + appendText.length);
-    canvas.renderAll();
+    canvas.requestRenderAll();
     this._graphics.fire(TEXT_EDITING);
   }
 
