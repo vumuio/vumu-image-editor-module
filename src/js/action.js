@@ -621,9 +621,11 @@ export default {
       undoStackChanged: (length) => {
         if (length) {
           this.ui.changeHelpButtonEnabled('undo', true);
+          this.ui.changeHelpButtonEnabled('preview', true);
           // this.ui.changeHelpButtonEnabled('reset', true);
         } else {
           this.ui.changeHelpButtonEnabled('undo', false);
+          this.ui.changeHelpButtonEnabled('preview', false);
           // this.ui.changeHelpButtonEnabled('reset', false);
         }
         this.ui.resizeEditor();

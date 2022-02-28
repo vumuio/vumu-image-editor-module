@@ -51425,10 +51425,14 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
     this.on({
       undoStackChanged: function undoStackChanged(length) {
         if (length) {
-          _this13.ui.changeHelpButtonEnabled('undo', true); // this.ui.changeHelpButtonEnabled('reset', true);
+          _this13.ui.changeHelpButtonEnabled('undo', true);
+
+          _this13.ui.changeHelpButtonEnabled('preview', true); // this.ui.changeHelpButtonEnabled('reset', true);
 
         } else {
-          _this13.ui.changeHelpButtonEnabled('undo', false); // this.ui.changeHelpButtonEnabled('reset', false);
+          _this13.ui.changeHelpButtonEnabled('undo', false);
+
+          _this13.ui.changeHelpButtonEnabled('preview', false); // this.ui.changeHelpButtonEnabled('reset', false);
 
         }
 
@@ -61559,21 +61563,21 @@ var ImageEditor = /*#__PURE__*/function () {
                 caretPositionStart = activeObj.selectionStart;
                 caretPositionEnd = activeObj.selectionEnd;
                 newText = slice_default()(text).call(text, 0, caretPositionStart) + appendText + slice_default()(text).call(text, caretPositionEnd);
-                this.discardSelection();
-                _context5.next = 9;
+                _context5.next = 8;
                 return this.execute(consts_commandNames.CHANGE_TEXT, id, newText);
 
-              case 9:
+              case 8:
+                this.discardSelection(); // this make sure everything wont break
+
                 canvas.setActiveObject(activeObj);
-                canvas.renderAll();
                 activeObj.enterEditing();
                 activeObj.setSelectionStart(caretPositionStart + appendText.length);
                 activeObj.setSelectionEnd(caretPositionStart + appendText.length);
-                canvas.renderAll();
+                canvas.requestRenderAll();
 
                 this._graphics.fire(imageEditor_TEXT_EDITING);
 
-              case 16:
+              case 15:
               case "end":
                 return _context5.stop();
             }
