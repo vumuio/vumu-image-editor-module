@@ -1248,7 +1248,6 @@ class ImageEditor {
   async appendUnderCursor(id, appendText) {
     const canvas = this.getCanvasInstance();
     const activeObj = canvas.getActiveObject();
-    console.log(activeObj);
     const { text } = activeObj;
 
     const caretPositionStart = activeObj.selectionStart;
