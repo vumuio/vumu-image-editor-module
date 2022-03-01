@@ -51425,15 +51425,15 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
     this.on({
       undoStackChanged: function undoStackChanged(length) {
         if (length) {
-          _this13.ui.changeHelpButtonEnabled('undo', true);
+          _this13.ui.changeHelpButtonEnabled('undo', true); // this.ui.changeHelpButtonEnabled('reset', true);
 
-          _this13.ui.changeHelpButtonEnabled('preview', true); // this.ui.changeHelpButtonEnabled('reset', true);
 
+          _this13.ui.changeHelpButtonEnabled('preview', true);
         } else {
-          _this13.ui.changeHelpButtonEnabled('undo', false);
+          _this13.ui.changeHelpButtonEnabled('undo', false); // this.ui.changeHelpButtonEnabled('reset', false);
 
-          _this13.ui.changeHelpButtonEnabled('preview', false); // this.ui.changeHelpButtonEnabled('reset', false);
 
+          _this13.ui.changeHelpButtonEnabled('preview', false);
         }
 
         _this13.ui.resizeEditor();
