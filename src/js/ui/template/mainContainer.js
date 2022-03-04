@@ -16,9 +16,6 @@ export default ({
                   <ul class="breadcrumbs list-none flex items-center">
                     <li class="active"><a href="#" id="personalized-dashboard">Personalized Dashboard</a></li>
                     <li><input type="text" id="project-title-input" placeholder="Enter project title here..." class="project-title" />
-                      <span style="cursor: pointer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0.25 10.9375V13.75H3.0625L11.3575 5.45501L8.545 2.64251L0.25 10.9375ZM13.5325 3.28001C13.825 2.98751 13.825 2.51501 13.5325 2.22251L11.7775 0.467513C11.485 0.175013 11.0125 0.175013 10.72 0.467513L9.3475 1.84001L12.16 4.65251L13.5325 3.28001Z" fill="#8492A6"/>
-                        </svg></span>
                     </li>
                   </ul>
                   <div class="buttons-area">
