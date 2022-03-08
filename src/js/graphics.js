@@ -1315,11 +1315,11 @@ class Graphics {
    * @private
    */
   _onSelectionCreated(fEvent) {
-    const { target } = fEvent;
-    const params = this.createObjectProperties(target);
+    const { selected } = fEvent;
+    const params = this.createObjectProperties(selected[0]);
 
     this.fire(events.OBJECT_ACTIVATED, params, fEvent);
-    this.fire(events.SELECTION_CREATED, fEvent.target);
+    this.fire(events.SELECTION_CREATED, selected[0]);
   }
 
   /**

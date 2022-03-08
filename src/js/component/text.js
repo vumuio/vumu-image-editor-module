@@ -492,8 +492,7 @@ class Text extends Component {
    */
   _onFabricSelect(fEvent) {
     this.isPrevEditing = true;
-
-    this.setSelectedInfo(fEvent.target, true);
+    this.setSelectedInfo(fEvent.selected[0], true);
   }
 
   /**
