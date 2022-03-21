@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 3.18.6
+ * @version 1.0.3
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -8648,7 +8648,7 @@ module.exports = path.URL;
 /* build: `node build.js modules=ALL exclude=gestures,accessors,erasing requirejs minifier=uglifyjs` */
 /*! Fabric.js Copyright 2008-2015, Printio (Juriy Zaytsev, Maxim Chernyak) */
 
-var fabric = fabric || { version: '4.6.0' };
+var fabric = fabric || { version: '5.2.1' };
 if (true) {
   exports.fabric = fabric;
 }
@@ -9408,6 +9408,135 @@ fabric.CommonMethods = {
     },
 
     /**
+     * Creates a vetor from points represented as a point
+     * @static
+     * @memberOf fabric.util
+     *
+     * @typedef {Object} Point
+     * @property {number} x
+     * @property {number} y
+     *
+     * @param {Point} from
+     * @param {Point} to
+     * @returns {Point} vector
+     */
+    createVector: function (from, to) {
+      return new fabric.Point(to.x - from.x, to.y - from.y);
+    },
+
+    /**
+     * Calculates angle between 2 vectors using dot product
+     * @static
+     * @memberOf fabric.util
+     * @param {Point} a
+     * @param {Point} b
+     * @returns the angle in radian between the vectors
+     */
+    calcAngleBetweenVectors: function (a, b) {
+      return Math.acos((a.x * b.x + a.y * b.y) / (Math.hypot(a.x, a.y) * Math.hypot(b.x, b.y)));
+    },
+
+    /**
+     * @static
+     * @memberOf fabric.util
+     * @param {Point} v
+     * @returns {Point} vector representing the unit vector of pointing to the direction of `v`
+     */
+    getHatVector: function (v) {
+      return new fabric.Point(v.x, v.y).multiply(1 / Math.hypot(v.x, v.y));
+    },
+
+    /**
+     * @static
+     * @memberOf fabric.util
+     * @param {Point} A
+     * @param {Point} B
+     * @param {Point} C
+     * @returns {{ vector: Point, angle: number }} vector representing the bisector of A and A's angle
+     */
+    getBisector: function (A, B, C) {
+      var AB = fabric.util.createVector(A, B), AC = fabric.util.createVector(A, C);
+      var alpha = fabric.util.calcAngleBetweenVectors(AB, AC);
+      //  check if alpha is relative to AB->BC
+      var ro = fabric.util.calcAngleBetweenVectors(fabric.util.rotateVector(AB, alpha), AC);
+      var phi = alpha * (ro === 0 ? 1 : -1) / 2;
+      return {
+        vector: fabric.util.getHatVector(fabric.util.rotateVector(AB, phi)),
+        angle: alpha
+      };
+    },
+
+    /**
+     * Project stroke width on points returning 2 projections for each point as follows:
+     * - `miter`: 2 points corresponding to the outer boundary and the inner boundary of stroke.
+     * - `bevel`: 2 points corresponding to the bevel boundaries, tangent to the bisector.
+     * - `round`: same as `bevel`
+     * Used to calculate object's bounding box
+     * @static
+     * @memberOf fabric.util
+     * @param {Point[]} points
+     * @param {Object} options
+     * @param {number} options.strokeWidth
+     * @param {'miter'|'bevel'|'round'} options.strokeLineJoin
+     * @param {number} options.strokeMiterLimit https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+     * @param {boolean} options.strokeUniform
+     * @param {number} options.scaleX
+     * @param {number} options.scaleY
+     * @param {boolean} [openPath] whether the shape is open or not, affects the calculations of the first and last points
+     * @returns {fabric.Point[]} array of size 2n/4n of all suspected points
+     */
+    projectStrokeOnPoints: function (points, options, openPath) {
+      var coords = [], s = options.strokeWidth / 2,
+          strokeUniformScalar = options.strokeUniform ?
+            new fabric.Point(1 / options.scaleX, 1 / options.scaleY) : new fabric.Point(1, 1),
+          getStrokeHatVector = function (v) {
+            var scalar = s / (Math.hypot(v.x, v.y));
+            return new fabric.Point(v.x * scalar * strokeUniformScalar.x, v.y * scalar * strokeUniformScalar.y);
+          };
+      if (points.length <= 1) {return coords;}
+      points.forEach(function (p, index) {
+        var A = new fabric.Point(p.x, p.y), B, C;
+        if (index === 0) {
+          C = points[index + 1];
+          B = openPath ? getStrokeHatVector(fabric.util.createVector(C, A)).addEquals(A) : points[points.length - 1];
+        }
+        else if (index === points.length - 1) {
+          B = points[index - 1];
+          C = openPath ? getStrokeHatVector(fabric.util.createVector(B, A)).addEquals(A) : points[0];
+        }
+        else {
+          B = points[index - 1];
+          C = points[index + 1];
+        }
+        var bisector = fabric.util.getBisector(A, B, C),
+            bisectorVector = bisector.vector,
+            alpha = bisector.angle,
+            scalar,
+            miterVector;
+        if (options.strokeLineJoin === 'miter') {
+          scalar = -s / Math.sin(alpha / 2);
+          miterVector = new fabric.Point(
+            bisectorVector.x * scalar * strokeUniformScalar.x,
+            bisectorVector.y * scalar * strokeUniformScalar.y
+          );
+          if (Math.hypot(miterVector.x, miterVector.y) / s <= options.strokeMiterLimit) {
+            coords.push(A.add(miterVector));
+            coords.push(A.subtract(miterVector));
+            return;
+          }
+        }
+        scalar = -s * Math.SQRT2;
+        miterVector = new fabric.Point(
+          bisectorVector.x * scalar * strokeUniformScalar.x,
+          bisectorVector.y * scalar * strokeUniformScalar.y
+        );
+        coords.push(A.add(miterVector));
+        coords.push(A.subtract(miterVector));
+      });
+      return coords;
+    },
+
+    /**
      * Apply transform t to point p
      * @static
      * @memberOf fabric.util
@@ -9720,6 +9849,25 @@ fabric.CommonMethods = {
     },
 
     /**
+     * Creates corresponding fabric instances residing in an object, e.g. `clipPath`
+     * @see {@link fabric.Object.ENLIVEN_PROPS}
+     * @param {Object} object
+     * @param {Object} [context] assign enlived props to this object (pass null to skip this)
+     * @param {(objects:fabric.Object[]) => void} callback
+     */
+    enlivenObjectEnlivables: function (object, context, callback) {
+      var enlivenProps = fabric.Object.ENLIVEN_PROPS.filter(function (key) { return !!object[key]; });
+      fabric.util.enlivenObjects(enlivenProps.map(function (key) { return object[key]; }), function (enlivedProps) {
+        var objects = {};
+        enlivenProps.forEach(function (key, index) {
+          objects[key] = enlivedProps[index];
+          context && (context[key] = enlivedProps[index]);
+        });
+        callback && callback(objects);
+      });
+    },
+
+    /**
      * Create and wait for loading of patterns
      * @static
      * @memberOf fabric.util
@@ -9801,56 +9949,13 @@ fabric.CommonMethods = {
      * @return {Array} properties Properties names to include
      */
     populateWithProperties: function(source, destination, properties) {
-      if (properties && Object.prototype.toString.call(properties) === '[object Array]') {
+      if (properties && Array.isArray(properties)) {
         for (var i = 0, len = properties.length; i < len; i++) {
           if (properties[i] in source) {
             destination[properties[i]] = source[properties[i]];
           }
         }
       }
-    },
-
-    /**
-     * WARNING: THIS WAS TO SUPPORT OLD BROWSERS. deprecated.
-     * WILL BE REMOVED IN FABRIC 5.0
-     * Draws a dashed line between two points
-     *
-     * This method is used to draw dashed line around selection area.
-     * See <a href="http://stackoverflow.com/questions/4576724/dotted-stroke-in-canvas">dotted stroke in canvas</a>
-     *
-     * @param {CanvasRenderingContext2D} ctx context
-     * @param {Number} x  start x coordinate
-     * @param {Number} y start y coordinate
-     * @param {Number} x2 end x coordinate
-     * @param {Number} y2 end y coordinate
-     * @param {Array} da dash array pattern
-     * @deprecated
-     */
-    drawDashedLine: function(ctx, x, y, x2, y2, da) {
-      var dx = x2 - x,
-          dy = y2 - y,
-          len = sqrt(dx * dx + dy * dy),
-          rot = atan2(dy, dx),
-          dc = da.length,
-          di = 0,
-          draw = true;
-
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.moveTo(0, 0);
-      ctx.rotate(rot);
-
-      x = 0;
-      while (len > x) {
-        x += da[di++ % dc];
-        if (x > len) {
-          x = len;
-        }
-        ctx[draw ? 'lineTo' : 'moveTo'](x, 0);
-        draw = !draw;
-      }
-
-      ctx.restore();
     },
 
     /**
@@ -9980,7 +10085,7 @@ fabric.CommonMethods = {
      * @param  {Boolean} [options.flipX]
      * @param  {Boolean} [options.flipY]
      * @param  {Number} [options.skewX]
-     * @param  {Number} [options.skewX]
+     * @param  {Number} [options.skewY]
      * @return {Number[]} transform matrix
      */
     calcDimensionsMatrix: function(options) {
@@ -10334,7 +10439,50 @@ fabric.CommonMethods = {
         x: bbox.width,
         y: bbox.height,
       };
-    }
+    },
+
+    /**
+     * Merges 2 clip paths into one visually equal clip path
+     *
+     * **IMPORTANT**:\
+     * Does **NOT** clone the arguments, clone them proir if necessary.
+     *
+     * Creates a wrapper (group) that contains one clip path and is clipped by the other so content is kept where both overlap.
+     * Use this method if both the clip paths may have nested clip paths of their own, so assigning one to the other's clip path property is not possible.
+     *
+     * In order to handle the `inverted` property we follow logic described in the following cases:\
+     * **(1)** both clip paths are inverted - the clip paths pass the inverted prop to the wrapper and loose it themselves.\
+     * **(2)** one is inverted and the other isn't - the wrapper shouldn't become inverted and the inverted clip path must clip the non inverted one to produce an identical visual effect.\
+     * **(3)** both clip paths are not inverted - wrapper and clip paths remain unchanged.
+     *
+     * @memberOf fabric.util
+     * @param {fabric.Object} c1
+     * @param {fabric.Object} c2
+     * @returns {fabric.Object} merged clip path
+     */
+    mergeClipPaths: function (c1, c2) {
+      var a = c1, b = c2;
+      if (a.inverted && !b.inverted) {
+        //  case (2)
+        a = c2;
+        b = c1;
+      }
+      //  `b` becomes `a`'s clip path so we transform `b` to `a` coordinate plane
+      fabric.util.applyTransformToObject(
+        b,
+        fabric.util.multiplyTransformMatrices(
+          fabric.util.invertTransform(a.calcTransformMatrix()),
+          b.calcTransformMatrix()
+        )
+      );
+      //  assign the `inverted` prop to the wrapping group
+      var inverted = a.inverted && b.inverted;
+      if (inverted) {
+        //  case (1)
+        a.inverted = b.inverted = false;
+      }
+      return new fabric.Group([a], { clipPath: b, inverted: inverted });
+    },
   };
 })( true ? exports : 0);
 
@@ -10848,15 +10996,15 @@ fabric.CommonMethods = {
         p, nextLen, nextStep = 0.01, angleFinder = segInfo.angleFinder, lastPerc;
     // nextStep > 0.0001 covers 0.00015625 that 1/64th of 1/100
     // the path
-    while (tmpLen < distance && perc <= 1 && nextStep > 0.0001) {
+    while (tmpLen < distance && nextStep > 0.0001) {
       p = iterator(perc);
       lastPerc = perc;
       nextLen = calcLineLength(tempP.x, tempP.y, p.x, p.y);
       // compare tmpLen each cycle with distance, decide next perc to test.
       if ((nextLen + tmpLen) > distance) {
         // we discard this step and we make smaller steps.
-        nextStep /= 2;
         perc -= nextStep;
+        nextStep /= 2;
       }
       else {
         tempP = p;
@@ -11153,50 +11301,6 @@ fabric.CommonMethods = {
   }
 
   /**
-   * Calculate bounding box of a elliptic-arc
-   * @deprecated
-   * @param {Number} fx start point of arc
-   * @param {Number} fy
-   * @param {Number} rx horizontal radius
-   * @param {Number} ry vertical radius
-   * @param {Number} rot angle of horizontal axis
-   * @param {Number} large 1 or 0, whatever the arc is the big or the small on the 2 points
-   * @param {Number} sweep 1 or 0, 1 clockwise or counterclockwise direction
-   * @param {Number} tx end point of arc
-   * @param {Number} ty
-   */
-  function getBoundsOfArc(fx, fy, rx, ry, rot, large, sweep, tx, ty) {
-
-    var fromX = 0, fromY = 0, bound, bounds = [],
-        segs = arcToSegments(tx - fx, ty - fy, rx, ry, large, sweep, rot);
-
-    for (var i = 0, len = segs.length; i < len; i++) {
-      bound = getBoundsOfCurve(fromX, fromY, segs[i][1], segs[i][2], segs[i][3], segs[i][4], segs[i][5], segs[i][6]);
-      bounds.push({ x: bound[0].x + fx, y: bound[0].y + fy });
-      bounds.push({ x: bound[1].x + fx, y: bound[1].y + fy });
-      fromX = segs[i][5];
-      fromY = segs[i][6];
-    }
-    return bounds;
-  };
-
-  /**
-   * Draws arc
-   * @deprecated
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {Number} fx
-   * @param {Number} fy
-   * @param {Array} coords coords of the arc, without the front 'A/a'
-   */
-  function drawArc(ctx, fx, fy, coords) {
-    coords = coords.slice(0).unshift('X'); // command A or a does not matter
-    var beziers = fromArcToBeziers(fx, fy, coords);
-    beziers.forEach(function(bezier) {
-      ctx.bezierCurveTo.apply(ctx, bezier.slice(1));
-    });
-  };
-
-  /**
    * Join path commands to go back to svg format
    * @param {Array} pathData fabricJS parsed path commands
    * @return {String} joined path 'M 0 0 L 20 30'
@@ -11211,16 +11315,6 @@ fabric.CommonMethods = {
   fabric.util.getBoundsOfCurve = getBoundsOfCurve;
   fabric.util.getPointOnPath = getPointOnPath;
   fabric.util.transformPath = transformPath;
-  /**
-   * Typo of `fromArcToBeziers` kept for not breaking the api once corrected.
-   * Will be removed in fabric 5.0
-   * @deprecated
-   */
-  fabric.util.fromArcToBeizers = fromArcToBeziers;
-  // kept because we do not want to make breaking changes.
-  // but useless and deprecated.
-  fabric.util.getBoundsOfArc = getBoundsOfArc;
-  fabric.util.drawArc = drawArc;
 })();
 
 
@@ -12121,7 +12215,132 @@ fabric.log = console.log;
 fabric.warn = console.warn;
 
 
-(function() {
+(function () {
+
+  var extend = fabric.util.object.extend,
+      clone = fabric.util.object.clone;
+
+  /**
+   * @typedef {Object} AnimationOptions
+   * Animation of a value or list of values.
+   * When using lists, think of something like this:
+   * fabric.util.animate({
+   *   startValue: [1, 2, 3],
+   *   endValue: [2, 4, 6],
+   *   onChange: function([a, b, c]) {
+   *     canvas.zoomToPoint({x: b, y: c}, a)
+   *     canvas.renderAll()
+   *   }
+   * });
+   * @example
+   * @property {Function} [onChange] Callback; invoked on every value change
+   * @property {Function} [onComplete] Callback; invoked when value change is completed
+   * @example
+   * // Note: startValue, endValue, and byValue must match the type
+   * var animationOptions = { startValue: 0, endValue: 1, byValue: 0.25 }
+   * var animationOptions = { startValue: [0, 1], endValue: [1, 2], byValue: [0.25, 0.25] }
+   * @property {number | number[]} [startValue=0] Starting value
+   * @property {number | number[]} [endValue=100] Ending value
+   * @property {number | number[]} [byValue=100] Value to modify the property by
+   * @property {Function} [easing] Easing function
+   * @property {Number} [duration=500] Duration of change (in ms)
+   * @property {Function} [abort] Additional function with logic. If returns true, animation aborts.
+   *
+   * @typedef {() => void} CancelFunction
+   *
+   * @typedef {Object} AnimationCurrentState
+   * @property {number | number[]} currentValue value in range [`startValue`, `endValue`]
+   * @property {number} completionRate value in range [0, 1]
+   * @property {number} durationRate value in range [0, 1]
+   *
+   * @typedef {(AnimationOptions & AnimationCurrentState & { cancel: CancelFunction }} AnimationContext
+   */
+
+  /**
+   * Array holding all running animations
+   * @memberof fabric
+   * @type {AnimationContext[]}
+   */
+  var RUNNING_ANIMATIONS = [];
+  fabric.util.object.extend(RUNNING_ANIMATIONS, {
+
+    /**
+     * cancel all running animations at the next requestAnimFrame
+     * @returns {AnimationContext[]}
+     */
+    cancelAll: function () {
+      var animations = this.splice(0);
+      animations.forEach(function (animation) {
+        animation.cancel();
+      });
+      return animations;
+    },
+
+    /**
+     * cancel all running animations attached to canvas at the next requestAnimFrame
+     * @param {fabric.Canvas} canvas
+     * @returns {AnimationContext[]}
+     */
+    cancelByCanvas: function (canvas) {
+      if (!canvas) {
+        return [];
+      }
+      var cancelled = this.filter(function (animation) {
+        return typeof animation.target === 'object' && animation.target.canvas === canvas;
+      });
+      cancelled.forEach(function (animation) {
+        animation.cancel();
+      });
+      return cancelled;
+    },
+
+    /**
+     * cancel all running animations for target at the next requestAnimFrame
+     * @param {*} target
+     * @returns {AnimationContext[]}
+     */
+    cancelByTarget: function (target) {
+      var cancelled = this.findAnimationsByTarget(target);
+      cancelled.forEach(function (animation) {
+        animation.cancel();
+      });
+      return cancelled;
+    },
+
+    /**
+     *
+     * @param {CancelFunction} cancelFunc the function returned by animate
+     * @returns {number}
+     */
+    findAnimationIndex: function (cancelFunc) {
+      return this.indexOf(this.findAnimation(cancelFunc));
+    },
+
+    /**
+     *
+     * @param {CancelFunction} cancelFunc the function returned by animate
+     * @returns {AnimationContext | undefined} animation's options object
+     */
+    findAnimation: function (cancelFunc) {
+      return this.find(function (animation) {
+        return animation.cancel === cancelFunc;
+      });
+    },
+
+    /**
+     *
+     * @param {*} target the object that is assigned to the target property of the animation context
+     * @returns {AnimationContext[]} array of animation options object associated with target
+     */
+    findAnimationsByTarget: function (target) {
+      if (!target) {
+        return [];
+      }
+      return this.filter(function (animation) {
+        return animation.target === target;
+      });
+    }
+  });
 
   function noop() {
     return false;
@@ -12134,22 +12353,34 @@ fabric.warn = console.warn;
   /**
    * Changes value from one to another within certain period of time, invoking callbacks as value is being changed.
    * @memberOf fabric.util
-   * @param {Object} [options] Animation options
-   * @param {Function} [options.onChange] Callback; invoked on every value change
-   * @param {Function} [options.onComplete] Callback; invoked when value change is completed
-   * @param {Number} [options.startValue=0] Starting value
-   * @param {Number} [options.endValue=100] Ending value
-   * @param {Number} [options.byValue=100] Value to modify the property by
-   * @param {Function} [options.easing] Easing function
-   * @param {Number} [options.duration=500] Duration of change (in ms)
-   * @param {Function} [options.abort] Additional function with logic. If returns true, onComplete is called.
-   * @returns {Function} abort function
+   * @param {AnimationOptions} [options] Animation options
+   * @example
+   * // Note: startValue, endValue, and byValue must match the type
+   * fabric.util.animate({ startValue: 0, endValue: 1, byValue: 0.25 })
+   * fabric.util.animate({ startValue: [0, 1], endValue: [1, 2], byValue: [0.25, 0.25] })
+   * @returns {CancelFunction} cancel function
    */
   function animate(options) {
-    var cancel = false;
-    requestAnimFrame(function(timestamp) {
-      options || (options = { });
+    options || (options = {});
+    var cancel = false,
+        context,
+        removeFromRegistry = function () {
+          var index = fabric.runningAnimations.indexOf(context);
+          return index > -1 && fabric.runningAnimations.splice(index, 1)[0];
+        };
 
+    context = extend(clone(options), {
+      cancel: function () {
+        cancel = true;
+        return removeFromRegistry();
+      },
+      currentValue: 'startValue' in options ? options.startValue : 0,
+      completionRate: 0,
+      durationRate: 0
+    });
+    fabric.runningAnimations.push(context);
+
+    requestAnimFrame(function(timestamp) {
       var start = timestamp || +new Date(),
           duration = options.duration || 500,
           finish = start + duration, time,
@@ -12157,32 +12388,44 @@ fabric.warn = console.warn;
           abort = options.abort || noop,
           onComplete = options.onComplete || noop,
           easing = options.easing || defaultEasing,
+          isMany = 'startValue' in options ? options.startValue.length > 0 : false,
           startValue = 'startValue' in options ? options.startValue : 0,
           endValue = 'endValue' in options ? options.endValue : 100,
-          byValue = options.byValue || endValue - startValue;
+          byValue = options.byValue || (isMany ? startValue.map(function(value, i) {
+            return endValue[i] - startValue[i];
+          }) : endValue - startValue);
 
       options.onStart && options.onStart();
 
       (function tick(ticktime) {
-        // TODO: move abort call after calculation
-        // and pass (current,valuePerc, timePerc) as arguments
         time = ticktime || +new Date();
         var currentTime = time > finish ? duration : (time - start),
             timePerc = currentTime / duration,
-            current = easing(currentTime, startValue, byValue, duration),
-            valuePerc = Math.abs((current - startValue) / byValue);
+            current = isMany ? startValue.map(function(_value, i) {
+              return easing(currentTime, startValue[i], byValue[i], duration);
+            }) : easing(currentTime, startValue, byValue, duration),
+            valuePerc = isMany ? Math.abs((current[0] - startValue[0]) / byValue[0])
+              : Math.abs((current - startValue) / byValue);
+        //  update context
+        context.currentValue = isMany ? current.slice() : current;
+        context.completionRate = valuePerc;
+        context.durationRate = timePerc;
         if (cancel) {
           return;
         }
         if (abort(current, valuePerc, timePerc)) {
-          // remove this in 4.0
-          // does to even make sense to abort and run onComplete?
-          onComplete(endValue, 1, 1);
+          removeFromRegistry();
           return;
         }
         if (time > finish) {
-          onChange(endValue, 1, 1);
+          //  update context
+          context.currentValue = isMany ? endValue.slice() : endValue;
+          context.completionRate = 1;
+          context.durationRate = 1;
+          //  execute callbacks
+          onChange(isMany ? endValue.slice() : endValue, 1, 1);
           onComplete(endValue, 1, 1);
+          removeFromRegistry();
           return;
         }
         else {
@@ -12191,9 +12434,8 @@ fabric.warn = console.warn;
         }
       })(start);
     });
-    return function() {
-      cancel = true;
-    };
+
+    return context.cancel;
   }
 
   var _requestAnimFrame = fabric.window.requestAnimationFrame       ||
@@ -12225,6 +12467,7 @@ fabric.warn = console.warn;
   fabric.util.animate = animate;
   fabric.util.requestAnimFrame = requestAnimFrame;
   fabric.util.cancelAnimFrame = cancelAnimFrame;
+  fabric.runningAnimations = RUNNING_ANIMATIONS;
 })();
 
 
@@ -12784,8 +13027,7 @@ fabric.warn = console.warn;
   }
 
   function normalizeValue(attr, value, parentAttributes, fontSize) {
-    var isArray = Object.prototype.toString.call(value) === '[object Array]',
-        parsed;
+    var isArray = Array.isArray(value), parsed;
 
     if ((attr === 'fill' || attr === 'stroke') && value === 'none') {
       value = '';
@@ -13183,7 +13425,7 @@ fabric.warn = console.warn;
         return;
       }
 
-      var xlink = xlinkAttribute.substr(1),
+      var xlink = xlinkAttribute.slice(1),
           x = el.getAttribute('x') || 0,
           y = el.getAttribute('y') || 0,
           el2 = elementById(doc, xlink).cloneNode(true),
@@ -13455,7 +13697,7 @@ fabric.warn = console.warn;
   function recursivelyParseGradientsXlink(doc, gradient) {
     var gradientsAttrs = ['gradientTransform', 'x1', 'x2', 'y1', 'y2', 'gradientUnits', 'cx', 'cy', 'r', 'fx', 'fy'],
         xlinkAttr = 'xlink:href',
-        xLink = gradient.getAttribute(xlinkAttr).substr(1),
+        xLink = gradient.getAttribute(xlinkAttr).slice(1),
         referencedGradient = elementById(doc, xLink);
     if (referencedGradient && referencedGradient.getAttribute(xlinkAttr)) {
       recursivelyParseGradientsXlink(doc, referencedGradient);
@@ -13707,22 +13949,26 @@ fabric.warn = console.warn;
         if (styleContents.trim() === '') {
           continue;
         }
-        rules = styleContents.match(/[^{]*\{[\s\S]*?\}/g);
-        rules = rules.map(function(rule) { return rule.trim(); });
+        // recovers all the rule in this form `body { style code... }`
+        // rules = styleContents.match(/[^{]*\{[\s\S]*?\}/g);
+        rules = styleContents.split('}');
+        // remove empty rules.
+        rules = rules.filter(function(rule) { return rule.trim(); });
+        // at this point we have hopefully an array of rules `body { style code... `
         // eslint-disable-next-line no-loop-func
         rules.forEach(function(rule) {
 
-          var match = rule.match(/([\s\S]*?)\s*\{([^}]*)\}/),
-              ruleObj = { }, declaration = match[2].trim(),
-              propertyValuePairs = declaration.replace(/;$/, '').split(/\s*;\s*/);
+          var match = rule.split('{'),
+              ruleObj = { }, declaration = match[1].trim(),
+              propertyValuePairs = declaration.split(';').filter(function(pair) { return pair.trim(); });
 
           for (i = 0, len = propertyValuePairs.length; i < len; i++) {
-            var pair = propertyValuePairs[i].split(/\s*:\s*/),
-                property = pair[0],
-                value = pair[1];
+            var pair = propertyValuePairs[i].split(':'),
+                property = pair[0].trim(),
+                value = pair[1].trim();
             ruleObj[property] = value;
           }
-          rule = match[1];
+          rule = match[0].trim();
           rule.split(',').forEach(function(_rule) {
             _rule = _rule.replace(/^svg/i, '').trim();
             if (_rule === '') {
@@ -17297,8 +17543,12 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     imageSmoothingEnabled: true,
 
     /**
-     * The transformation (in the format of Canvas transform) which focuses the viewport
+     * The transformation (a Canvas 2D API transform matrix) which focuses the viewport
      * @type Array
+     * @example <caption>Default transform</caption>
+     * canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
+     * @example <caption>Scale by 70% and translate toward bottom-right by 50, without skewing</caption>
+     * canvas.viewportTransform = [0.7, 0, 0, 0.7, 50, 50];
      * @default
      */
     viewportTransform: fabric.iMatrix.concat(),
@@ -17392,7 +17642,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * @private
      */
     _isRetinaScaling: function() {
-      return (fabric.devicePixelRatio !== 1 && this.enableRetinaScaling);
+      return (fabric.devicePixelRatio > 1 && this.enableRetinaScaling);
     },
 
     /**
@@ -17400,7 +17650,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * @return {Number} retinaScaling if applied, otherwise 1;
      */
     getRetinaScaling: function() {
-      return this._isRetinaScaling() ? fabric.devicePixelRatio : 1;
+      return this._isRetinaScaling() ? Math.max(1, fabric.devicePixelRatio) : 1;
     },
 
     /**
@@ -17767,7 +18017,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
         }
       }
       if (this._isCurrentlyDrawing) {
-        this.freeDrawingBrush && this.freeDrawingBrush._setBrushStyles();
+        this.freeDrawingBrush && this.freeDrawingBrush._setBrushStyles(this.contextTop);
       }
       this._initRetinaScaling();
       this.calcOffset();
@@ -17834,8 +18084,8 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     },
 
     /**
-     * Sets viewport transform of this canvas instance
-     * @param {Array} vpt the transform in the form of context.transform
+     * Sets viewport transformation of this canvas instance
+     * @param {Array} vpt a Canvas 2D API transform matrix
      * @return {fabric.Canvas} instance
      * @chainable true
      */
@@ -18187,6 +18437,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * Returns coordinates of a center of canvas.
      * Returned value is an object with top and left properties
      * @return {Object} object with "top" and "left" number values
+     * @deprecated migrate to `getCenterPoint`
      */
     getCenter: function () {
       return {
@@ -18196,12 +18447,20 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
     },
 
     /**
+     * Returns coordinates of a center of canvas.
+     * @return {fabric.Point} 
+     */
+    getCenterPoint: function () {
+      return new fabric.Point(this.width / 2, this.height / 2);
+    },
+
+    /**
      * Centers object horizontally in the canvas
      * @param {fabric.Object} object Object to center horizontally
      * @return {fabric.Canvas} thisArg
      */
     centerObjectH: function (object) {
-      return this._centerObject(object, new fabric.Point(this.getCenter().left, object.getCenterPoint().y));
+      return this._centerObject(object, new fabric.Point(this.getCenterPoint().x, object.getCenterPoint().y));
     },
 
     /**
@@ -18211,7 +18470,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * @chainable
      */
     centerObjectV: function (object) {
-      return this._centerObject(object, new fabric.Point(object.getCenterPoint().x, this.getCenter().top));
+      return this._centerObject(object, new fabric.Point(object.getCenterPoint().x, this.getCenterPoint().y));
     },
 
     /**
@@ -18221,9 +18480,8 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * @chainable
      */
     centerObject: function(object) {
-      var center = this.getCenter();
-
-      return this._centerObject(object, new fabric.Point(center.left, center.top));
+      var center = this.getCenterPoint();
+      return this._centerObject(object, center);
     },
 
     /**
@@ -18234,7 +18492,6 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      */
     viewportCenterObject: function(object) {
       var vpCenter = this.getVpCenter();
-
       return this._centerObject(object, vpCenter);
     },
 
@@ -18268,9 +18525,9 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
      * @chainable
      */
     getVpCenter: function() {
-      var center = this.getCenter(),
+      var center = this.getCenterPoint(),
           iVpt = invertTransform(this.viewportTransform);
-      return transformPoint({ x: center.left, y: center.top }, iVpt);
+      return transformPoint(center, iVpt);
     },
 
     /**
@@ -18936,7 +19193,7 @@ fabric.ElementsParser = function(elements, callback, options, reviver, parsingOp
       this.contextContainer = null;
       // restore canvas style
       this.lowerCanvasEl.classList.remove('lower-canvas');
-      this.lowerCanvasEl.style = this._originalCanvasStyle;
+      fabric.util.setStyle(this.lowerCanvasEl, this._originalCanvasStyle);
       delete this._originalCanvasStyle;
       // restore canvas size to original size in case retina scaling was applied
       this.lowerCanvasEl.setAttribute('width', this.width);
@@ -19104,9 +19361,9 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
   /**
    * Sets brush styles
    * @private
+   * @param {CanvasRenderingContext2D} ctx
    */
-  _setBrushStyles: function() {
-    var ctx = this.canvas.contextTop;
+  _setBrushStyles: function (ctx) {
     ctx.strokeStyle = this.color;
     ctx.lineWidth = this.width;
     ctx.lineCap = this.strokeLineCap;
@@ -19192,6 +19449,22 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
     decimate: 0.4,
 
     /**
+     * Draws a straight line between last recorded point to current pointer
+     * Used for `shift` functionality
+     *
+     * @type boolean
+     * @default false
+     */
+    drawStraightLine: false,
+
+    /**
+     * The event modifier key that makes the brush draw a straight line.
+     * If `null` or 'none' or any other string that is not a modifier key the feature is disabled.
+     * @type {'altKey' | 'shiftKey' | 'ctrlKey' | 'none' | undefined | null}
+     */
+    straightLineKey: 'shiftKey',
+
+    /**
      * Constructor
      * @param {fabric.Canvas} canvas
      * @return {fabric.PencilBrush} Instance of a pencil brush
@@ -19199,6 +19472,10 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
     initialize: function(canvas) {
       this.canvas = canvas;
       this._points = [];
+    },
+
+    needsFullRender: function () {
+      return this.callSuper('needsFullRender') || this._hasStraightLine;
     },
 
     /**
@@ -19219,6 +19496,7 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
       if (!this.canvas._isMainEvent(options.e)) {
         return;
       }
+      this.drawStraightLine = options.e[this.straightLineKey];
       this._prepareForDrawing(pointer);
       // capture coordinates immediately
       // this allows to draw dots (when movement never occurs)
@@ -19234,6 +19512,7 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
       if (!this.canvas._isMainEvent(options.e)) {
         return;
       }
+      this.drawStraightLine = options.e[this.straightLineKey];
       if (this.limitedToCanvasSize === true && this._isOutSideCanvas(pointer)) {
         return;
       }
@@ -19266,6 +19545,7 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
       if (!this.canvas._isMainEvent(options.e)) {
         return true;
       }
+      this.drawStraightLine = false;
       this.oldEnd = undefined;
       this._finalizeAndAddPath();
       return false;
@@ -19292,6 +19572,10 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
       if (this._points.length > 1 && point.eq(this._points[this._points.length - 1])) {
         return false;
       }
+      if (this.drawStraightLine && this._points.length > 1) {
+        this._hasStraightLine = true;
+        this._points.pop();
+      }
       this._points.push(point);
       return true;
     },
@@ -19302,8 +19586,9 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
      */
     _reset: function() {
       this._points = [];
-      this._setBrushStyles();
+      this._setBrushStyles(this.canvas.contextTop);
       this._setShadow();
+      this._hasStraightLine = false;
     },
 
     /**
@@ -19318,12 +19603,13 @@ fabric.BaseBrush = fabric.util.createClass(/** @lends fabric.BaseBrush.prototype
     /**
      * Draw a smooth path on the topCanvas using quadraticCurveTo
      * @private
+     * @param {CanvasRenderingContext2D} [ctx]
      */
-    _render: function() {
-      var ctx  = this.canvas.contextTop, i, len,
+    _render: function(ctx) {
+      var i, len,
           p1 = this._points[0],
           p2 = this._points[1];
-
+      ctx = ctx || this.canvas.contextTop;
       this._saveAndTransform(ctx);
       ctx.beginPath();
       //if we only have 2 points in the path and they are the same
@@ -19857,17 +20143,19 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
 
   /**
    * Creates "pattern" instance property
+   * @param {CanvasRenderingContext2D} ctx
    */
-  getPattern: function() {
-    return this.canvas.contextTop.createPattern(this.source || this.getPatternSrc(), 'repeat');
+  getPattern: function(ctx) {
+    return ctx.createPattern(this.source || this.getPatternSrc(), 'repeat');
   },
 
   /**
    * Sets brush styles
+   * @param {CanvasRenderingContext2D} ctx
    */
-  _setBrushStyles: function() {
-    this.callSuper('_setBrushStyles');
-    this.canvas.contextTop.strokeStyle = this.getPattern();
+  _setBrushStyles: function(ctx) {
+    this.callSuper('_setBrushStyles', ctx);
+    ctx.strokeStyle = this.getPattern(ctx);
   },
 
   /**
@@ -19926,15 +20214,11 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
    * @fires dragover
    * @fires dragenter
    * @fires dragleave
+   * @fires drop:before before drop event. same native event. This is added to handle edge cases
    * @fires drop
    * @fires after:render at the end of the render process, receives the context in the callback
    * @fires before:render at start the render process, receives the context in the callback
    *
-   * the following events are deprecated:
-   * @fires object:rotated at the end of a rotation transform
-   * @fires object:scaled at the end of a scale transform
-   * @fires object:moved at the end of translation transform
-   * @fires object:skewed at the end of a skew transform
    */
   fabric.Canvas = fabric.util.createClass(fabric.StaticCanvas, /** @lends fabric.Canvas.prototype */ {
 
@@ -20120,13 +20404,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     freeDrawingCursor:      'crosshair',
 
     /**
-     * Cursor value used for rotation point
-     * @type String
-     * @default
-     */
-    rotationCursor:         'crosshair',
-
-    /**
      * Cursor value used for disabled elements ( corners with disabled action )
      * @type String
      * @since 2.0.0
@@ -20232,6 +20509,13 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     targets: [],
 
     /**
+     * When the option is enabled, PointerEvent is used instead of MouseEvent.
+     * @type Boolean
+     * @default
+     */
+    enablePointerEvents: false,
+
+    /**
      * Keep track of the hovered target
      * @type fabric.Object
      * @private
@@ -20306,6 +20590,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       }
       if (this.hasLostContext) {
         this.renderTopLayer(this.contextTop);
+        this.hasLostContext = false;
       }
       var canvasToDrawOn = this.contextContainer;
       this.renderCanvas(canvasToDrawOn, this._chooseObjectsToRender());
@@ -20399,7 +20684,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     _isSelectionKeyPressed: function(e) {
       var selectionKeyPressed = false;
 
-      if (Object.prototype.toString.call(this.selectionKey) === '[object Array]') {
+      if (Array.isArray(this.selectionKey)) {
         selectionKeyPressed = !!this.selectionKey.find(function(key) { return e[key] === true; });
       }
       else {
@@ -20826,6 +21111,14 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     },
 
     /**
+     * Returns context of top canvas where interactions are drawn
+     * @returns {CanvasRenderingContext2D}
+     */
+    getTopContext: function () {
+      return this.contextTop;
+    },
+
+    /**
      * @private
      */
     _createCacheCanvas: function () {
@@ -20975,17 +21268,12 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           e: e,
           selected: added,
           deselected: removed,
-          // added for backward compatibility
-          // deprecated
-          updated: added[0] || removed[0],
-          target: this._activeObject,
         });
       }
       else if (objects.length > 0) {
         this.fire('selection:created', {
           e: e,
           selected: added,
-          target: this._activeObject,
         });
       }
       else if (oldObjects.length > 0) {
@@ -21309,7 +21597,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       this._onDragOver = this._onDragOver.bind(this);
       this._onDragEnter = this._simpleEventHandler.bind(this, 'dragenter');
       this._onDragLeave = this._simpleEventHandler.bind(this, 'dragleave');
-      this._onDrop = this._simpleEventHandler.bind(this, 'drop');
+      this._onDrop = this._onDrop.bind(this);
       this.eventsBound = true;
     },
 
@@ -21419,6 +21707,18 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       e.preventDefault();
       var target = this._simpleEventHandler('dragover', e);
       this._fireEnterLeaveEvents(target, e);
+    },
+
+    /**
+     * `drop:before` is a an event that allow you to schedule logic
+     * before the `drop` event. Prefer `drop` event always, but if you need
+     * to run some drop-disabling logic on an event, since there is no way
+     * to handle event handlers ordering, use `drop:before`
+     * @param {Event} e
+     */
+    _onDrop: function (e) {
+      this._simpleEventHandler('drop:before', e);
+      return this._simpleEventHandler('drop', e);
     },
 
     /**
@@ -21653,24 +21953,33 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
           );
         }
       }
+      var corner, pointer;
       if (target) {
+        corner = target._findTargetCorner(
+          this.getPointer(e, true),
+          fabric.util.isTouchEvent(e)
+        );
         if (target.selectable && target !== this._activeObject && target.activeOn === 'up') {
           this.setActiveObject(target, e);
           shouldRender = true;
         }
         else {
-          var corner = target._findTargetCorner(
-            this.getPointer(e, true),
-            fabric.util.isTouchEvent(e)
-          );
           var control = target.controls[corner],
               mouseUpHandler = control && control.getMouseUpHandler(e, target, control);
           if (mouseUpHandler) {
-            var pointer = this.getPointer(e);
+            pointer = this.getPointer(e);
             mouseUpHandler(e, transform, pointer.x, pointer.y);
           }
         }
         target.isMoving = false;
+      }
+      // if we are ending up a transform on a different control or a new object
+      // fire the original mouse up from the corner that started the transform
+      if (transform && (transform.target !== target || transform.corner !== corner)) {
+        var originalControl = transform.target && transform.target.controls[transform.corner],
+            originalMouseUpHandler = originalControl && originalControl.getMouseUpHandler(e, target, control);
+        pointer = pointer || this.getPointer(e);
+        originalMouseUpHandler && originalMouseUpHandler(e, transform, pointer.x, pointer.y);
       }
       this._setCursorFromEvent(e, target);
       this._handleEvent(e, 'up', LEFT_CLICK, isClick);
@@ -21753,7 +22062,6 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
 
       var transform = this._currentTransform,
           target = transform.target,
-          eventName,
           options = {
             e: e,
             target: target,
@@ -21768,57 +22076,8 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       target.setCoords();
 
       if (transform.actionPerformed || (this.stateful && target.hasStateChanged())) {
-        if (transform.actionPerformed) {
-          // this is not friendly to the new control api.
-          // is deprecated.
-          eventName = this._addEventOptions(options, transform);
-          this._fire(eventName, options);
-        }
         this._fire('modified', options);
       }
-    },
-
-    /**
-     * Mutate option object in order to add by property and give back the event name.
-     * @private
-     * @deprecated since 4.2.0
-     * @param {Object} options to mutate
-     * @param {Object} transform to inspect action from
-     */
-    _addEventOptions: function(options, transform) {
-      // we can probably add more details at low cost
-      // scale change, rotation changes, translation changes
-      var eventName, by;
-      switch (transform.action) {
-        case 'scaleX':
-          eventName = 'scaled';
-          by = 'x';
-          break;
-        case 'scaleY':
-          eventName = 'scaled';
-          by = 'y';
-          break;
-        case 'skewX':
-          eventName = 'skewed';
-          by = 'x';
-          break;
-        case 'skewY':
-          eventName = 'skewed';
-          by = 'y';
-          break;
-        case 'scale':
-          eventName = 'scaled';
-          by = 'equally';
-          break;
-        case 'rotate':
-          eventName = 'rotated';
-          break;
-        case 'drag':
-          eventName = 'moved';
-          break;
-      }
-      options.by = by;
-      return eventName;
     },
 
     /**
@@ -23260,6 +23519,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     /**
      * When `false`, the stoke width will scale with the object.
      * When `true`, the stroke will always match the exact pixel size entered for stroke width.
+     * this Property does not work on Text classes or drawing call that uses strokeText,fillText methods
      * default to false
      * @since 2.6.0
      * @type Boolean
@@ -23635,11 +23895,9 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         if (object[prop] === prototype[prop]) {
           delete object[prop];
         }
-        var isArray = Object.prototype.toString.call(object[prop]) === '[object Array]' &&
-                      Object.prototype.toString.call(prototype[prop]) === '[object Array]';
-
         // basically a check for [] === []
-        if (isArray && object[prop].length === 0 && prototype[prop].length === 0) {
+        if (Array.isArray(object[prop]) && Array.isArray(prototype[prop])
+          && object[prop].length === 0 && prototype[prop].length === 0) {
           delete object[prop];
         }
       });
@@ -23815,7 +24073,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
 
     renderCache: function(options) {
       options = options || {};
-      if (!this._cacheCanvas) {
+      if (!this._cacheCanvas || !this._cacheContext) {
         this._createCacheCanvas();
       }
       if (this.isCacheDirty()) {
@@ -23830,6 +24088,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      */
     _removeCacheCanvas: function() {
       this._cacheCanvas = null;
+      this._cacheContext = null;
       this.cacheWidth = 0;
       this.cacheHeight = 0;
     },
@@ -23910,26 +24169,26 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     /**
      * Execute the drawing operation for an object clipPath
      * @param {CanvasRenderingContext2D} ctx Context to render on
+     * @param {fabric.Object} clipPath
      */
-    drawClipPathOnCache: function(ctx) {
-      var path = this.clipPath;
+    drawClipPathOnCache: function(ctx, clipPath) {
       ctx.save();
       // DEBUG: uncomment this line, comment the following
       // ctx.globalAlpha = 0.4
-      if (path.inverted) {
+      if (clipPath.inverted) {
         ctx.globalCompositeOperation = 'destination-out';
       }
       else {
         ctx.globalCompositeOperation = 'destination-in';
       }
       //ctx.scale(1 / 2, 1 / 2);
-      if (path.absolutePositioned) {
+      if (clipPath.absolutePositioned) {
         var m = fabric.util.invertTransform(this.calcTransformMatrix());
         ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
       }
-      path.transform(ctx);
-      ctx.scale(1 / path.zoomX, 1 / path.zoomY);
-      ctx.drawImage(path._cacheCanvas, -path.cacheTranslationX, -path.cacheTranslationY);
+      clipPath.transform(ctx);
+      ctx.scale(1 / clipPath.zoomX, 1 / clipPath.zoomY);
+      ctx.drawImage(clipPath._cacheCanvas, -clipPath.cacheTranslationX, -clipPath.cacheTranslationY);
       ctx.restore();
     },
 
@@ -23948,22 +24207,26 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         this._renderBackground(ctx);
       }
       this._render(ctx);
-      this._drawClipPath(ctx);
+      this._drawClipPath(ctx, this.clipPath);
       this.fill = originalFill;
       this.stroke = originalStroke;
     },
 
-    _drawClipPath: function(ctx) {
-      var path = this.clipPath;
-      if (!path) { return; }
+    /**
+     * Prepare clipPath state and cache and draw it on instance's cache
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {fabric.Object} clipPath
+     */
+    _drawClipPath: function (ctx, clipPath) {
+      if (!clipPath) { return; }
       // needed to setup a couple of variables
       // path canvas gets overridden with this one.
       // TODO find a better solution?
-      path.canvas = this.canvas;
-      path.shouldCache();
-      path._transformDone = true;
-      path.renderCache({ forClipping: true });
-      this.drawClipPathOnCache(ctx);
+      clipPath.canvas = this.canvas;
+      clipPath.shouldCache();
+      clipPath._transformDone = true;
+      clipPath.renderCache({ forClipping: true });
+      this.drawClipPathOnCache(ctx, clipPath);
     },
 
     /**
@@ -23984,7 +24247,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
       if (this.isNotVisible()) {
         return false;
       }
-      if (this._cacheCanvas && !skipCanvas && this._updateCacheCanvas()) {
+      if (this._cacheCanvas && this._cacheContext && !skipCanvas && this._updateCacheCanvas()) {
         // in this case the context is already cleared.
         return true;
       }
@@ -23993,7 +24256,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
           (this.clipPath && this.clipPath.absolutePositioned) ||
           (this.statefullCache && this.hasStateChanged('cacheProperties'))
         ) {
-          if (this._cacheCanvas && !skipCanvas) {
+          if (this._cacheCanvas && this._cacheContext && !skipCanvas) {
             var width = this.cacheWidth / this.zoomX;
             var height = this.cacheHeight / this.zoomY;
             this._cacheContext.clearRect(-width / 2, -height / 2, width, height);
@@ -24107,6 +24370,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
 
     /**
      * Renders controls and borders for the object
+     * the context here is not transformed
      * @param {CanvasRenderingContext2D} ctx Context to render on
      * @param {Object} [styleOverride] properties to override the object style
      */
@@ -24125,7 +24389,10 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
       if (!this.group) {
         ctx.globalAlpha = this.isMoving ? this.borderOpacityWhenMoving : 1;
       }
-      ctx.rotate(degreesToRadians(options.angle));
+      if (this.flipX) {
+        options.angle -= 180;
+      }
+      ctx.rotate(degreesToRadians(this.group ? options.angle : this.angle));
       if (styleOverride.forActiveSelection || this.group) {
         drawBorders && this.drawBordersInGroup(ctx, options, styleOverride);
       }
@@ -24523,7 +24790,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * @return {Boolean}
      */
     isType: function(type) {
-      return this.type === type;
+      return arguments.length > 1 ? Array.from(arguments).includes(this.type) : this.type === type;
     },
 
     /**
@@ -24661,6 +24928,16 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
       if (this.globalCompositeOperation) {
         ctx.globalCompositeOperation = this.globalCompositeOperation;
       }
+    },
+
+    /**
+     * cancel instance's running animations
+     * override if necessary to dispose artifacts such as `clipPath`
+     */
+    dispose: function () {
+      if (fabric.runningAnimations) {
+        fabric.runningAnimations.cancelByTarget(this);
+      }
     }
   });
 
@@ -24678,6 +24955,15 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    */
   fabric.Object.NUM_FRACTION_DIGITS = 2;
 
+  /**
+   * Defines which properties should be enlivened from the object passed to {@link fabric.Object._fromObject}
+   * @static
+   * @memberOf fabric.Object
+   * @constant
+   * @type string[]
+   */
+  fabric.Object.ENLIVEN_PROPS = ['clipPath'];
+
   fabric.Object._fromObject = function(className, object, callback, extraParam) {
     var klass = fabric[className];
     object = clone(object, true);
@@ -24688,8 +24974,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
       if (typeof patterns[1] !== 'undefined') {
         object.stroke = patterns[1];
       }
-      fabric.util.enlivenObjects([object.clipPath], function(enlivedProps) {
-        object.clipPath = enlivedProps[0];
+      fabric.util.enlivenObjectEnlivables(object, object, function () {
         var instance = extraParam ? new klass(object[extraParam], object) : new klass(object);
         callback && callback(instance);
       });
@@ -25010,7 +25295,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
     /**
      * Describe object's corner position in canvas element coordinates.
      * includes padding. Used of object detection.
-     * set and refreshed with setCoords and calcCoords.
+     * set and refreshed with setCoords.
      * @memberOf fabric.Object.prototype
      */
     lineCoords: null,
@@ -25394,21 +25679,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
       return this.scale(value / this.height / boundingRectFactor);
     },
 
-    /**
-     * Calculates and returns the .coords of an object.
-     * unused by the library, only for the end dev.
-     * @return {Object} Object with tl, tr, br, bl ....
-     * @chainable
-     * @deprecated
-     */
-    calcCoords: function(absolute) {
-      // this is a compatibility function to avoid removing calcCoords now.
-      if (absolute) {
-        return this.calcACoords();
-      }
-      return this.calcOCoords();
-    },
-
     calcLineCoords: function() {
       var vpt = this.getViewportTransform(),
           padding = this.padding, angle = degreesToRadians(this.angle),
@@ -25483,7 +25753,8 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
      * oCoords are used to find the corners
      * aCoords are used to quickly find an object on the canvas
      * lineCoords are used to quickly find object during pointer events.
-     * See {@link https://github.com/kangax/fabric.js/wiki/When-to-call-setCoords|When-to-call-setCoords}
+     * See {@link https://github.com/fabricjs/fabric.js/wiki/When-to-call-setCoords} and {@link http://fabricjs.com/fabric-gotchas}
+     *
      * @param {Boolean} [skipCorners] skip calculation of oCoords.
      * @return {fabric.Object} thisArg
      * @chainable
@@ -25578,23 +25849,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
       cache.key = key;
       cache.value = util.composeMatrix(options);
       return cache.value;
-    },
-
-    /*
-     * Calculate object dimensions from its properties
-     * @private
-     * @deprecated since 3.4.0, please use fabric.util._calcDimensionsTransformMatrix
-     * not including or including flipX, flipY to emulate the flipping boolean
-     * @return {Object} .x width dimension
-     * @return {Object} .y height dimension
-     */
-    _calcDimensionsTransformMatrix: function(skewX, skewY, flipping) {
-      return util.calcDimensionsMatrix({
-        skewX: skewX,
-        skewY: skewY,
-        scaleX: this.scaleX * (flipping && this.flipX ? -1 : 1),
-        scaleY: this.scaleY * (flipping && this.flipY ? -1 : 1)
-      });
     },
 
     /*
@@ -26461,8 +26715,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    * @param {Object} [callbacks] Callbacks object with optional "onComplete" and/or "onChange" properties
    * @param {Function} [callbacks.onComplete] Invoked on completion
    * @param {Function} [callbacks.onChange] Invoked on every step of animation
-   * @return {fabric.Canvas} thisArg
-   * @chainable
+   * @return {fabric.AnimationContext} context
    */
   fxCenterObjectH: function (object, callbacks) {
     callbacks = callbacks || { };
@@ -26472,9 +26725,10 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         onChange = callbacks.onChange || empty,
         _this = this;
 
-    fabric.util.animate({
+    return fabric.util.animate({
+      target: this,
       startValue: object.left,
-      endValue: this.getCenter().left,
+      endValue: this.getCenterPoint().x,
       duration: this.FX_DURATION,
       onChange: function(value) {
         object.set('left', value);
@@ -26486,8 +26740,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         onComplete();
       }
     });
-
-    return this;
   },
 
   /**
@@ -26496,8 +26748,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    * @param {Object} [callbacks] Callbacks object with optional "onComplete" and/or "onChange" properties
    * @param {Function} [callbacks.onComplete] Invoked on completion
    * @param {Function} [callbacks.onChange] Invoked on every step of animation
-   * @return {fabric.Canvas} thisArg
-   * @chainable
+   * @return {fabric.AnimationContext} context
    */
   fxCenterObjectV: function (object, callbacks) {
     callbacks = callbacks || { };
@@ -26507,9 +26758,10 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         onChange = callbacks.onChange || empty,
         _this = this;
 
-    fabric.util.animate({
+    return fabric.util.animate({
+      target: this,
       startValue: object.top,
-      endValue: this.getCenter().top,
+      endValue: this.getCenterPoint().y,
       duration: this.FX_DURATION,
       onChange: function(value) {
         object.set('top', value);
@@ -26521,8 +26773,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         onComplete();
       }
     });
-
-    return this;
   },
 
   /**
@@ -26531,8 +26781,7 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    * @param {Object} [callbacks] Callbacks object with optional "onComplete" and/or "onChange" properties
    * @param {Function} [callbacks.onComplete] Invoked on completion
    * @param {Function} [callbacks.onChange] Invoked on every step of animation
-   * @return {fabric.Canvas} thisArg
-   * @chainable
+   * @return {fabric.AnimationContext} context
    */
   fxRemove: function (object, callbacks) {
     callbacks = callbacks || { };
@@ -26542,7 +26791,8 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         onChange = callbacks.onChange || empty,
         _this = this;
 
-    fabric.util.animate({
+    return fabric.util.animate({
+      target: this,
       startValue: object.opacity,
       endValue: 0,
       duration: this.FX_DURATION,
@@ -26556,8 +26806,6 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
         onComplete();
       }
     });
-
-    return this;
   }
 });
 
@@ -26568,7 +26816,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
    * @param {Number|Object} value Value to animate property to (if string was given first) or options object
    * @return {fabric.Object} thisArg
    * @tutorial {@link http://fabricjs.com/fabric-intro-part-2#animation}
-   * @chainable
+   * @return {fabric.AnimationContext | fabric.AnimationContext[]} animation context (or an array if passed multiple properties)
    *
    * As object — multiple properties
    *
@@ -26581,22 +26829,22 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
    * object.animate('left', { duration: ... });
    *
    */
-  animate: function() {
+  animate: function () {
     if (arguments[0] && typeof arguments[0] === 'object') {
-      var propsToAnimate = [], prop, skipCallbacks;
+      var propsToAnimate = [], prop, skipCallbacks, out = [];
       for (prop in arguments[0]) {
         propsToAnimate.push(prop);
       }
       for (var i = 0, len = propsToAnimate.length; i < len; i++) {
         prop = propsToAnimate[i];
         skipCallbacks = i !== len - 1;
-        this._animate(prop, arguments[0][prop], arguments[1], skipCallbacks);
+        out.push(this._animate(prop, arguments[0][prop], arguments[1], skipCallbacks));
       }
+      return out;
     }
     else {
-      this._animate.apply(this, arguments);
+      return this._animate.apply(this, arguments);
     }
-    return this;
   },
 
   /**
@@ -26644,6 +26892,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     }
 
     var _options = {
+      target: this,
       startValue: options.from,
       endValue: to,
       byValue: options.by,
@@ -27015,7 +27264,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
   'use strict';
 
   var fabric = global.fabric || (global.fabric = { }),
-      pi = Math.PI;
+      degreesToRadians = fabric.util.degreesToRadians;
 
   if (fabric.Circle) {
     fabric.warn('fabric.Circle is already defined.');
@@ -27045,22 +27294,20 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     radius: 0,
 
     /**
-     * Start angle of the circle, moving clockwise
-     * deprecated type, this should be in degree, this was an oversight.
+     * degrees of start of the circle.
      * probably will change to degrees in next major version
-     * @type Number
+     * @type Number 0 - 359
      * @default 0
      */
     startAngle: 0,
 
     /**
      * End angle of the circle
-     * deprecated type, this should be in degree, this was an oversight.
      * probably will change to degrees in next major version
-     * @type Number
-     * @default 2Pi
+     * @type Number 1 - 360
+     * @default 360
      */
-    endAngle: pi * 2,
+    endAngle: 360,
 
     cacheProperties: fabric.Object.prototype.cacheProperties.concat('radius', 'startAngle', 'endAngle'),
 
@@ -27098,7 +27345,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      */
     _toSVG: function() {
       var svgString, x = 0, y = 0,
-          angle = (this.endAngle - this.startAngle) % ( 2 * pi);
+          angle = (this.endAngle - this.startAngle) % 360;
 
       if (angle === 0) {
         svgString = [
@@ -27109,14 +27356,17 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         ];
       }
       else {
-        var startX = fabric.util.cos(this.startAngle) * this.radius,
-            startY = fabric.util.sin(this.startAngle) * this.radius,
-            endX = fabric.util.cos(this.endAngle) * this.radius,
-            endY = fabric.util.sin(this.endAngle) * this.radius,
-            largeFlag = angle > pi ? '1' : '0';
+        var start = degreesToRadians(this.startAngle),
+            end = degreesToRadians(this.endAngle),
+            radius = this.radius,
+            startX = fabric.util.cos(start) * radius,
+            startY = fabric.util.sin(start) * radius,
+            endX = fabric.util.cos(end) * radius,
+            endY = fabric.util.sin(end) * radius,
+            largeFlag = angle > 180 ? '1' : '0';
         svgString = [
           '<path d="M ' + startX + ' ' + startY,
-          ' A ' + this.radius + ' ' + this.radius,
+          ' A ' + radius + ' ' + radius,
           ' 0 ', +largeFlag + ' 1', ' ' + endX + ' ' + endY,
           '" ', 'COMMON_PARTS', ' />\n'
         ];
@@ -27135,8 +27385,10 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         0,
         0,
         this.radius,
-        this.startAngle,
-        this.endAngle, false);
+        degreesToRadians(this.startAngle),
+        degreesToRadians(this.endAngle),
+        false
+      );
       this._renderPaintInOrder(ctx);
     },
 
@@ -27694,7 +27946,8 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       extend = fabric.util.object.extend,
       min = fabric.util.array.min,
       max = fabric.util.array.max,
-      toFixed = fabric.util.toFixed;
+      toFixed = fabric.util.toFixed,
+      projectStrokeOnPoints = fabric.util.projectStrokeOnPoints;
 
   if (fabric.Polyline) {
     fabric.warn('fabric.Polyline is already defined');
@@ -27722,6 +27975,17 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      * @default
      */
     points: null,
+
+    /**
+     * WARNING: Feature in progress
+     * Calculate the exact bounding box taking in account strokeWidth on acute angles
+     * this will be turned to true by default on fabric 6.0
+     * maybe will be left in as an optimization since calculations may be slow
+     * @deprecated
+     * @type Boolean
+     * @default false
+     */
+    exactBoundingBox: false,
 
     cacheProperties: fabric.Object.prototype.cacheProperties.concat('points'),
 
@@ -27751,13 +28015,25 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       this._setPositionDimensions(options);
     },
 
+    /**
+     * @private
+     */
+    _projectStrokeOnPoints: function () {
+      return projectStrokeOnPoints(this.points, this, true);
+    },
+
     _setPositionDimensions: function(options) {
-      var calcDim = this._calcDimensions(options), correctLeftTop;
-      this.width = calcDim.width;
-      this.height = calcDim.height;
+      var calcDim = this._calcDimensions(options), correctLeftTop,
+          correctSize = this.exactBoundingBox ? this.strokeWidth : 0;
+      this.width = calcDim.width - correctSize;
+      this.height = calcDim.height - correctSize;
       if (!options.fromSVG) {
         correctLeftTop = this.translateToGivenOrigin(
-          { x: calcDim.left - this.strokeWidth / 2, y: calcDim.top - this.strokeWidth / 2 },
+          {
+            // this looks bad, but is one way to keep it optional for now.
+            x: calcDim.left - this.strokeWidth / 2 + correctSize / 2,
+            y: calcDim.top - this.strokeWidth / 2 + correctSize / 2
+          },
           'left',
           'top',
           this.originX,
@@ -27771,8 +28047,8 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         this.top = options.fromSVG ? calcDim.top : correctLeftTop.y;
       }
       this.pathOffset = {
-        x: calcDim.left + this.width / 2,
-        y: calcDim.top + this.height / 2
+        x: calcDim.left + this.width / 2 + correctSize / 2,
+        y: calcDim.top + this.height / 2 + correctSize / 2
       };
     },
 
@@ -27788,7 +28064,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      */
     _calcDimensions: function() {
 
-      var points = this.points,
+      var points = this.exactBoundingBox ? this._projectStrokeOnPoints() : this.points,
           minX = min(points, 'x') || 0,
           minY = min(points, 'y') || 0,
           maxX = max(points, 'x') || 0,
@@ -27800,7 +28076,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         left: minX,
         top: minY,
         width: width,
-        height: height
+        height: height,
       };
     },
 
@@ -27936,7 +28212,8 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
 
   'use strict';
 
-  var fabric = global.fabric || (global.fabric = { });
+  var fabric = global.fabric || (global.fabric = {}),
+      projectStrokeOnPoints = fabric.util.projectStrokeOnPoints;
 
   if (fabric.Polygon) {
     fabric.warn('fabric.Polygon is already defined');
@@ -27957,6 +28234,13 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      * @default
      */
     type: 'polygon',
+
+    /**
+     * @private
+     */
+    _projectStrokeOnPoints: function () {
+      return projectStrokeOnPoints(this.points, this);
+    },
 
     /**
      * @private
@@ -28015,7 +28299,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       min = fabric.util.array.min,
       max = fabric.util.array.max,
       extend = fabric.util.object.extend,
-      _toString = Object.prototype.toString,
+      clone = fabric.util.object.clone,
       toFixed = fabric.util.toFixed;
 
   if (fabric.Path) {
@@ -28056,23 +28340,24 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
      * @param {Object} [options] Options object
      * @return {fabric.Path} thisArg
      */
-    initialize: function(path, options) {
-      options = options || { };
+    initialize: function (path, options) {
+      options = clone(options || {});
+      delete options.path;
       this.callSuper('initialize', options);
-      if (!path) {
-        path = [];
-      }
+      this._setPath(path || [], options);
+    },
 
-      var fromArray = _toString.call(path) === '[object Array]';
-
+    /**
+    * @private
+    * @param {Array|String} path Path data (sequence of coordinates and corresponding "command" tokens)
+    * @param {Object} [options] Options object
+    */
+    _setPath: function (path, options) {
       this.path = fabric.util.makePathSimpler(
-        fromArray ? path : fabric.util.parsePath(path)
+        Array.isArray(path) ? path : fabric.util.parsePath(path)
       );
 
-      if (!this.path) {
-        return;
-      }
-      fabric.Polyline.prototype._setPositionDimensions.call(this, options);
+      fabric.Polyline.prototype._setPositionDimensions.call(this, options || {});
     },
 
     /**
@@ -28729,7 +29014,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       for (var i = 0, len = this._objects.length; i < len; i++) {
         this._objects[i].render(ctx);
       }
-      this._drawClipPath(ctx);
+      this._drawClipPath(ctx, this.clipPath);
     },
 
     /**
@@ -28776,25 +29061,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     },
 
     /**
-     * Realises the transform from this group onto the supplied object
-     * i.e. it tells you what would happen if the supplied object was in
-     * the group, and then the group was destroyed. It mutates the supplied
-     * object.
-     * Warning: this method is not useful anymore, it has been kept to no break the api.
-     * is not used in the fabricJS codebase
-     * this method will be reduced to using the utility.
-     * @private
-     * @deprecated
-     * @param {fabric.Object} object
-     * @param {Array} parentMatrix parent transformation
-     * @return {fabric.Object} transformedObject
-     */
-    realizeTransform: function(object, parentMatrix) {
-      fabric.util.addTransformToObject(object, parentMatrix);
-      return object;
-    },
-
-    /**
      * Destroys a group (restoring state of its objects)
      * @return {fabric.Group} thisArg
      * @chainable
@@ -28806,6 +29072,14 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         object.set('dirty', true);
       });
       return this._restoreObjectsState();
+    },
+
+    dispose: function () {
+      this.callSuper('dispose');
+      this.forEachObject(function (object) {
+        object.dispose && object.dispose();
+      });
+      this._objects = [];
     },
 
     /**
@@ -28971,11 +29245,10 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
       });
       return;
     }
-    fabric.util.enlivenObjects(objects, function(enlivenedObjects) {
-      fabric.util.enlivenObjects([object.clipPath], function(enlivedClipPath) {
-        var options = fabric.util.object.clone(object, true);
-        options.clipPath = enlivedClipPath[0];
-        delete options.objects;
+    fabric.util.enlivenObjects(objects, function (enlivenedObjects) {
+      var options = fabric.util.object.clone(object, true);
+      delete options.objects;
+      fabric.util.enlivenObjectEnlivables(object, options, function () {
         callback && callback(new fabric.Group(enlivenedObjects, options, true));
       });
     });
@@ -29345,7 +29618,8 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
     /**
      * Delete textures, reference to elements and eventually JSDOM cleanup
      */
-    dispose: function() {
+    dispose: function () {
+      this.callSuper('dispose');
       this.removeTexture(this.cacheKey);
       this.removeTexture(this.cacheKey + '_filtered');
       this._cacheContext = undefined;
@@ -29855,8 +30129,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         object.filters = filters || [];
         fabric.Image.prototype._initFilters.call(object, [object.resizeFilter], function(resizeFilters) {
           object.resizeFilter = resizeFilters[0];
-          fabric.util.enlivenObjects([object.clipPath], function(enlivedProps) {
-            object.clipPath = enlivedProps[0];
+          fabric.util.enlivenObjectEnlivables(object, object, function () {
             var image = new fabric.Image(img, object);
             callback(image, false);
           });
@@ -29927,8 +30200,7 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
    * @chainable
    */
   straighten: function() {
-    this.rotate(this._getAngleValueForStraighten());
-    return this;
+    return this.rotate(this._getAngleValueForStraighten());
   },
 
   /**
@@ -29937,7 +30209,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
    * @param {Function} [callbacks.onComplete] Invoked on completion
    * @param {Function} [callbacks.onChange] Invoked on every step of animation
    * @return {fabric.Object} thisArg
-   * @chainable
    */
   fxStraighten: function(callbacks) {
     callbacks = callbacks || { };
@@ -29947,7 +30218,8 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         onChange = callbacks.onChange || empty,
         _this = this;
 
-    fabric.util.animate({
+    return fabric.util.animate({
+      target: this,
       startValue: this.get('angle'),
       endValue: this._getAngleValueForStraighten(),
       duration: this.FX_DURATION,
@@ -29960,8 +30232,6 @@ fabric.util.object.extend(fabric.Object.prototype, /** @lends fabric.Object.prot
         onComplete();
       },
     });
-
-    return this;
   }
 });
 
@@ -29983,13 +30253,11 @@ fabric.util.object.extend(fabric.StaticCanvas.prototype, /** @lends fabric.Stati
    * Same as {@link fabric.Canvas.prototype.straightenObject}, but animated
    * @param {fabric.Object} object Object to straighten
    * @return {fabric.Canvas} thisArg
-   * @chainable
    */
   fxStraightenObject: function (object) {
-    object.fxStraighten({
+    return object.fxStraighten({
       onChange: this.requestRenderAllBound
     });
-    return this;
   }
 });
 
@@ -30890,8 +31158,10 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     mainParameter: 'matrix',
 
     /**
-     * Lock the colormatrix on the color part, skipping alpha, manly for non webgl scenario
+     * Lock the colormatrix on the color part, skipping alpha, mainly for non webgl scenario
      * to save some calculation
+     * @type Boolean
+     * @default true
      */
     colorsOnly: true,
 
@@ -32290,17 +32560,23 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     /**
      * Color to make the blend operation with. default to a reddish color since black or white
      * gives always strong result.
+     * @type String
+     * @default
      **/
     color: '#F95C63',
 
     /**
      * Blend mode for the filter: one of multiply, add, diff, screen, subtract,
      * darken, lighten, overlay, exclusion, tint.
+     * @type String
+     * @default
      **/
     mode: 'multiply',
 
     /**
      * alpha value. represent the strength of the blend color operation.
+     * @type Number
+     * @default
      **/
     alpha: 1,
 
@@ -32541,8 +32817,9 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     image: null,
 
     /**
-     * Blend mode for the filter: one of multiply, add, diff, screen, subtract,
-     * darken, lighten, overlay, exclusion, tint.
+     * Blend mode for the filter (one of "multiply", "mask")
+     * @type String
+     * @default
      **/
     mode: 'multiply',
 
@@ -33678,6 +33955,8 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
      * blur value, in percentage of image dimensions.
      * specific to keep the image blur constant at different resolutions
      * range between 0 and 1.
+     * @type Number
+     * @default
      */
     blur: 0,
 
@@ -34156,7 +34435,7 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
   var additionalProps =
     ('fontFamily fontWeight fontSize text underline overline linethrough' +
     ' textAlign fontStyle lineHeight textBackgroundColor charSpacing styles' +
-    ' direction path pathStartOffset pathSide').split(' ');
+    ' direction path pathStartOffset pathSide pathAlign').split(' ');
 
   /**
    * Text class
@@ -34185,7 +34464,8 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
       'styles',
       'path',
       'pathStartOffset',
-      'pathSide'
+      'pathSide',
+      'pathAlign'
     ],
 
     /**
@@ -34383,6 +34663,16 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     pathSide:               'left',
 
     /**
+     * How text is aligned to the path. This property determines
+     * the perpendicular position of each character relative to the path.
+     * (one of "baseline", "center", "ascender", "descender")
+     * This feature is in BETA, and its behavior may change
+     * @type String
+     * @default
+     */
+    pathAlign:               'baseline',
+
+    /**
      * @private
      */
     _fontSizeFraction: 0.222,
@@ -34525,6 +34815,8 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
     /**
      * Return a context for measurement of text string.
      * if created it gets stored for reuse
+     * this is for internal use, please do not use it
+     * @private
      * @param {String} text Text string
      * @param {Object} [options] Options object
      * @return {fabric.Text} thisArg
@@ -34696,7 +34988,20 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
      * @param {String} [charStyle.fontStyle] Font style (italic|normal)
      */
     _setTextStyles: function(ctx, charStyle, forMeasuring) {
-      ctx.textBaseline = 'alphabetic';
+      ctx.textBaseline = 'alphabetical';
+      if (this.path) {
+        switch (this.pathAlign) {
+          case 'center':
+            ctx.textBaseline = 'middle';
+            break;
+          case 'ascender':
+            ctx.textBaseline = 'top';
+            break;
+          case 'descender':
+            ctx.textBaseline = 'bottom';
+            break;
+        }
+      }
       ctx.font = this._getFontDeclaration(charStyle, forMeasuring);
     },
 
@@ -35161,16 +35466,17 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
           path = this.path,
           shortCut = !isJustify && this.charSpacing === 0 && this.isEmptyStyles(lineIndex) && !path,
           isLtr = this.direction === 'ltr', sign = this.direction === 'ltr' ? 1 : -1,
-          drawingLeft;
-
+          drawingLeft, currentDirection = ctx.canvas.getAttribute('dir');
       ctx.save();
+      if (currentDirection !== this.direction) {
+        ctx.canvas.setAttribute('dir', isLtr ? 'ltr' : 'rtl');
+        ctx.direction = isLtr ? 'ltr' : 'rtl';
+        ctx.textAlign = isLtr ? 'left' : 'right';
+      }
       top -= lineHeight * this._fontSizeFraction / this.lineHeight;
       if (shortCut) {
         // render all the line in one pass without checking
         // drawingLeft = isLtr ? left : left - this.getLineWidth(lineIndex);
-        ctx.canvas.setAttribute('dir', isLtr ? 'ltr' : 'rtl');
-        ctx.direction = isLtr ? 'ltr' : 'rtl';
-        ctx.textAlign = isLtr ? 'left' : 'right';
         this._renderChar(method, ctx, lineIndex, 0, line.join(''), left, top, lineHeight);
         ctx.restore();
         return;
@@ -35207,9 +35513,6 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
           }
           else {
             drawingLeft = left;
-            ctx.canvas.setAttribute('dir', isLtr ? 'ltr' : 'rtl');
-            ctx.direction = isLtr ? 'ltr' : 'rtl';
-            ctx.textAlign = isLtr ? 'left' : 'right';
             this._renderChar(method, ctx, lineIndex, i, charsToRender, drawingLeft, top, lineHeight);
           }
           charsToRender = '';
@@ -35460,19 +35763,12 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
      * @return {Number} Line width
      */
     getLineWidth: function(lineIndex) {
-      if (this.__lineWidths[lineIndex]) {
+      if (this.__lineWidths[lineIndex] !== undefined) {
         return this.__lineWidths[lineIndex];
       }
 
-      var width, line = this._textLines[lineIndex], lineInfo;
-
-      if (line === '') {
-        width = 0;
-      }
-      else {
-        lineInfo = this.measureLine(lineIndex);
-        width = lineInfo.width;
-      }
+      var lineInfo = this.measureLine(lineIndex);
+      var width = lineInfo.width;
       this.__lineWidths[lineIndex] = width;
       return width;
     },
@@ -37569,7 +37865,13 @@ fabric.Image.filters.BaseFilter.fromObject = function(object, callback) {
           this.insertCharStyleObject(cursorLoc.lineIndex + i, 0, addedLines[i], copiedStyle);
         }
         else if (copiedStyle) {
-          this.styles[cursorLoc.lineIndex + i][0] = copiedStyle[0];
+          // this test is required in order to close #6841
+          // when a pasted buffer begins with a newline then
+          // this.styles[cursorLoc.lineIndex + i] and copiedStyle[0]
+          // may be undefined for some reason
+          if (this.styles[cursorLoc.lineIndex + i] && copiedStyle[0]) {
+            this.styles[cursorLoc.lineIndex + i][0] = copiedStyle[0];
+          }
         }
         copiedStyle = copiedStyle && copiedStyle.slice(addedLines[i] + 1);
       }
@@ -40916,7 +41218,7 @@ g,0<d.length&&(d=za[d[0]])&&(a.c[e]=d))}a.c[e]||(d=za[e])&&(a.c[e]=d);for(d=0;d<
 /***/ (function(module) {
 
 "use strict";
-module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIGRpc3BsYXk9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPg0KPGRlZnMgaWQ9InR1aS1pbWFnZS1lZGl0b3Itc3ZnLWRlZmF1bHQtaWNvbnMiPg0KPHN5bWJvbCBpZD0iaWMtYXBwbHkiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgc3Ryb2tlPSJub25lIiBmaWxsPSJub25lIi8+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNNCAxMi4wMTFsNSA1TDIwLjAxMSA2Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWNhbmNlbCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiLz4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik02IDZsMTIgMTJNMTggNkw2IDE4Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWNyb3AiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgc3Ryb2tlPSJub25lIiBmaWxsPSJub25lIiAvPg0KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTQgMGgxdjIwYTEgMSAwIDAgMS0xLTFWMHpNMjAgMTdoLTFWNWgxdjEyem0wIDJ2NWgtMXYtNWgxeiIvPg0KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTUgMTloMTl2MUg1ek00Ljc2MiA0djFIMFY0aDQuNzYyek03IDRoMTJhMSAxIDAgMCAxIDEgMUg3VjR6Ii8+DQo8L3N5bWJvbD4NCjwhLS0gVGhpcyBpY29uIG1hZGUgYnkgUGl4ZWwgcGVyZmVjdCBmcm9tIHd3dy5mbGF0aWNvbi5jb20gLS0+DQo8c3ltYm9sIGlkPSJpYy1yZXNpemUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIHN0cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIvPg0KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gMTguOTg4MjgxIDMuMDExNzE5IEMgMTguODAwNzgxIDIuODI0MjE5IDE4LjUgMi44MjQyMTkgMTguMzEyNSAzLjAxMTcxOSBMIDExLjYyMTA5NCA5LjcwNzAzMSBDIDExLjQyOTY4OCA5Ljg5NDUzMSAxMS40Mjk2ODggMTAuMTk1MzEyIDExLjYyMTA5NCAxMC4zNzg5MDYgQyAxMS43MTA5MzggMTAuNDcyNjU2IDExLjgzNTkzOCAxMC41MTk1MzEgMTEuOTU3MDMxIDEwLjUxOTUzMSBDIDEyLjA3ODEyNSAxMC41MTk1MzEgMTIuMjAzMTI1IDEwLjQ3MjY1NiAxMi4yOTI5NjkgMTAuMzc4OTA2IEwgMTguOTg4MjgxIDMuNjg3NSBDIDE5LjE3NTc4MSAzLjUgMTkuMTc1NzgxIDMuMTk5MjE5IDE4Ljk4ODI4MSAzLjAxMTcxOSBaIE0gMTguOTg4MjgxIDMuMDExNzE5ICIvPg0KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gMTguNjUyMzQ0IDIuODY3MTg4IEMgMTguMzg2NzE5IDIuODY3MTg4IDE4LjE3MTg3NSAzLjA4MjAzMSAxOC4xNzE4NzUgMy4zNDc2NTYgTCAxOC4xNzE4NzUgOS4wODU5MzggQyAxOC4xNzE4NzUgOS4zNDc2NTYgMTguMzg2NzE5IDkuNTYyNSAxOC42NTIzNDQgOS41NjI1IEMgMTguOTE3OTY5IDkuNTYyNSAxOS4xMzI4MTIgOS4zNDc2NTYgMTkuMTMyODEyIDkuMDg1OTM4IEwgMTkuMTMyODEyIDMuMzQ3NjU2IEMgMTkuMTMyODEyIDMuMDgyMDMxIDE4LjkxNzk2OSAyLjg2NzE4OCAxOC42NTIzNDQgMi44NjcxODggWiBNIDE4LjY1MjM0NCAyLjg2NzE4OCAiLz4NCiAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNIDE4LjY1MjM0NCAyLjg2NzE4OCBMIDEyLjkxNDA2MiAyLjg2NzE4OCBDIDEyLjY1MjM0NCAyLjg2NzE4OCAxMi40Mzc1IDMuMDgyMDMxIDEyLjQzNzUgMy4zNDc2NTYgQyAxMi40Mzc1IDMuNjEzMjgxIDEyLjY1MjM0NCAzLjgyODEyNSAxMi45MTQwNjIgMy44MjgxMjUgTCAxOC42NTIzNDQgMy44MjgxMjUgQyAxOC45MTc5NjkgMy44MjgxMjUgMTkuMTMyODEyIDMuNjEzMjgxIDE5LjEzMjgxMiAzLjM0NzY1NiBDIDE5LjEzMjgxMiAzLjA4MjAzMSAxOC45MTc5NjkgMi44NjcxODggMTguNjUyMzQ0IDIuODY3MTg4IFogTSAxOC42NTIzNDQgMi44NjcxODggIi8+DQogIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTSAxMC4zNzg5MDYgMTEuNjIxMDk0IEMgMTAuMTk1MzEyIDExLjQzMzU5NCA5Ljg5MDYyNSAxMS40MzM1OTQgOS43MDMxMjUgMTEuNjIxMDk0IEwgMy4wMDc4MTIgMTguMzE2NDA2IEMgMi44MjAzMTIgMTguNSAyLjgyMDMxMiAxOC44MDQ2ODggMy4wMDc4MTIgMTguOTkyMTg4IEMgMy4xMDU0NjkgMTkuMDg1OTM4IDMuMjI2NTYyIDE5LjEzMjgxMiAzLjM0NzY1NiAxOS4xMzI4MTIgQyAzLjQ2ODc1IDE5LjEzMjgxMiAzLjU4OTg0NCAxOS4wODU5MzggMy42ODM1OTQgMTguOTkyMTg4IEwgMTAuMzc4OTA2IDEyLjI5Njg3NSBDIDEwLjU2NjQwNiAxMi4xMDkzNzUgMTAuNTY2NDA2IDExLjgwNDY4OCAxMC4zNzg5MDYgMTEuNjIxMDk0IFogTSAxMC4zNzg5MDYgMTEuNjIxMDk0ICIvPg0KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gMy4zNDc2NTYgMTIuNDM3NSBDIDMuMDgyMDMxIDEyLjQzNzUgMi44NjcxODggMTIuNjUyMzQ0IDIuODY3MTg4IDEyLjkxNDA2MiBMIDIuODY3MTg4IDE4LjY1MjM0NCBDIDIuODY3MTg4IDE4LjkxNzk2OSAzLjA4MjAzMSAxOS4xMzI4MTIgMy4zNDc2NTYgMTkuMTMyODEyIEMgMy42MTMyODEgMTkuMTMyODEyIDMuODI4MTI1IDE4LjkxNzk2OSAzLjgyODEyNSAxOC42NTIzNDQgTCAzLjgyODEyNSAxMi45MTQwNjIgQyAzLjgyODEyNSAxMi42NTIzNDQgMy42MTMyODEgMTIuNDM3NSAzLjM0NzY1NiAxMi40Mzc1IFogTSAzLjM0NzY1NiAxMi40Mzc1ICIvPg0KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gOS4wODU5MzggMTguMTcxODc1IEwgMy4zNDc2NTYgMTguMTcxODc1IEMgMy4wODIwMzEgMTguMTcxODc1IDIuODY3MTg4IDE4LjM4NjcxOSAyLjg2NzE4OCAxOC42NTIzNDQgQyAyLjg2NzE4OCAxOC45MTc5NjkgMy4wODIwMzEgMTkuMTMyODEyIDMuMzQ3NjU2IDE5LjEzMjgxMiBMIDkuMDg1OTM4IDE5LjEzMjgxMiBDIDkuMzQ3NjU2IDE5LjEzMjgxMiA5LjU2MjUgMTguOTE3OTY5IDkuNTYyNSAxOC42NTIzNDQgQyA5LjU2MjUgMTguMzg2NzE5IDkuMzQ3NjU2IDE4LjE3MTg3NSA5LjA4NTkzOCAxOC4xNzE4NzUgWiBNIDkuMDg1OTM4IDE4LjE3MTg3NSAiLz4NCiAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNIDIwLjU2MjUgMCBMIDEuNDM3NSAwIEMgMC42NDQ1MzEgMCAwIDAuNjQ0NTMxIDAgMS40Mzc1IEwgMCAyMC41NjI1IEMgMCAyMS4zNTU0NjkgMC42NDQ1MzEgMjIgMS40Mzc1IDIyIEwgMjAuNTYyNSAyMiBDIDIxLjM1NTQ2OSAyMiAyMiAyMS4zNTU0NjkgMjIgMjAuNTYyNSBMIDIyIDEuNDM3NSBDIDIyIDAuNjQ0NTMxIDIxLjM1NTQ2OSAwIDIwLjU2MjUgMCBaIE0gMjEuMDQyOTY5IDIwLjU2MjUgQyAyMS4wNDI5NjkgMjAuODI4MTI1IDIwLjgyODEyNSAyMS4wNDI5NjkgMjAuNTYyNSAyMS4wNDI5NjkgTCAxLjQzNzUgMjEuMDQyOTY5IEMgMS4xNzE4NzUgMjEuMDQyOTY5IDAuOTU3MDMxIDIwLjgyODEyNSAwLjk1NzAzMSAyMC41NjI1IEwgMC45NTcwMzEgMS40Mzc1IEMgMC45NTcwMzEgMS4xNzE4NzUgMS4xNzE4NzUgMC45NTcwMzEgMS40Mzc1IDAuOTU3MDMxIEwgMjAuNTYyNSAwLjk1NzAzMSBDIDIwLjgyODEyNSAwLjk1NzAzMSAyMS4wNDI5NjkgMS4xNzE4NzUgMjEuMDQyOTY5IDEuNDM3NSBaIE0gMjEuMDQyOTY5IDIwLjU2MjUgIi8+DQo8L3N5bWJvbD4NCjwhLS0gIC0tPg0KPHN5bWJvbCBpZD0iaWMtZGVsZXRlLWFsbCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik01IDIzSDNhMSAxIDAgMCAxLTEtMVY2aDF2MTZoMnYxem0xNi0xMGgtMVY2aDF2N3pNOSAxM0g4di0zaDF2M3ptMyAwaC0xdi0zaDF2M3ptMyAwaC0xdi0zaDF2M3pNMTQuNzk0IDMuNzk0TDEzIDJoLTNMOC4yMDYgMy43OTRBLjk2My45NjMgMCAwIDEgOCAyLjVsLjcwMy0xLjA1NUExIDEgMCAwIDEgOS41MzUgMWgzLjkzYTEgMSAwIDAgMSAuODMyLjQ0NUwxNSAyLjVhLjk2NS45NjUgMCAwIDEtLjIwNiAxLjI5NHpNMTQuMTk3IDRIOC44MDNoNS4zOTR6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMCAzaDIzdjFIMHpNMTEuMjg2IDIxSDguNzE0TDggMjNIN2wxLTIuOFYyMGguMDcxTDkuNSAxNmgxbDEuNDI5IDRIMTJ2LjJsMSAyLjhoLTFsLS43MTQtMnptLS4zNTctMUwxMCAxNy40IDkuMDcxIDIwaDEuODU4ek0yMCAyMmgzdjFoLTR2LTdoMXY2em0tNSAwaDN2MWgtNHYtN2gxdjZ6Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWRlbGV0ZSIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0zIDZ2MTZoMTdWNmgxdjE2YTEgMSAwIDAgMS0xIDFIM2ExIDEgMCAwIDEtMS0xVjZoMXpNMTQuNzk0IDMuNzk0TDEzIDJoLTNMOC4yMDYgMy43OTRBLjk2My45NjMgMCAwIDEgOCAyLjVsLjcwMy0xLjA1NUExIDEgMCAwIDEgOS41MzUgMWgzLjkzYTEgMSAwIDAgMSAuODMyLjQ0NUwxNSAyLjVhLjk2NS45NjUgMCAwIDEtLjIwNiAxLjI5NHpNMTQuMTk3IDRIOC44MDNoNS4zOTR6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMCAzaDIzdjFIMHpNOCAxMGgxdjZIOHYtNnptMyAwaDF2NmgtMXYtNnptMyAwaDF2NmgtMXYtNnoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtZHJhdy1mcmVlIiB2aWV3Qm94PSIwIDAgMzIgMzIiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTTIuNSAyMC45MjlDMi41OTQgMTAuOTc2IDQuMzIzIDYgNy42ODYgNmM1Ljg3MiAwIDIuNTI0IDE5IDcuNjk3IDE5czEuODktMTQuOTI5IDYuNDE0LTE0LjkyOSAxLjM1NyAxMC44NTggNS4xMyAxMC44NThjMS44MDIgMCAyLjY1Ny0yLjI2MiAyLjU2Ni02Ljc4NiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1kcmF3LWxpbmUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNMiAxNS41aDI4Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWRyYXciIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNMi41IDIxLjVINWMuMjQ1IDAgLjQ4LS4wNTguNjkxLS4xNjhsLjEyNC0uMDY1LjE0LjAxYy40MjkuMDI4Ljg1LS4xMjcgMS4xNi0uNDM3TDIyLjU1IDUuNDA1YS41LjUgMCAwIDAgMC0uNzA3bC0zLjI0Ni0zLjI0NWEuNS41IDAgMCAwLS43MDcgMEwzLjE2MiAxNi44ODhhMS40OTUgMS40OTUgMCAwIDAtLjQzNyAxLjE1NWwuMDEuMTQtLjA2NS4xMjNjLS4xMTEuMjEyLS4xNy40NDgtLjE3LjY5NHYyLjV6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTYuNDE0IDMuNzA3bDMuODkgMy44OS0uNzA4LjcwNi0zLjg4OS0zLjg4OXoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtZmlsdGVyIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgLz4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0xMiA3djFIMlY3aDEwem02IDBoNHYxaC00Vjd6TTEyIDE2djFoMTB2LTFIMTJ6bS02IDBIMnYxaDR2LTF6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNOC41IDIwYTMuNSAzLjUgMCAxIDEgMC03IDMuNSAzLjUgMCAwIDEgMCA3em0wLTFhMi41IDIuNSAwIDEgMCAwLTUgMi41IDIuNSAwIDAgMCAwIDV6TTE1LjUgMTFhMy41IDMuNSAwIDEgMSAwLTcgMy41IDMuNSAwIDAgMSAwIDd6bTAtMWEyLjUgMi41IDAgMSAwIDAtNSAyLjUgMi41IDAgMCAwIDAgNXoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtZmxpcC1yZXNldCIgdmlld0JveD0iMCAwIDMxIDMyIj4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGQ9Ik0zMSAwSDB2MzJoMzF6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMjggMTZhOCA4IDAgMCAxLTggOEgzdi0xaDF2LTdIM2E4IDggMCAwIDEgOC04aDE3djFoLTF2N2gxek0xMSA5YTcgNyAwIDAgMC03IDd2N2gxNmE3IDcgMCAwIDAgNy03VjlIMTF6Ii8+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIiBkPSJNMjQgNWwzLjUgMy41TDI0IDEyTTcgMjBsLTMuNSAzLjVMNyAyNyIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1mbGlwLXgiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBkPSJNMzIgMzJIMFYwaDMyeiIvPg0KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTE3IDMyaC0xVjBoMXpNMjcuMTY3IDExbC41IDNoLTEuMDNsLS41NDYtM2gxLjA3NnptLS41LTNoLTEuMTIyTDI1IDVoLTVWNGg1LjE1M2ExIDEgMCAwIDEgLjk4Ni44MzZMMjYuNjY3IDh6bTEuNSA5bC41IDNoLS45NGwtLjU0NS0zaC45ODV6bTEgNmwuNjM5IDMuODM2QTEgMSAwIDAgMSAyOC44MTkgMjhIMjZ2LTFoM2wtLjcyNi00aC44OTR6TTIzIDI4aC0zdi0xaDN2MXpNMTMgNHYxSDdMMyAyN2gxMHYxSDMuMThhMSAxIDAgMCAxLS45ODYtMS4xNjRsMy42NjYtMjJBMSAxIDAgMCAxIDYuODQ3IDRIMTN6Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWZsaXAteSIgdmlld0JveD0iMCAwIDMyIDMyIj4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGQ9Ik0wIDB2MzJoMzJWMHoiLz4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0wIDE2djFoMzJ2LTF6TTExIDI3LjE2N2wzIC41di0xLjAzbC0zLS41NDZ2MS4wNzZ6bS0zLS41di0xLjEyMkw1IDI1di01SDR2NS4xNTNhMSAxIDAgMCAwIC44MzYuOTg2TDggMjYuNjY3em05IDEuNWwzIC41di0uOTRsLTMtLjU0NXYuOTg1em02IDFsMy44MzYuNjM5QTEgMSAwIDAgMCAyOCAyOC44MlYyNmgtMXYzbC00LS43Mjd2Ljg5NHpNMjggMjN2LTNoLTF2M2gxek00IDEzaDFWN2wyMi00djEwaDFWMy4xOGExIDEgMCAwIDAtMS4xNjQtLjk4NmwtMjIgMy42NjdBMSAxIDAgMCAwIDQgNi44NDdWMTN6Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWZsaXAiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiAvPg0KICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIHN0cm9rZT0ibm9uZSIgZD0iTTExIDBoMXYyNGgtMXpNMTkgMjF2LTFoMnYtMmgxdjJhMSAxIDAgMCAxLTEgMWgtMnptLTIgMGgtM3YtMWgzdjF6bTUtNWgtMXYtM2gxdjN6bTAtNWgtMVY4aDF2M3ptMC01aC0xVjRoLTJWM2gyYTEgMSAwIDAgMSAxIDF2MnptLTUtM3YxaC0zVjNoM3pNOSAzdjFIMnYxNmg3djFIMmExIDEgMCAwIDEtMS0xVjRhMSAxIDAgMCAxIDEtMWg3eiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5IiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgZD0iTTAgMEgyNFYyNEgweiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTc0MCAtMTYpIHRyYW5zbGF0ZSg1NDcgOCkgdHJhbnNsYXRlKDE5MyA4KSIvPg0KICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIHN0cm9rZT0ibm9uZSIgZD0iTTEyLjUgMUMxOC4yOTkgMSAyMyA1LjcwMSAyMyAxMS41UzE4LjI5OSAyMiAxMi41IDIyYy01LjI5IDAtOS42NjUtMy45MTEtMTAuMzk0LTguOTk5aDEuMDEyQzMuODM4IDE3LjUzNCA3Ljc2NCAyMSAxMi41IDIxYzUuMjQ3IDAgOS41LTQuMjUzIDkuNS05LjVTMTcuNzQ3IDIgMTIuNSAyQzguNDkgMiA1LjA2IDQuNDg1IDMuNjY2IDhIM2g0djFIMlY0aDF2My4wMjJDNC42OCAzLjQ2MiA4LjMwMyAxIDEyLjUgMXptLjUgNWwtLjAwMSA1LjI5MSAyLjUzNyAyLjUzNy0uNzA4LjcwOEwxMi4yOTIgMTJIMTJWNmgxeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTc0MCAtMTYpIHRyYW5zbGF0ZSg1NDcgOCkgdHJhbnNsYXRlKDE5MyA4KSIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LWNoZWNrIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPg0KICAgICAgICA8cGF0aCBzdHJva2U9IiM1NTU1NTUiIGQ9Ik00LjUgLTFMMS41IDIgNi41IDciIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02MCAtODA0KSB0cmFuc2xhdGUoNjAgODA0KSB0cmFuc2xhdGUoMiAzKSByb3RhdGUoLTkwIDQgMykiIC8+DQogICAgPC9nPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LWNyb3AiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiID4NCiAgICAgICAgPHBhdGggZD0iTTAgMEgxMlYxMkgweiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTg0IC04MDQpIHRyYW5zbGF0ZSg4NCA4MDQpIi8+DQogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0yIDBoMXYxMGMtLjU1MiAwLTEtLjQ0OC0xLTFWMHpNMTAgOXYzSDlWOWgxek05IDJoMXY2SDlWMnoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC04NCAtODA0KSB0cmFuc2xhdGUoODQgODA0KSIvPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNMiA5SDEyVjEwSDJ6TTkgMmMuNTEzIDAgLjkzNi4zODYuOTkzLjg4M0wxMCAzSDNWMmg2ek0yIDNIMFYyaDJ2MXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC04NCAtODA0KSB0cmFuc2xhdGUoODQgODA0KSIvPg0KICAgIDwvZz4NCjwvc3ltYm9sPg0KPCEtLSBUaGlzIGljb24gbWFkZSBieSBQaXhlbCBwZXJmZWN0IGZyb20gd3d3LmZsYXRpY29uLmNvbSAtLT4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktcmVzaXplIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPg0KICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0gOS40OTIxODggMS41MDc4MTIgQyA5LjM5ODQzOCAxLjQxNDA2MiA5LjI1IDEuNDE0MDYyIDkuMTU2MjUgMS41MDc4MTIgTCA1LjgxMjUgNC44NTE1NjIgQyA1LjcxNDg0NCA0Ljk0NTMxMiA1LjcxNDg0NCA1LjA5NzY1NiA1LjgxMjUgNS4xODc1IEMgNS44NTU0NjkgNS4yMzQzNzUgNS45MTc5NjkgNS4yNTc4MTIgNS45NzY1NjIgNS4yNTc4MTIgQyA2LjAzOTA2MiA1LjI1NzgxMiA2LjEwMTU2MiA1LjIzNDM3NSA2LjE0ODQzOCA1LjE4NzUgTCA5LjQ5MjE4OCAxLjg0Mzc1IEMgOS41ODU5MzggMS43NSA5LjU4NTkzOCAxLjYwMTU2MiA5LjQ5MjE4OCAxLjUwNzgxMiBaIE0gOS40OTIxODggMS41MDc4MTIgIi8+DQogICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTSA5LjMyODEyNSAxLjQzMzU5NCBDIDkuMTk1MzEyIDEuNDMzNTk0IDkuMDg1OTM4IDEuNTM5MDYyIDkuMDg1OTM4IDEuNjcxODc1IEwgOS4wODU5MzggNC41NDI5NjkgQyA5LjA4NTkzOCA0LjY3MTg3NSA5LjE5NTMxMiA0Ljc4MTI1IDkuMzI4MTI1IDQuNzgxMjUgQyA5LjQ2MDkzOCA0Ljc4MTI1IDkuNTY2NDA2IDQuNjcxODc1IDkuNTY2NDA2IDQuNTQyOTY5IEwgOS41NjY0MDYgMS42NzE4NzUgQyA5LjU2NjQwNiAxLjUzOTA2MiA5LjQ2MDkzOCAxLjQzMzU5NCA5LjMyODEyNSAxLjQzMzU5NCBaIE0gOS4zMjgxMjUgMS40MzM1OTQgIi8+DQogICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTSA5LjMyODEyNSAxLjQzMzU5NCBMIDYuNDU3MDMxIDEuNDMzNTk0IEMgNi4zMjgxMjUgMS40MzM1OTQgNi4yMTg3NSAxLjUzOTA2MiA2LjIxODc1IDEuNjcxODc1IEMgNi4yMTg3NSAxLjgwNDY4OCA2LjMyODEyNSAxLjkxNDA2MiA2LjQ1NzAzMSAxLjkxNDA2MiBMIDkuMzI4MTI1IDEuOTE0MDYyIEMgOS40NjA5MzggMS45MTQwNjIgOS41NjY0MDYgMS44MDQ2ODggOS41NjY0MDYgMS42NzE4NzUgQyA5LjU2NjQwNiAxLjUzOTA2MiA5LjQ2MDkzOCAxLjQzMzU5NCA5LjMyODEyNSAxLjQzMzU5NCBaIE0gOS4zMjgxMjUgMS40MzM1OTQgIi8+DQogICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTSA1LjE4NzUgNS44MTI1IEMgNS4wOTc2NTYgNS43MTg3NSA0Ljk0NTMxMiA1LjcxODc1IDQuODUxNTYyIDUuODEyNSBMIDEuNTAzOTA2IDkuMTU2MjUgQyAxLjQxMDE1NiA5LjI1IDEuNDEwMTU2IDkuNDAyMzQ0IDEuNTAzOTA2IDkuNDk2MDk0IEMgMS41NTQ2ODggOS41NDI5NjkgMS42MTMyODEgOS41NjY0MDYgMS42NzE4NzUgOS41NjY0MDYgQyAxLjczNDM3NSA5LjU2NjQwNiAxLjc5Njg3NSA5LjU0Mjk2OSAxLjg0Mzc1IDkuNDk2MDk0IEwgNS4xODc1IDYuMTQ4NDM4IEMgNS4yODEyNSA2LjA1NDY4OCA1LjI4MTI1IDUuOTAyMzQ0IDUuMTg3NSA1LjgxMjUgWiBNIDUuMTg3NSA1LjgxMjUgIi8+DQogICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTSAxLjY3MTg3NSA2LjIxODc1IEMgMS41MzkwNjIgNi4yMTg3NSAxLjQzMzU5NCA2LjMyODEyNSAxLjQzMzU5NCA2LjQ1NzAzMSBMIDEuNDMzNTk0IDkuMzI4MTI1IEMgMS40MzM1OTQgOS40NjA5MzggMS41MzkwNjIgOS41NjY0MDYgMS42NzE4NzUgOS41NjY0MDYgQyAxLjgwNDY4OCA5LjU2NjQwNiAxLjkxNDA2MiA5LjQ2MDkzOCAxLjkxNDA2MiA5LjMyODEyNSBMIDEuOTE0MDYyIDYuNDU3MDMxIEMgMS45MTQwNjIgNi4zMjgxMjUgMS44MDQ2ODggNi4yMTg3NSAxLjY3MTg3NSA2LjIxODc1IFogTSAxLjY3MTg3NSA2LjIxODc1ICIvPg0KICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0gNC41NDI5NjkgOS4wODU5MzggTCAxLjY3MTg3NSA5LjA4NTkzOCBDIDEuNTM5MDYyIDkuMDg1OTM4IDEuNDMzNTk0IDkuMTk1MzEyIDEuNDMzNTk0IDkuMzI4MTI1IEMgMS40MzM1OTQgOS40NjA5MzggMS41MzkwNjIgOS41NjY0MDYgMS42NzE4NzUgOS41NjY0MDYgTCA0LjU0Mjk2OSA5LjU2NjQwNiBDIDQuNjcxODc1IDkuNTY2NDA2IDQuNzgxMjUgOS40NjA5MzggNC43ODEyNSA5LjMyODEyNSBDIDQuNzgxMjUgOS4xOTUzMTIgNC42NzE4NzUgOS4wODU5MzggNC41NDI5NjkgOS4wODU5MzggWiBNIDQuNTQyOTY5IDkuMDg1OTM4ICIvPg0KICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0gMTAuMjgxMjUgMCBMIDAuNzE4NzUgMCBDIDAuMzIwMzEyIDAgMCAwLjMyMDMxMiAwIDAuNzE4NzUgTCAwIDEwLjI4MTI1IEMgMCAxMC42Nzk2ODggMC4zMjAzMTIgMTEgMC43MTg3NSAxMSBMIDEwLjI4MTI1IDExIEMgMTAuNjc5Njg4IDExIDExIDEwLjY3OTY4OCAxMSAxMC4yODEyNSBMIDExIDAuNzE4NzUgQyAxMSAwLjMyMDMxMiAxMC42Nzk2ODggMCAxMC4yODEyNSAwIFogTSAxMC41MjM0MzggMTAuMjgxMjUgQyAxMC41MjM0MzggMTAuNDE0MDYyIDEwLjQxNDA2MiAxMC41MjM0MzggMTAuMjgxMjUgMTAuNTIzNDM4IEwgMC43MTg3NSAxMC41MjM0MzggQyAwLjU4NTkzOCAxMC41MjM0MzggMC40NzY1NjIgMTAuNDE0MDYyIDAuNDc2NTYyIDEwLjI4MTI1IEwgMC40NzY1NjIgMC43MTg3NSBDIDAuNDc2NTYyIDAuNTg1OTM4IDAuNTg1OTM4IDAuNDc2NTYyIDAuNzE4NzUgMC40NzY1NjIgTCAxMC4yODEyNSAwLjQ3NjU2MiBDIDEwLjQxNDA2MiAwLjQ3NjU2MiAxMC41MjM0MzggMC41ODU5MzggMTAuNTIzNDM4IDAuNzE4NzUgWiBNIDEwLjUyMzQzOCAxMC4yODEyNSAiLz4NCiAgPC9nPg0KPC9zeW1ib2w+DQo8IS0tICAtLT4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktZHJhdyIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPg0KICAgICAgICA8cGF0aCBkPSJNMCAxSDEyVjEzSDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTU2IC04MDQpIHRyYW5zbGF0ZSgxNTYgODAzKSIvPg0KICAgICAgICA8cGF0aCBzdHJva2U9IiM0MzQzNDMiIGQ9Ik05LjYyMiAxLjU4NGwxLjgzNSAxLjY1OC04LjMxIDguNDA3TC41IDEyLjVWMTFsOS4xMjItOS40MTZ6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTU2IC04MDQpIHRyYW5zbGF0ZSgxNTYgODAzKSIvPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNNy42MjggMy43NTNMMTAuMzc4IDMuNzUzIDEwLjM3OCA0LjI1MyA3LjYyOCA0LjI1M3oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNTYgLTgwNCkgdHJhbnNsYXRlKDE1NiA4MDMpIHJvdGF0ZSg0NSA5LjAwMyA0LjAwMykiLz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktZmlsdGVyIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiA+DQogICAgICAgIDxwYXRoIGQ9Ik0wIDBIMTJWMTJIMHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNzYgLTgwNCkgdHJhbnNsYXRlKDI3NiA4MDQpIi8+DQogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0xMiAzdjFIOVYzaDN6TTcgNEgwVjNoN3YxeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI3NiAtODA0KSB0cmFuc2xhdGUoMjc2IDgwNCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTEyIDh2MUg5VjhoM3pNNyA5SDBWOGg3djF6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjc2IC04MDQpIHRyYW5zbGF0ZSgyNzYgODA0KSBtYXRyaXgoLTEgMCAwIDEgMTIgMCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTggMWMxLjEwNSAwIDIgLjg5NSAyIDJzLS44OTUgMi0yIDItMi0uODk1LTItMiAuODk1LTIgMi0yem0wIDFjLS41NTIgMC0xIC40NDgtMSAxcy40NDggMSAxIDEgMS0uNDQ4IDEtMS0uNDQ4LTEtMS0xek00IDdjMS4xMDUgMCAyIC44OTUgMiAycy0uODk1IDItMiAyLTItLjg5NS0yLTIgLjg5NS0yIDItMnptMCAxYy0uNTUyIDAtMSAuNDQ4LTEgMXMuNDQ4IDEgMSAxIDEtLjQ0OCAxLTEtLjQ0OC0xLTEtMXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNzYgLTgwNCkgdHJhbnNsYXRlKDI3NiA4MDQpIi8+DQogICAgPC9nPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LWZsaXAiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiID4NCiAgICAgICAgPHBhdGggZD0iTTAgMEgxMlYxMkgweiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEwOCAtODA0KSB0cmFuc2xhdGUoMTA4IDgwNCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTYgMEw3IDAgNyAxMiA2IDEyek0xMSAxMFY5aDF2MS41YzAgLjI3Ni0uMjI0LjUtLjUuNUgxMHYtMWgxek01IDF2MUgxdjhoNHYxSC41Yy0uMjc2IDAtLjUtLjIyNC0uNS0uNXYtOWMwLS4yNzYuMjI0LS41LjUtLjVINXptNyA1djJoLTFWNmgxem0wLTN2MmgtMVYzaDF6TTkgMXYxSDdWMWgyem0yLjUgMGMuMjc2IDAgLjUuMjI0LjUuNVYyaC0yVjFoMS41ek05IDExSDd2LTFoMnYxeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEwOCAtODA0KSB0cmFuc2xhdGUoMTA4IDgwNCkiLz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktaWNvbiIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPg0KICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjA0IC04MDQpIHRyYW5zbGF0ZSgyMDQgODA0KSIvPg0KICAgICAgICA8cGF0aCBzdHJva2U9IiM0MzQzNDMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjEiIGQ9Ik02IDkuNTY4TDIuNjAxIDExIDIuOTc1IDcuNDY3IDAuNSA0LjgyIDQuMTMgNC4wNjggNiAxIDcuODcgNC4wNjggMTEuNSA0LjgyIDkuMDI1IDcuNDY3IDkuMzk5IDExeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIwNCAtODA0KSB0cmFuc2xhdGUoMjA0IDgwNCkiLz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktbWFzayIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPg0KICAgICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjUyIC04MDQpIHRyYW5zbGF0ZSgyNTIgODA0KSI+DQogICAgICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6Ii8+DQogICAgICAgICAgICA8Y2lyY2xlIGN4PSI2IiBjeT0iNiIgcj0iMi41IiBzdHJva2U9IiM0NDQiLz4NCiAgICAgICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0xMS41IDBjLjI3NiAwIC41LjIyNC41LjV2MTFjMCAuMjc2LS4yMjQuNS0uNS41SC41Yy0uMjc2IDAtLjUtLjIyNC0uNS0uNVYuNUMwIC4yMjQuMjI0IDAgLjUgMGgxMXpNMTEgMUgxdjEwaDEwVjF6Ii8+DQogICAgICAgIDwvZz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3Rvcnktcm90YXRlIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxkZWZzPg0KICAgICAgICA8cGF0aCBpZD0icmZuNHJ5bGZmYSIgZD0iTTcgMTJjLS4zMzUgMC0uNjYzLS4wMjUtLjk4My0uMDc0QzMuMTcxIDExLjQ5MiAxIDkuMjA1IDEgNi40NDRjMC0xLjM2My41MzQtMi42MTMgMS40MTUtMy41OCIvPg0KICAgICAgICA8bWFzayBpZD0iNmY5Z24yZHlzYiIgd2lkdGg9IjYiIGhlaWdodD0iOS4xMzYiIHg9IjAiIHk9IjAiIG1hc2tVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giPg0KICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcmZuNHJ5bGZmYSIgc3Ryb2tlPSI0MzQzNDMiLz4NCiAgICAgICAgPC9tYXNrPg0KICAgIDwvZGVmcz4NCiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPg0KICAgICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTMyIC04MDQpIHRyYW5zbGF0ZSgxMzIgODA0KSI+DQogICAgICAgICAgICA8cGF0aCBkPSJNMCAwLjVIMTJWMTIuNUgweiIvPg0KICAgICAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTYuNSAxQzkuNTM4IDEgMTIgMy40NjIgMTIgNi41YzAgMi4zNy0xLjUgNC4zOS0zLjYgNS4xNjNsLS40MDctLjkxNkM5Ljc0NCAxMC4xMyAxMSA4LjQ2MiAxMSA2LjUgMTEgNC4wMTUgOC45ODUgMiA2LjUgMmMtLjc3NyAwLTEuNTA5LjE5Ny0yLjE0Ny41NDRMNCAxLjc1bC0uMjA1LS4wNEM0LjU5NCAxLjI1OCA1LjUxNyAxIDYuNSAxeiIvPg0KICAgICAgICAgICAgPHVzZSBzdHJva2U9IiM0MzQzNDMiIHN0cm9rZS1kYXNoYXJyYXk9IjIgMS4yNSIgc3Ryb2tlLXdpZHRoPSIxIiBtYXNrPSJ1cmwoIzZmOWduMmR5c2IpIiB4bGluazpocmVmPSIjcmZuNHJ5bGZmYSIvPg0KICAgICAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTQuMjc5IDBMNiAxLjc1IDQuMjUgMy41NzEgMy41NDMgMi44NjQgNC41ODYgMS43NSAzLjU3MiAwLjcwN3oiIHRyYW5zZm9ybT0ibWF0cml4KC0xIDAgMCAxIDkuNTQzIDApIi8+DQogICAgICAgIDwvZz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3Rvcnktc2hhcGUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiID4NCiAgICAgICAgPHBhdGggZD0iTTAgMEgxMlYxMkgweiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE4MCAtODA0KSB0cmFuc2xhdGUoMTgwIDgwNCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTExLjUgNGMuMjc2IDAgLjUuMjI0LjUuNXY3YzAgLjI3Ni0uMjI0LjUtLjUuNWgtN2MtLjI3NiAwLS41LS4yMjQtLjUtLjVWOC44aDFWMTFoNlY1SDguMzQxbC0uNTY4LTFIMTEuNXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xODAgLTgwNCkgdHJhbnNsYXRlKDE4MCA4MDQpIi8+DQogICAgICAgIDxwYXRoIHN0cm9rZT0iIzQzNDM0MyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNNC41IDAuNUw4LjUgNy42MTEgMC41IDcuNjExeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE4MCAtODA0KSB0cmFuc2xhdGUoMTgwIDgwNCkiLz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktdGV4dCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPg0KICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjI4IC04MDQpIHRyYW5zbGF0ZSgyMjggODA0KSIvPg0KICAgICAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNMiAxaDhjLjU1MiAwIDEgLjQ0OCAxIDFIMWMwLS41NTIuNDQ4LTEgMS0xeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyOCAtODA0KSB0cmFuc2xhdGUoMjI4IDgwNCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTEgMUgyVjNIMXpNMTAgMUgxMVYzSDEwek01LjUgMUw2LjUgMSA2LjUgMTEgNS41IDExeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyOCAtODA0KSB0cmFuc2xhdGUoMjI4IDgwNCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTQgMTBIOFYxMUg0eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyOCAtODA0KSB0cmFuc2xhdGUoMjI4IDgwNCkiLz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktbG9hZCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+DQogICAgICAgIDxwYXRoIGQ9Ik0wIDBIMTJWMTJIMHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zMjQgLTgwNSkgdHJhbnNsYXRlKDMyNCA4MDUpIi8+DQogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik01IDBjLjU1MiAwIDEgLjQ0OCAxIDF2MWg1LjVjLjI3NiAwIC41LjIyNC41LjV2OGMwIC4yNzYtLjIyNC41LS41LjVILjVjLS4yNzYgMC0uNS0uMjI0LS41LS41VjFjMC0uNTUyLjQ0OC0xIDEtMWg0em0wIDFIMXY5aDEwVjNINVYxeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTMyNCAtODA1KSB0cmFuc2xhdGUoMzI0IDgwNSkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTEgMkw1IDIgNSAzIDEgM3oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zMjQgLTgwNSkgdHJhbnNsYXRlKDMyNCA4MDUpIi8+DQogICAgPC9nPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LWRlbGV0ZSIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+DQogICAgICAgIDxnIGZpbGw9IiM0MzQzNDMiPg0KICAgICAgICAgICAgPHBhdGggZD0iTTIgOWg4VjFoMXY4LjVjMCAuMjc2LS4yMjQuNS0uNS41aC05Yy0uMjc2IDAtLjUtLjIyNC0uNS0uNVYxaDF2OHpNMCAwSDEyVjFIMHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zMDAgLTgwNCkgdHJhbnNsYXRlKDMwMCA4MDQpIHRyYW5zbGF0ZSgwIDIpIi8+DQogICAgICAgICAgICA8cGF0aCBkPSJNNCAzSDVWN0g0ek03IDNIOFY3SDd6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzAwIC04MDQpIHRyYW5zbGF0ZSgzMDAgODA0KSB0cmFuc2xhdGUoMCAyKSIvPg0KICAgICAgICAgICAgPHBhdGggZD0iTTQgMWg0VjBoMXYxLjVjMCAuMjc2LS4yMjQuNS0uNS41aC01Yy0uMjc2IDAtLjUtLjIyNC0uNS0uNVYwaDF2MXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zMDAgLTgwNCkgdHJhbnNsYXRlKDMwMCA4MDQpIG1hdHJpeCgxIDAgMCAtMSAwIDIpIi8+DQogICAgICAgIDwvZz4NCiAgICA8L2c+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktZ3JvdXAiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPg0KICAgICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzQ4IC04MDQpIHRyYW5zbGF0ZSgzNDggODA0KSI+DQogICAgICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6Ii8+DQogICAgICAgICAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNMSA5djJoMXYxSC41Yy0uMjc2IDAtLjUtLjIyNC0uNS0uNVY5aDF6bTExIDF2MS41YzAgLjI3Ni0uMjI0LjUtLjUuNUg5di0xaDJ2LTFoMXptLTQgMXYxSDZ2LTFoMnptLTMgMHYxSDN2LTFoMnptNy00djJoLTFWN2gxek0xIDZ2MkgwVjZoMXptMTEtMnYyaC0xVjRoMXpNMSAzdjJIMFYzaDF6bTEwLjUtM2MuMjc2IDAgLjUuMjI0LjUuNVYzaC0xVjFoLTFWMGgxLjV6TTYgMHYxSDRWMGgyem0zIDB2MUg3VjBoMnpNMCAuNUMwIC4yMjQuMjI0IDAgLjUgMEgzdjFIMXYxSDBWLjV6TTkuNSA0Yy4yNzYgMCAuNS4yMjQuNS41djVjMCAuMjc2LS4yMjQuNS0uNS41aC01Yy0uMjc2IDAtLjUtLjIyNC0uNS0uNVY4LjM1NWMuMzE3LjA5NC42NTIuMTQ1IDEgLjE0NVY5aDRWNWgtLjVjMC0uMzQ4LS4wNS0uNjgzLS4xNDUtMUg5LjV6Ii8+DQogICAgICAgICAgICA8Y2lyY2xlIGN4PSI1IiBjeT0iNSIgcj0iMi41IiBzdHJva2U9IiM0MzQzNDMiLz4NCiAgICAgICAgPC9nPg0KICAgIDwvZz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtaWNvbi1hcnJvdy0yIiB2aWV3Qm94PSIwIDAgMzIgMzIiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMjEuNzkzIDE4LjVIMi41di01aDE4LjkzNWwtNy42LThoNS44NzJsMTAuNSAxMC41LTEwLjUgMTAuNWgtNS45MTRsOC04eiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1pY29uLWFycm93LTMiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0yNS4yODggMTYuNDJMMTQuMjA4IDI3LjVINi43OTJsMTEuMjkxLTExLjI5MUw2LjgyNiA0LjVoNy4zODFsMTEuNjYxIDExLjY2MS0uNTguMjU4eiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1pY29uLWFycm93IiB2aWV3Qm94PSIwIDAgMzIgMzIiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTTIuNSAxMS41djloMTh2NS4yOTNMMzAuMjkzIDE2IDIwLjUgNi4yMDdWMTEuNWgtMTh6Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWljb24tYnViYmxlIiB2aWV3Qm94PSIwIDAgMzIgMzIiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMjIuMjA3IDI0LjVMMTYuNSAzMC4yMDdWMjQuNUg4QTYuNSA2LjUgMCAwIDEgMS41IDE4VjlBNi41IDYuNSAwIDAgMSA4IDIuNWgxNkE2LjUgNi41IDAgMCAxIDMwLjUgOXY5YTYuNSA2LjUgMCAwIDEtNi41IDYuNWgtMS43OTN6Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWljb24taGVhcnQiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHBhdGggZmlsbC1ydWxlPSJub256ZXJvIiBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0xNS45OTYgMzAuNjc1bDEuOTgxLTEuNzljNy44OTgtNy4xNzcgMTAuMzY1LTkuNzE4IDEyLjEzNS0xMy4wMTIuOTIyLTEuNzE2IDEuMzc3LTMuMzcgMS4zNzctNS4wNzYgMC00LjY1LTMuNjQ3LTguMjk3LTguMjk3LTguMjk3LTIuMzMgMC00Ljg2IDEuNTI3LTYuODE3IDMuODI0bC0uMzguNDQ3LS4zODEtLjQ0N0MxMy42NTggNC4wMjcgMTEuMTI2IDIuNSA4Ljc5NyAyLjUgNC4xNDcgMi41LjUgNi4xNDcuNSAxMC43OTdjMCAxLjcxNC40NiAzLjM3NSAxLjM4OSA1LjA5OCAxLjc3NSAzLjI4OCA0LjI2IDUuODQzIDEyLjEyMyAxMi45NzRsMS45ODQgMS44MDZ6Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWljb24tbG9hZCIgdmlld0JveD0iMCAwIDMyIDMyIj4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTE3LjMxNCAxOC44NjdsMS45NTEtMi41MyA0IDUuMTg0aC0xN2w2LjUtOC44NCA0LjU0OSA2LjE4NnoiLz4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0xOC4wMSA0YTExLjc5OCAxMS43OTggMCAwIDAgMCAxSDN2MjRoMjRWMTQuOTg2YTguNzM4IDguNzM4IDAgMCAwIDEgMFYyOWExIDEgMCAwIDEtMSAxSDNhMSAxIDAgMCAxLTEtMVY1YTEgMSAwIDAgMSAxLTFoMTUuMDF6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMjUgM2gxdjloLTF6Ii8+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNMjIgNmwzLjUtMy41TDI5IDYiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtaWNvbi1sb2NhdGlvbiIgdmlld0JveD0iMCAwIDMyIDMyIj4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0xNiAzMS4yOEMyMy42NzUgMjMuMzAyIDI3LjUgMTcuMTgxIDI3LjUgMTNjMC02LjM1MS01LjE0OS0xMS41LTExLjUtMTEuNVM0LjUgNi42NDkgNC41IDEzYzAgNC4xODEgMy44MjUgMTAuMzAyIDExLjUgMTguMjh6Ii8+DQogICAgPGNpcmNsZSBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGN4PSIxNiIgY3k9IjEzIiByPSI0LjUiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtaWNvbi1wb2x5Z29uIiB2aWV3Qm94PSIwIDAgMzIgMzIiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTS41NzYgMTZMOC4yOSAyOS41aDE1LjQyTDMxLjQyNCAxNiAyMy43MSAyLjVIOC4yOUwuNTc2IDE2eiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1pY29uLXN0YXItMiIgdmlld0JveD0iMCAwIDMyIDMyIj4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0xOS40NDYgMzEuNTkybDIuMjY1LTMuMjcyIDMuOTQ2LjI1LjYzNi0zLjk0IDMuNjY1LTEuNTA1LTEuMTItMy44MzIgMi42NTUtMi45NjItMi42NTYtMi45NjIgMS4xMi0zLjgzMi0zLjY2NC0xLjUwNS0uNjM2LTMuOTQxLTMuOTQ2LjI1LTIuMjY1LTMuMjcxTDE2IDMuMDI0IDEyLjU1NCAxLjA3IDEwLjI4OSA0LjM0bC0zLjk0Ni0uMjUtLjYzNiAzLjk0MS0zLjY2NSAxLjUwNSAxLjEyIDMuODMyTC41MDggMTYuMzNsMi42NTYgMi45NjItMS4xMiAzLjgzMiAzLjY2NCAxLjUwNC42MzYgMy45NDIgMy45NDYtLjI1IDIuMjY1IDMuMjdMMTYgMjkuNjM4bDMuNDQ2IDEuOTU1eiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1pY29uLXN0YXIiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNMjUuMjkyIDI5Ljg3OGwtMS43NzUtMTAuMzQ2IDcuNTE3LTcuMzI3LTEwLjM4OC0xLjUxTDE2IDEuMjgybC00LjY0NiA5LjQxMy0xMC4zODggMS41MSA3LjUxNyA3LjMyNy0xLjc3NSAxMC4zNDZMMTYgMjQuOTkzbDkuMjkyIDQuODg1eiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1pY29uIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMTEuOTIzIDE5LjEzNkw1LjQyNCAyMmwuNzE1LTcuMDY1LTQuNzMxLTUuMjk2IDYuOTQtMS41MDNMMTEuOTIzIDJsMy41NzQgNi4xMzYgNi45NCAxLjUwMy00LjczMSA1LjI5NkwxOC40MiAyMnoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtbWFzay1sb2FkIiB2aWV3Qm94PSIwIDAgMzIgMzIiPg0KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgZD0iTTAgMGgzMnYzMkgweiIvPg0KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTE4LjAxIDRhMTEuNzk4IDExLjc5OCAwIDAgMCAwIDFIM3YyNGgyNFYxNC45ODZhOC43MzggOC43MzggMCAwIDAgMSAwVjI5YTEgMSAwIDAgMS0xIDFIM2ExIDEgMCAwIDEtMS0xVjVhMSAxIDAgMCAxIDEtMWgxNS4wMXpNMTUgMjNhNiA2IDAgMSAxIDAtMTIgNiA2IDAgMCAxIDAgMTJ6bTAtMWE1IDUgMCAxIDAgMC0xMCA1IDUgMCAwIDAgMCAxMHoiLz4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0yNSAzaDF2OWgtMXoiLz4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0yMiA2bDMuNS0zLjVMMjkgNiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1tYXNrIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjQuNSIgc3Ryb2tlPSJpbmhlcml0IiBmaWxsPSJub25lIi8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMiAxaDIwYTEgMSAwIDAgMSAxIDF2MjBhMSAxIDAgMCAxLTEgMUgyYTEgMSAwIDAgMS0xLTFWMmExIDEgMCAwIDEgMS0xem0wIDF2MjBoMjBWMkgyeiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1pbWFnZSIgdmlld0JveD0iMCAwIDE3IDEzIiBmaWxsPSJub25lIj4NCiAgICA8cGF0aCBkPSJNMTMuMjMxNSAxMS41NzU5TDMuMjMxNzcgMTEuNTA0M0w1Ljc1Njc3IDguMDIyMjZMNy40MDkwNyAxMC4wMzQxTDkuOTM0MDcgNi41NTIxNUwxMy4yMzE1IDExLjU3NTlaIiBmaWxsPSIjNkI3Qzk0Ii8+DQogICAgPHJlY3QgeD0iMC44MDcwNjEiIHk9IjAuOTg2NjY2IiB3aWR0aD0iMTUiIGhlaWdodD0iMTMiIHRyYW5zZm9ybT0icm90YXRlKDAuNDEwMzg5IDAuODA3MDYxIDAuOTg2NjY2KSIgc3Ryb2tlPSIjNkI3Qzk0Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWltYWdlLWxvYWQiIHZpZXdCb3g9IjAgMCAxNyAxMyIgZmlsbD0ibm9uZSI+DQogICAgPHBhdGggZD0iTTEzLjIzMTUgMTEuNTc1OUwzLjIzMTc3IDExLjUwNDNMNS43NTY3NyA4LjAyMjI2TDcuNDA5MDcgMTAuMDM0MUw5LjkzNDA3IDYuNTUyMTVMMTMuMjMxNSAxMS41NzU5WiIgZmlsbD0iIzZCN0M5NCIvPg0KICAgIDxyZWN0IHg9IjAuODA3MDYxIiB5PSIwLjk4NjY2NiIgd2lkdGg9IjE1IiBoZWlnaHQ9IjEzIiB0cmFuc2Zvcm09InJvdGF0ZSgwLjQxMDM4OSAwLjgwNzA2MSAwLjk4NjY2NikiIHN0cm9rZT0iIzZCN0M5NCIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1sb2dvIiB2aWV3Qm94PSIwIDAgMTYgMTkiIGZpbGw9Im5vbmUiPg0KICAgIDxwYXRoIGQ9Ik05Ljg3OTc4IDEwLjEyMThMOS44MTEzNiAxMC4xODEyTDkuODMyMDMgMTAuMjY5NEwxMC40OTI0IDEzLjA4NjFMOC4wMjAyMiAxMS42MDM0TDcuOTQyNjYgMTEuNTU2OUw3Ljg2NTMxIDExLjYwMzhMNS40MDAzOSAxMy4wOTc5TDYuMDQ3MjcgMTAuMjg2NUw2LjA2NzYgMTAuMTk4MUw1Ljk5ODg1IDEwLjEzOTFMMy44MTc2MiA4LjI2NDgxTDYuNjkxNDcgOC4wMTEyOUw2Ljc4MTYzIDguMDAzMzNMNi44MTY2MiA3LjkxOTg1TDcuOTI4MTMgNS4yNjgxNEw5LjA1MTY5IDcuOTA2Nkw5LjA4NzExIDcuOTg5NzlMOS4xNzcyMiA3Ljk5NzMxTDEyLjA1MjIgOC4yMzczOEw5Ljg3OTc4IDEwLjEyMThaTTcuOTgyMjIgMi40Mzc5Mkw3LjkyMTI1IDIuNDExTDcuODYwNDEgMi40MzgyTDIuMTU4NTUgNC45ODc0NUwyLjA2OTU0IDUuMDI3MjVMMi4wNjk3NyA1LjEyNDc0TDIuMDc4NzQgOC45NTcxMkMyLjA4NzUxIDEyLjcwMzUgNC41NjM3NSAxNi4xNTk3IDcuOTExNjEgMTcuMTgzOEw3Ljk1NTg2IDE3LjE5NzNMOC4wMDAwNCAxNy4xODM2QzExLjM0MzEgMTYuMTQzOCAxMy44MDMxIDEyLjY3NjEgMTMuNzk0MyA4LjkyOTdMMTMuNzg1NCA1LjA5NzMyTDEzLjc4NTEgNC45OTk4MkwxMy42OTU5IDQuOTYwNDVMNy45ODIyMiAyLjQzNzkyWk0wLjczNjcyIDQuMTY1MzJMNy45MTc4NCAwLjk1MzU1OUwxNS4xMTM5IDQuMTMxNjdMMTUuMTI1MSA4LjkyNjU4QzE1LjEzNTYgMTMuMzc2MyAxMi4wNzMzIDE3LjUzOTQgNy45NTkwOCAxOC41NzM3QzMuODQwMTEgMTcuNTU4NiAwLjc1ODM1OCAxMy40MSAwLjc0Nzk0MyA4Ljk2MDIzTDAuNzM2NzIgNC4xNjUzMloiIGZpbGw9IiM2QjdDOTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC4zIi8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLWxvZ28tbG9hZCIgdmlld0JveD0iMCAwIDE2IDE5IiBmaWxsPSJub25lIj4NCiAgICA8cGF0aCBkPSJNOS44Nzk3OCAxMC4xMjE4TDkuODExMzYgMTAuMTgxMkw5LjgzMjAzIDEwLjI2OTRMMTAuNDkyNCAxMy4wODYxTDguMDIwMjIgMTEuNjAzNEw3Ljk0MjY2IDExLjU1NjlMNy44NjUzMSAxMS42MDM4TDUuNDAwMzkgMTMuMDk3OUw2LjA0NzI3IDEwLjI4NjVMNi4wNjc2IDEwLjE5ODFMNS45OTg4NSAxMC4xMzkxTDMuODE3NjIgOC4yNjQ4MUw2LjY5MTQ3IDguMDExMjlMNi43ODE2MyA4LjAwMzMzTDYuODE2NjIgNy45MTk4NUw3LjkyODEzIDUuMjY4MTRMOS4wNTE2OSA3LjkwNjZMOS4wODcxMSA3Ljk4OTc5TDkuMTc3MjIgNy45OTczMUwxMi4wNTIyIDguMjM3MzhMOS44Nzk3OCAxMC4xMjE4Wk03Ljk4MjIyIDIuNDM3OTJMNy45MjEyNSAyLjQxMUw3Ljg2MDQxIDIuNDM4MkwyLjE1ODU1IDQuOTg3NDVMMi4wNjk1NCA1LjAyNzI1TDIuMDY5NzcgNS4xMjQ3NEwyLjA3ODc0IDguOTU3MTJDMi4wODc1MSAxMi43MDM1IDQuNTYzNzUgMTYuMTU5NyA3LjkxMTYxIDE3LjE4MzhMNy45NTU4NiAxNy4xOTczTDguMDAwMDQgMTcuMTgzNkMxMS4zNDMxIDE2LjE0MzggMTMuODAzMSAxMi42NzYxIDEzLjc5NDMgOC45Mjk3TDEzLjc4NTQgNS4wOTczMkwxMy43ODUxIDQuOTk5ODJMMTMuNjk1OSA0Ljk2MDQ1TDcuOTgyMjIgMi40Mzc5MlpNMC43MzY3MiA0LjE2NTMyTDcuOTE3ODQgMC45NTM1NTlMMTUuMTEzOSA0LjEzMTY3TDE1LjEyNTEgOC45MjY1OEMxNS4xMzU2IDEzLjM3NjMgMTIuMDczMyAxNy41Mzk0IDcuOTU5MDggMTguNTczN0MzLjg0MDExIDE3LjU1ODYgMC43NTgzNTggMTMuNDEgMC43NDc5NDMgOC45NjAyM0wwLjczNjcyIDQuMTY1MzJaIiBmaWxsPSIjNkI3Qzk0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuMyIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1yZWRvIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxwYXRoIGQ9Ik0xMS41IDhDMTQuMTUgOCAxNi41NSA4Ljk5IDE4LjQgMTAuNkwyMiA3VjE2SDEzTDE2LjYyIDEyLjM4QzE1LjIzIDExLjIyIDEzLjQ2IDEwLjUgMTEuNSAxMC41QzcuOTYgMTAuNSA0Ljk1IDEyLjgxIDMuOSAxNkwxLjUzIDE1LjIyQzIuOTIgMTEuMDMgNi44NSA4IDExLjUgOFoiIGZpbGw9IiM4NDkyQTYiLz4NCjwvc3ltYm9sPg0KICAgIDxzeW1ib2wgaWQ9ImljLXJlc2V0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIG9wYWNpdHk9Ii41IiBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiLz4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0yIDEzdi0xYTcgNyAwIDAgMSA3LTdoMTN2MWgtMXY1aDF2MWE3IDcgMCAwIDEtNyA3SDJ2LTFoMXYtNUgyem03LTdhNiA2IDAgMCAwLTYgNnY2aDEyYTYgNiAwIDAgMCA2LTZWNkg5eiIvPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgZD0iTTE5IDNsMi41IDIuNUwxOSA4TTUgMTZsLTIuNSAyLjVMNSAyMSIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1wcmV2aWV3IiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxwYXRoIGQ9Ik0xMSAyQzE0Ljc5IDIgMTguMTcgNC4xMyAxOS44MiA3LjVDMTguMTcgMTAuODcgMTQuOCAxMyAxMSAxM0M3LjIgMTMgMy44MyAxMC44NyAyLjE4IDcuNUMzLjgzIDQuMTMgNy4yMSAyIDExIDJaTTExIDBDNiAwIDEuNzMgMy4xMSAwIDcuNUMxLjczIDExLjg5IDYgMTUgMTEgMTVDMTYgMTUgMjAuMjcgMTEuODkgMjIgNy41QzIwLjI3IDMuMTEgMTYgMCAxMSAwWk0xMSA1QzEyLjM4IDUgMTMuNSA2LjEyIDEzLjUgNy41QzEzLjUgOC44OCAxMi4zOCAxMCAxMSAxMEM5LjYyIDEwIDguNSA4Ljg4IDguNSA3LjVDOC41IDYuMTIgOS42MiA1IDExIDVaTTExIDNDOC41MiAzIDYuNSA1LjAyIDYuNSA3LjVDNi41IDkuOTggOC41MiAxMiAxMSAxMkMxMy40OCAxMiAxNS41IDkuOTggMTUuNSA3LjVDMTUuNSA1LjAyIDEzLjQ4IDMgMTEgM1oiIGZpbGw9IiM4NDkyQTYiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtcm90YXRlLWNsb2Nrd2lzZSIgdmlld0JveD0iMCAwIDMyIDMyIj4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0yOSAxN2gtLjkyNGMwIDYuNjI3LTUuMzczIDEyLTEyIDEyLTYuNjI4IDAtMTItNS4zNzMtMTItMTJDNC4wNzYgMTAuMzk4IDkuNDA3IDUuMDQxIDE2IDVWNEM4LjgyIDQgMyA5LjgyIDMgMTdzNS44MiAxMyAxMyAxMyAxMy01LjgyIDEzLTEzeiIvPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgZD0iTTE2IDEuNWw0IDMtNCAzIi8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik0xNiA0aDR2MWgtNHoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtcm90YXRlLWNvdW50ZXJjbG9ja3dpc2UiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBkPSJNMyAxN2guOTI0YzAgNi42MjcgNS4zNzMgMTIgMTIgMTIgNi42MjggMCAxMi01LjM3MyAxMi0xMiAwLTYuNjAyLTUuMzMxLTExLjk2LTExLjkyNC0xMlY0YzcuMTggMCAxMyA1LjgyIDEzIDEzcy01LjgyIDEzLTEzIDEzUzMgMjQuMTggMyAxN3oiLz4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTEyIDRoNHYxaC00eiIvPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgZD0iTTE2IDEuNWwtNCAzIDQgMyIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1yb3RhdGUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiAvPg0KICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIHN0cm9rZT0ibm9uZSIgZD0iTTguMzQ5IDIyLjI1NGExMC4wMDIgMTAuMDAyIDAgMCAxLTIuNzc4LTEuNzE5bC42NS0uNzZhOS4wMDIgOS4wMDIgMCAwIDAgMi40OTUgMS41NDhsLS4zNjcuOTMxem0yLjg3My43MDRsLjA3OC0uOTk3YTkgOSAwIDEgMC0uNTU3LTE3Ljg1MmwtLjE0LS45OUExMC4wNzYgMTAuMDc2IDAgMCAxIDEyLjE0NSAzYzUuNTIzIDAgMTAgNC40NzcgMTAgMTBzLTQuNDc3IDEwLTEwIDEwYy0uMzEyIDAtLjYyLS4wMTQtLjkyNC0uMDQyem0tNy41NTYtNC42NTVhOS45NDIgOS45NDIgMCAwIDEtMS4yNTMtMi45OTZsLjk3My0uMjM0YTguOTQ4IDguOTQ4IDAgMCAwIDEuMTI0IDIuNjkzbC0uODQ0LjUzN3ptLTEuNTAyLTUuOTFBOS45NDkgOS45NDkgMCAwIDEgMi44OCA5LjIzbC45MjUuMzgyYTguOTU0IDguOTU0IDAgMCAwLS42NDQgMi44NDRsLS45OTgtLjA2MnptMi4yMS01LjY4NmMuNjg3LS44NDggMS41MS0xLjU4IDIuNDM2LTIuMTY2bC41MjMuODUyYTkuMDQ4IDkuMDQ4IDAgMCAwLTIuMTg4IDEuOTVsLS43NzEtLjYzNnoiLz4NCiAgICA8cGF0aCBzdHJva2U9ImluaGVyaXQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIGQ9Ik0xMyAxbC0yLjUgMi41TDEzIDYiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtc2hhcGUtY2lyY2xlIiB2aWV3Qm94PSIwIDAgMzIgMzIiPg0KICAgIDxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjE0LjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1zaGFwZS1yZWN0YW5nbGUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHJlY3Qgd2lkdGg9IjI3IiBoZWlnaHQ9IjI3IiB4PSIyLjUiIHk9IjIuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiByeD0iMSIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1zaGFwZS10cmlhbmdsZSIgdmlld0JveD0iMCAwIDMyIDMyIj4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0xNiAyLjVsMTUuNSAyN0guNXoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtc2hhcGUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTQuNzA2IDhIMjFhMSAxIDAgMCAxIDEgMXYxMmExIDEgMCAwIDEtMSAxSDlhMSAxIDAgMCAxLTEtMXYtNGgxdjRoMTJWOWgtNS43MDZsLS41ODgtMXoiLz4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTguNSAxLjVsNy41IDEzSDF6Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgd2lkdGg9IjI4IiBoZWlnaHQ9IjIyIiB2aWV3Qm94PSIwIDAgMjggMjIiIGlkPSJpYy10ZXh0LWFsaWduLWNlbnRlciI+DQogICAgPHBhdGggZD0iTTI4IDAuOTk5OTY5SDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+DQogICAgPHBhdGggZD0iTTI4IDEzSDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+DQogICAgPHBhdGggZD0iTTIyIDYuOTk5OTdINSIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4NCiAgICA8cGF0aCBkPSJNMjIgMjFINSIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCB3aWR0aD0iMjgiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyOCAyMiIgaWQ9ImljLXRleHQtYWxpZ24tbGVmdCI+DQogICAgPHBhdGggZD0iTTI4IDAuOTk5OTY5SDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+DQogICAgPHBhdGggZD0iTTI4IDEzSDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+DQogICAgPHBhdGggZD0iTTE3IDYuOTk5OTdIMCIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4NCiAgICA8cGF0aCBkPSJNMTcgMjFIMCIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCB3aWR0aD0iMjgiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyOCAyMiIgaWQ9ImljLXRleHQtYWxpZ24tcmlnaHQiPg0KICAgIDxwYXRoIGQ9Ik0yOCAwLjk5OTk2OUgwIiBzdHJva2U9IiM2QjdDOTQiIHN0cm9rZS13aWR0aD0iMiIvPg0KICAgIDxwYXRoIGQ9Ik0yOCAxM0gwIiBzdHJva2U9IiM2QjdDOTQiIHN0cm9rZS13aWR0aD0iMiIvPg0KICAgIDxwYXRoIGQ9Ik0yOCA2Ljk5OTk3SDExIiBzdHJva2U9IiM2QjdDOTQiIHN0cm9rZS13aWR0aD0iMiIvPg0KICAgIDxwYXRoIGQ9Ik0yOCAyMUgxMSIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCAgd2lkdGg9IjMzIiBoZWlnaHQ9IjQ4IiBpZD0iaWMtdGV4dC1ib2xkIiB2aWV3Qm94PSIwIDAgMzMgNDgiPg0KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgZD0iTTAgMGgzMnYzMkgweiIvPg0KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTcgMmgydjJIN3pNNyAyOGgydjJIN3oiLz4NCiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS13aWR0aD0iMiIgZD0iTTkgM3YxMmg5YTYgNiAwIDEgMCAwLTEySDl6TTkgMTV2MTRoMTBhNyA3IDAgMCAwIDAtMTRIOXoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtdGV4dC1pdGFsaWMiIHZpZXdCb3g9IjAgMCAzMiAzMiI+DQogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBkPSJNMCAwaDMydjMySDB6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTUgMmg1djFoLTV6TTExIDI5aDV2MWgtNXpNMTcgM2gxbC00IDI2aC0xeiIvPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy10ZXh0LXVuZGVybGluZSIgdmlld0JveD0iMCAwIDMyIDMyIj4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMzJ2MzJIMHoiLz4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik04IDJ2MTRhOCA4IDAgMSAwIDE2IDBWMmgxdjE0YTkgOSAwIDAgMS0xOCAwVjJoMXpNMyAyOWgyNnYxSDN6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNNSAyaDV2MUg1ek0yMiAyaDV2MWgtNXoiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtdGV4dCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik00IDNoMTVhMSAxIDAgMCAxIDEgMUgzYTEgMSAwIDAgMSAxLTF6TTMgNGgxdjFIM3pNMTkgNGgxdjFoLTF6Ii8+DQogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTEgM2gxdjE4aC0xeiIvPg0KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTEwIDIwaDN2MWgtM3oiLz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtdW5kbyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4NCiAgICA8cGF0aCBkPSJNMTIuNSA4QzkuODUgOCA3LjQ1IDguOTkgNS42IDEwLjZMMiA3VjE2SDExTDcuMzggMTIuMzhDOC43NyAxMS4yMiAxMC41NCAxMC41IDEyLjUgMTAuNUMxNi4wNCAxMC41IDE5LjA1IDEyLjgxIDIwLjEgMTZMMjIuNDcgMTUuMjJDMjEuMDggMTEuMDMgMTcuMTUgOCAxMi41IDhaIiBmaWxsPSIjODQ5MkE2Ii8+DQo8L3N5bWJvbD4NCjxzeW1ib2wgaWQ9ImljLXpvb20taW4iIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyOSAtMjkwKSB0cmFuc2xhdGUoMjI5IDI5MCkiPg0KICAgICAgICA8Y2lyY2xlIGN4PSIxMC41IiBjeT0iMTAuNSIgcj0iOSIgc3Ryb2tlPSJpbmhlcml0IiBmaWxsPSJub25lIi8+DQogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGQ9Ik0xOC44MjggMTUuODI4SDE5LjgyOFYyMi44MjhIMTguODI4eiIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDE5LjMyOCAxOS4zMjgpIi8+DQogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGQ9Ik03IDEwSDE0VjExSDd6Ii8+DQogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGQ9Ik0xMCA3SDExVjE0SDEweiIvPg0KICAgIDwvZz4NCjwvc3ltYm9sPg0KPHN5bWJvbCBpZD0iaWMtem9vbS1vdXQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+DQogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2MyAtMjkwKSB0cmFuc2xhdGUoMjYzIDI5MCkiPg0KICAgICAgICA8Y2lyY2xlIGN4PSIxMC41IiBjeT0iMTAuNSIgcj0iOSIgc3Ryb2tlPSJpbmhlcml0IiBmaWxsPSJub25lIi8+DQogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGQ9Ik0xOC44MjggMTUuODI4SDE5LjgyOFYyMi44MjhIMTguODI4eiIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDE5LjMyOCAxOS4zMjgpIi8+DQogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGQ9Ik03IDEwSDE0VjExSDd6Ii8+DQogICAgPC9nPg0KPC9zeW1ib2w+DQo8c3ltYm9sIGlkPSJpYy1oYW5kIiB2aWV3Qm94PSIwIDAgMjQgMjQiPg0KICAgIDxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+DQogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTguNjcyIDMuMzZjMS4zMjggMCAyLjExNC43OCAyLjI5IDEuODY5bC4wMTQuMTAxLjAyMy4wMDZ2MS4wNDJsLS42MzgtLjE4NWMtLjE4Ny0uMDU1LS4zMjMtLjIxMS0uMzU0LS4zOTlMMTAgNS43MTNjMC0uODI1LS40Mi0xLjM1My0xLjMyOC0xLjM1M0M3LjY5NSA0LjM2IDcgNS4wNDEgNyA1LjcxM3Y3Ljk0MWMwIC40MzktLjUyNC42NjUtLjg0My4zNjRsLTEuODY4LTEuNzYxYy0uNTk1LS41MjgtMS4zMTYtLjYxNy0xLjkxOC0uMjE2LS41MjIuMzQ4LS41NjIgMS4yMDMtLjE4IDEuOEw3LjczOCAyMmgxMS4wMTNsLjI4NS0uNTE4YzEuMjQ3LTIuMzI2IDEuODk3LTQuMjU5IDEuOTYtNS43ODVsLjAwNC0uMjM5VjguMDM1YzAtLjY1Ni0uNS0xLjE3LTEtMS4xNy0uNTAzIDAtMSAuNDU2LTEgMS4xNyAwIC4zMzMtLjMyLjU3My0uNjQuNDhMMTggOC40MVY3LjM2OGwuMDg2LjAyNi4wNDItLjEzNmMuMjc5LS44MDUuOTc4LTEuMzMyIDEuNzM4LTEuMzg4TDIwIDUuODY1YzEuMDU3IDAgMiAuOTY3IDIgMi4xN3Y3LjQyM2MwIDEuOTI5LS44NDUgNC4zNTItMi41MjEgNy4yOS0uMDkuMTU2LS4yNTUuMjUyLS40MzUuMjUySDcuNDc0Yy0uMTY2IDAtLjMyMS0uMDgyLS40MTQtLjIxOWwtNS43MDQtOC4zOWMtLjY1My0xLjAxOS0uNTg0LTIuNDg2LjQ2LTMuMTgyIDEtLjY2NiAyLjIxNi0uNTE2IDMuMTQ4LjMxTDYgMTIuNDk1VjUuNzEzYzAtMS4xOCAxLjA1OC0yLjI2MyAyLjQ5LTIuMzQ4eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI5NyAtMjkwKSB0cmFuc2xhdGUoMjk3IDI5MCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iaW5oZXJpdCIgZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMTIuNSAxLjVjMS4zMjUgMCAyLjQxIDEuMDMyIDIuNDk1IDIuMzM2TDE1IDR2Ny4yMmgtMVY0YzAtLjgyOC0uNjcyLTEuNS0xLjUtMS41LS43OCAwLTEuNDIuNTk1LTEuNDkzIDEuMzU2TDExIDR2Ny4yMmgtMVY0YzAtMS4zOCAxLjEyLTIuNSAyLjUtMi41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI5NyAtMjkwKSB0cmFuc2xhdGUoMjk3IDI5MCkiLz4NCiAgICAgICAgPHBhdGggZmlsbD0iaW5oZXJpdCIgZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMTYuNSAzLjVjMS4zMjUgMCAyLjQxIDEuMDMyIDIuNDk1IDIuMzM2TDE5IDZ2Ni4zaC0xVjZjMC0uODI4LS42NzItMS41LTEuNS0xLjUtLjc4IDAtMS40Mi41OTUtMS40OTMgMS4zNTZMMTUgNnYyLjQ0aC0xVjZjMC0xLjM4IDEuMTItMi41IDIuNS0yLjV6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjk3IC0yOTApIHRyYW5zbGF0ZSgyOTcgMjkwKSIvPg0KICAgIDwvZz4NCjwvc3ltYm9sPg0KPC9kZWZzPg0KPC9zdmc+DQo=";
+module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyBkaXNwbGF5PSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4KPGRlZnMgaWQ9InR1aS1pbWFnZS1lZGl0b3Itc3ZnLWRlZmF1bHQtaWNvbnMiPgo8c3ltYm9sIGlkPSJpYy1hcHBseSIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIHN0cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIvPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNNCAxMi4wMTFsNSA1TDIwLjAxMSA2Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1jYW5jZWwiIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiLz4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTTYgNmwxMiAxMk0xOCA2TDYgMTgiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWNyb3AiIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiIC8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik00IDBoMXYyMGExIDEgMCAwIDEtMS0xVjB6TTIwIDE3aC0xVjVoMXYxMnptMCAydjVoLTF2LTVoMXoiLz4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTUgMTloMTl2MUg1ek00Ljc2MiA0djFIMFY0aDQuNzYyek03IDRoMTJhMSAxIDAgMCAxIDEgMUg3VjR6Ii8+Cjwvc3ltYm9sPgo8IS0tIFRoaXMgaWNvbiBtYWRlIGJ5IFBpeGVsIHBlcmZlY3QgZnJvbSB3d3cuZmxhdGljb24uY29tIC0tPgo8c3ltYm9sIGlkPSJpYy1yZXNpemUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgc3Ryb2tlPSJub25lIiBmaWxsPSJub25lIi8+CiAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNIDE4Ljk4ODI4MSAzLjAxMTcxOSBDIDE4LjgwMDc4MSAyLjgyNDIxOSAxOC41IDIuODI0MjE5IDE4LjMxMjUgMy4wMTE3MTkgTCAxMS42MjEwOTQgOS43MDcwMzEgQyAxMS40Mjk2ODggOS44OTQ1MzEgMTEuNDI5Njg4IDEwLjE5NTMxMiAxMS42MjEwOTQgMTAuMzc4OTA2IEMgMTEuNzEwOTM4IDEwLjQ3MjY1NiAxMS44MzU5MzggMTAuNTE5NTMxIDExLjk1NzAzMSAxMC41MTk1MzEgQyAxMi4wNzgxMjUgMTAuNTE5NTMxIDEyLjIwMzEyNSAxMC40NzI2NTYgMTIuMjkyOTY5IDEwLjM3ODkwNiBMIDE4Ljk4ODI4MSAzLjY4NzUgQyAxOS4xNzU3ODEgMy41IDE5LjE3NTc4MSAzLjE5OTIxOSAxOC45ODgyODEgMy4wMTE3MTkgWiBNIDE4Ljk4ODI4MSAzLjAxMTcxOSAiLz4KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gMTguNjUyMzQ0IDIuODY3MTg4IEMgMTguMzg2NzE5IDIuODY3MTg4IDE4LjE3MTg3NSAzLjA4MjAzMSAxOC4xNzE4NzUgMy4zNDc2NTYgTCAxOC4xNzE4NzUgOS4wODU5MzggQyAxOC4xNzE4NzUgOS4zNDc2NTYgMTguMzg2NzE5IDkuNTYyNSAxOC42NTIzNDQgOS41NjI1IEMgMTguOTE3OTY5IDkuNTYyNSAxOS4xMzI4MTIgOS4zNDc2NTYgMTkuMTMyODEyIDkuMDg1OTM4IEwgMTkuMTMyODEyIDMuMzQ3NjU2IEMgMTkuMTMyODEyIDMuMDgyMDMxIDE4LjkxNzk2OSAyLjg2NzE4OCAxOC42NTIzNDQgMi44NjcxODggWiBNIDE4LjY1MjM0NCAyLjg2NzE4OCAiLz4KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gMTguNjUyMzQ0IDIuODY3MTg4IEwgMTIuOTE0MDYyIDIuODY3MTg4IEMgMTIuNjUyMzQ0IDIuODY3MTg4IDEyLjQzNzUgMy4wODIwMzEgMTIuNDM3NSAzLjM0NzY1NiBDIDEyLjQzNzUgMy42MTMyODEgMTIuNjUyMzQ0IDMuODI4MTI1IDEyLjkxNDA2MiAzLjgyODEyNSBMIDE4LjY1MjM0NCAzLjgyODEyNSBDIDE4LjkxNzk2OSAzLjgyODEyNSAxOS4xMzI4MTIgMy42MTMyODEgMTkuMTMyODEyIDMuMzQ3NjU2IEMgMTkuMTMyODEyIDMuMDgyMDMxIDE4LjkxNzk2OSAyLjg2NzE4OCAxOC42NTIzNDQgMi44NjcxODggWiBNIDE4LjY1MjM0NCAyLjg2NzE4OCAiLz4KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gMTAuMzc4OTA2IDExLjYyMTA5NCBDIDEwLjE5NTMxMiAxMS40MzM1OTQgOS44OTA2MjUgMTEuNDMzNTk0IDkuNzAzMTI1IDExLjYyMTA5NCBMIDMuMDA3ODEyIDE4LjMxNjQwNiBDIDIuODIwMzEyIDE4LjUgMi44MjAzMTIgMTguODA0Njg4IDMuMDA3ODEyIDE4Ljk5MjE4OCBDIDMuMTA1NDY5IDE5LjA4NTkzOCAzLjIyNjU2MiAxOS4xMzI4MTIgMy4zNDc2NTYgMTkuMTMyODEyIEMgMy40Njg3NSAxOS4xMzI4MTIgMy41ODk4NDQgMTkuMDg1OTM4IDMuNjgzNTk0IDE4Ljk5MjE4OCBMIDEwLjM3ODkwNiAxMi4yOTY4NzUgQyAxMC41NjY0MDYgMTIuMTA5Mzc1IDEwLjU2NjQwNiAxMS44MDQ2ODggMTAuMzc4OTA2IDExLjYyMTA5NCBaIE0gMTAuMzc4OTA2IDExLjYyMTA5NCAiLz4KICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0gMy4zNDc2NTYgMTIuNDM3NSBDIDMuMDgyMDMxIDEyLjQzNzUgMi44NjcxODggMTIuNjUyMzQ0IDIuODY3MTg4IDEyLjkxNDA2MiBMIDIuODY3MTg4IDE4LjY1MjM0NCBDIDIuODY3MTg4IDE4LjkxNzk2OSAzLjA4MjAzMSAxOS4xMzI4MTIgMy4zNDc2NTYgMTkuMTMyODEyIEMgMy42MTMyODEgMTkuMTMyODEyIDMuODI4MTI1IDE4LjkxNzk2OSAzLjgyODEyNSAxOC42NTIzNDQgTCAzLjgyODEyNSAxMi45MTQwNjIgQyAzLjgyODEyNSAxMi42NTIzNDQgMy42MTMyODEgMTIuNDM3NSAzLjM0NzY1NiAxMi40Mzc1IFogTSAzLjM0NzY1NiAxMi40Mzc1ICIvPgogIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTSA5LjA4NTkzOCAxOC4xNzE4NzUgTCAzLjM0NzY1NiAxOC4xNzE4NzUgQyAzLjA4MjAzMSAxOC4xNzE4NzUgMi44NjcxODggMTguMzg2NzE5IDIuODY3MTg4IDE4LjY1MjM0NCBDIDIuODY3MTg4IDE4LjkxNzk2OSAzLjA4MjAzMSAxOS4xMzI4MTIgMy4zNDc2NTYgMTkuMTMyODEyIEwgOS4wODU5MzggMTkuMTMyODEyIEMgOS4zNDc2NTYgMTkuMTMyODEyIDkuNTYyNSAxOC45MTc5NjkgOS41NjI1IDE4LjY1MjM0NCBDIDkuNTYyNSAxOC4zODY3MTkgOS4zNDc2NTYgMTguMTcxODc1IDkuMDg1OTM4IDE4LjE3MTg3NSBaIE0gOS4wODU5MzggMTguMTcxODc1ICIvPgogIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTSAyMC41NjI1IDAgTCAxLjQzNzUgMCBDIDAuNjQ0NTMxIDAgMCAwLjY0NDUzMSAwIDEuNDM3NSBMIDAgMjAuNTYyNSBDIDAgMjEuMzU1NDY5IDAuNjQ0NTMxIDIyIDEuNDM3NSAyMiBMIDIwLjU2MjUgMjIgQyAyMS4zNTU0NjkgMjIgMjIgMjEuMzU1NDY5IDIyIDIwLjU2MjUgTCAyMiAxLjQzNzUgQyAyMiAwLjY0NDUzMSAyMS4zNTU0NjkgMCAyMC41NjI1IDAgWiBNIDIxLjA0Mjk2OSAyMC41NjI1IEMgMjEuMDQyOTY5IDIwLjgyODEyNSAyMC44MjgxMjUgMjEuMDQyOTY5IDIwLjU2MjUgMjEuMDQyOTY5IEwgMS40Mzc1IDIxLjA0Mjk2OSBDIDEuMTcxODc1IDIxLjA0Mjk2OSAwLjk1NzAzMSAyMC44MjgxMjUgMC45NTcwMzEgMjAuNTYyNSBMIDAuOTU3MDMxIDEuNDM3NSBDIDAuOTU3MDMxIDEuMTcxODc1IDEuMTcxODc1IDAuOTU3MDMxIDEuNDM3NSAwLjk1NzAzMSBMIDIwLjU2MjUgMC45NTcwMzEgQyAyMC44MjgxMjUgMC45NTcwMzEgMjEuMDQyOTY5IDEuMTcxODc1IDIxLjA0Mjk2OSAxLjQzNzUgWiBNIDIxLjA0Mjk2OSAyMC41NjI1ICIvPgo8L3N5bWJvbD4KPCEtLSAgLS0+CjxzeW1ib2wgaWQ9ImljLWRlbGV0ZS1hbGwiIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik01IDIzSDNhMSAxIDAgMCAxLTEtMVY2aDF2MTZoMnYxem0xNi0xMGgtMVY2aDF2N3pNOSAxM0g4di0zaDF2M3ptMyAwaC0xdi0zaDF2M3ptMyAwaC0xdi0zaDF2M3pNMTQuNzk0IDMuNzk0TDEzIDJoLTNMOC4yMDYgMy43OTRBLjk2My45NjMgMCAwIDEgOCAyLjVsLjcwMy0xLjA1NUExIDEgMCAwIDEgOS41MzUgMWgzLjkzYTEgMSAwIDAgMSAuODMyLjQ0NUwxNSAyLjVhLjk2NS45NjUgMCAwIDEtLjIwNiAxLjI5NHpNMTQuMTk3IDRIOC44MDNoNS4zOTR6Ii8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0wIDNoMjN2MUgwek0xMS4yODYgMjFIOC43MTRMOCAyM0g3bDEtMi44VjIwaC4wNzFMOS41IDE2aDFsMS40MjkgNEgxMnYuMmwxIDIuOGgtMWwtLjcxNC0yem0tLjM1Ny0xTDEwIDE3LjQgOS4wNzEgMjBoMS44NTh6TTIwIDIyaDN2MWgtNHYtN2gxdjZ6bS01IDBoM3YxaC00di03aDF2NnoiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWRlbGV0ZSIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTMgNnYxNmgxN1Y2aDF2MTZhMSAxIDAgMCAxLTEgMUgzYTEgMSAwIDAgMS0xLTFWNmgxek0xNC43OTQgMy43OTRMMTMgMmgtM0w4LjIwNiAzLjc5NEEuOTYzLjk2MyAwIDAgMSA4IDIuNWwuNzAzLTEuMDU1QTEgMSAwIDAgMSA5LjUzNSAxaDMuOTNhMSAxIDAgMCAxIC44MzIuNDQ1TDE1IDIuNWEuOTY1Ljk2NSAwIDAgMS0uMjA2IDEuMjk0ek0xNC4xOTcgNEg4LjgwM2g1LjM5NHoiLz4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTAgM2gyM3YxSDB6TTggMTBoMXY2SDh2LTZ6bTMgMGgxdjZoLTF2LTZ6bTMgMGgxdjZoLTF2LTZ6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1kcmF3LWZyZWUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0yLjUgMjAuOTI5QzIuNTk0IDEwLjk3NiA0LjMyMyA2IDcuNjg2IDZjNS44NzIgMCAyLjUyNCAxOSA3LjY5NyAxOXMxLjg5LTE0LjkyOSA2LjQxNC0xNC45MjkgMS4zNTcgMTAuODU4IDUuMTMgMTAuODU4YzEuODAyIDAgMi42NTctMi4yNjIgMi41NjYtNi43ODYiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWRyYXctbGluZSIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTTIgMTUuNWgyOCIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtZHJhdyIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTTIuNSAyMS41SDVjLjI0NSAwIC40OC0uMDU4LjY5MS0uMTY4bC4xMjQtLjA2NS4xNC4wMWMuNDI5LjAyOC44NS0uMTI3IDEuMTYtLjQzN0wyMi41NSA1LjQwNWEuNS41IDAgMCAwIDAtLjcwN2wtMy4yNDYtMy4yNDVhLjUuNSAwIDAgMC0uNzA3IDBMMy4xNjIgMTYuODg4YTEuNDk1IDEuNDk1IDAgMCAwLS40MzcgMS4xNTVsLjAxLjE0LS4wNjUuMTIzYy0uMTExLjIxMi0uMTcuNDQ4LS4xNy42OTR2Mi41eiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTYuNDE0IDMuNzA3bDMuODkgMy44OS0uNzA4LjcwNi0zLjg4OS0zLjg4OXoiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWZpbHRlciIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgLz4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTEyIDd2MUgyVjdoMTB6bTYgMGg0djFoLTRWN3pNMTIgMTZ2MWgxMHYtMUgxMnptLTYgMEgydjFoNHYtMXoiLz4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTguNSAyMGEzLjUgMy41IDAgMSAxIDAtNyAzLjUgMy41IDAgMCAxIDAgN3ptMC0xYTIuNSAyLjUgMCAxIDAgMC01IDIuNSAyLjUgMCAwIDAgMCA1ek0xNS41IDExYTMuNSAzLjUgMCAxIDEgMC03IDMuNSAzLjUgMCAwIDEgMCA3em0wLTFhMi41IDIuNSAwIDEgMCAwLTUgMi41IDIuNSAwIDAgMCAwIDV6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1mbGlwLXJlc2V0IiB2aWV3Qm94PSIwIDAgMzEgMzIiPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBkPSJNMzEgMEgwdjMyaDMxeiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMjggMTZhOCA4IDAgMCAxLTggOEgzdi0xaDF2LTdIM2E4IDggMCAwIDEgOC04aDE3djFoLTF2N2gxek0xMSA5YTcgNyAwIDAgMC03IDd2N2gxNmE3IDcgMCAwIDAgNy03VjlIMTF6Ii8+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIGQ9Ik0yNCA1bDMuNSAzLjVMMjQgMTJNNyAyMGwtMy41IDMuNUw3IDI3Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1mbGlwLXgiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGQ9Ik0zMiAzMkgwVjBoMzJ6Ii8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0xNyAzMmgtMVYwaDF6TTI3LjE2NyAxMWwuNSAzaC0xLjAzbC0uNTQ2LTNoMS4wNzZ6bS0uNS0zaC0xLjEyMkwyNSA1aC01VjRoNS4xNTNhMSAxIDAgMCAxIC45ODYuODM2TDI2LjY2NyA4em0xLjUgOWwuNSAzaC0uOTRsLS41NDUtM2guOTg1em0xIDZsLjYzOSAzLjgzNkExIDEgMCAwIDEgMjguODE5IDI4SDI2di0xaDNsLS43MjYtNGguODk0ek0yMyAyOGgtM3YtMWgzdjF6TTEzIDR2MUg3TDMgMjdoMTB2MUgzLjE4YTEgMSAwIDAgMS0uOTg2LTEuMTY0bDMuNjY2LTIyQTEgMSAwIDAgMSA2Ljg0NyA0SDEzeiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtZmxpcC15IiB2aWV3Qm94PSIwIDAgMzIgMzIiPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBkPSJNMCAwdjMyaDMyVjB6Ii8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0wIDE2djFoMzJ2LTF6TTExIDI3LjE2N2wzIC41di0xLjAzbC0zLS41NDZ2MS4wNzZ6bS0zLS41di0xLjEyMkw1IDI1di01SDR2NS4xNTNhMSAxIDAgMCAwIC44MzYuOTg2TDggMjYuNjY3em05IDEuNWwzIC41di0uOTRsLTMtLjU0NXYuOTg1em02IDFsMy44MzYuNjM5QTEgMSAwIDAgMCAyOCAyOC44MlYyNmgtMXYzbC00LS43Mjd2Ljg5NHpNMjggMjN2LTNoLTF2M2gxek00IDEzaDFWN2wyMi00djEwaDFWMy4xOGExIDEgMCAwIDAtMS4xNjQtLjk4NmwtMjIgMy42NjdBMSAxIDAgMCAwIDQgNi44NDdWMTN6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1mbGlwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiAvPgogICAgPHBhdGggZmlsbD0iaW5oZXJpdCIgc3Ryb2tlPSJub25lIiBkPSJNMTEgMGgxdjI0aC0xek0xOSAyMXYtMWgydi0yaDF2MmExIDEgMCAwIDEtMSAxaC0yem0tMiAwaC0zdi0xaDN2MXptNS01aC0xdi0zaDF2M3ptMC01aC0xVjhoMXYzem0wLTVoLTFWNGgtMlYzaDJhMSAxIDAgMCAxIDEgMXYyem0tNS0zdjFoLTNWM2gzek05IDN2MUgydjE2aDd2MUgyYTEgMSAwIDAgMS0xLTFWNGExIDEgMCAwIDEgMS0xaDd6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5IiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBkPSJNMCAwSDI0VjI0SDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNzQwIC0xNikgdHJhbnNsYXRlKDU0NyA4KSB0cmFuc2xhdGUoMTkzIDgpIi8+CiAgICA8cGF0aCBmaWxsPSJpbmhlcml0IiBzdHJva2U9Im5vbmUiIGQ9Ik0xMi41IDFDMTguMjk5IDEgMjMgNS43MDEgMjMgMTEuNVMxOC4yOTkgMjIgMTIuNSAyMmMtNS4yOSAwLTkuNjY1LTMuOTExLTEwLjM5NC04Ljk5OWgxLjAxMkMzLjgzOCAxNy41MzQgNy43NjQgMjEgMTIuNSAyMWM1LjI0NyAwIDkuNS00LjI1MyA5LjUtOS41UzE3Ljc0NyAyIDEyLjUgMkM4LjQ5IDIgNS4wNiA0LjQ4NSAzLjY2NiA4SDNoNHYxSDJWNGgxdjMuMDIyQzQuNjggMy40NjIgOC4zMDMgMSAxMi41IDF6bS41IDVsLS4wMDEgNS4yOTEgMi41MzcgMi41MzctLjcwOC43MDhMMTIuMjkyIDEySDEyVjZoMXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC03NDAgLTE2KSB0cmFuc2xhdGUoNTQ3IDgpIHRyYW5zbGF0ZSgxOTMgOCkiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktY2hlY2siIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiID4KICAgICAgICA8cGF0aCBzdHJva2U9IiM1NTU1NTUiIGQ9Ik00LjUgLTFMMS41IDIgNi41IDciIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02MCAtODA0KSB0cmFuc2xhdGUoNjAgODA0KSB0cmFuc2xhdGUoMiAzKSByb3RhdGUoLTkwIDQgMykiIC8+CiAgICA8L2c+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LWNyb3AiIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPgogICAgICAgIDxwYXRoIGQ9Ik0wIDBIMTJWMTJIMHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC04NCAtODA0KSB0cmFuc2xhdGUoODQgODA0KSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0yIDBoMXYxMGMtLjU1MiAwLTEtLjQ0OC0xLTFWMHpNMTAgOXYzSDlWOWgxek05IDJoMXY2SDlWMnoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC04NCAtODA0KSB0cmFuc2xhdGUoODQgODA0KSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0yIDlIMTJWMTBIMnpNOSAyYy41MTMgMCAuOTM2LjM4Ni45OTMuODgzTDEwIDNIM1YyaDZ6TTIgM0gwVjJoMnYxeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTg0IC04MDQpIHRyYW5zbGF0ZSg4NCA4MDQpIi8+CiAgICA8L2c+Cjwvc3ltYm9sPgo8IS0tIFRoaXMgaWNvbiBtYWRlIGJ5IFBpeGVsIHBlcmZlY3QgZnJvbSB3d3cuZmxhdGljb24uY29tIC0tPgo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LXJlc2l6ZSIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPgogICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTSA5LjQ5MjE4OCAxLjUwNzgxMiBDIDkuMzk4NDM4IDEuNDE0MDYyIDkuMjUgMS40MTQwNjIgOS4xNTYyNSAxLjUwNzgxMiBMIDUuODEyNSA0Ljg1MTU2MiBDIDUuNzE0ODQ0IDQuOTQ1MzEyIDUuNzE0ODQ0IDUuMDk3NjU2IDUuODEyNSA1LjE4NzUgQyA1Ljg1NTQ2OSA1LjIzNDM3NSA1LjkxNzk2OSA1LjI1NzgxMiA1Ljk3NjU2MiA1LjI1NzgxMiBDIDYuMDM5MDYyIDUuMjU3ODEyIDYuMTAxNTYyIDUuMjM0Mzc1IDYuMTQ4NDM4IDUuMTg3NSBMIDkuNDkyMTg4IDEuODQzNzUgQyA5LjU4NTkzOCAxLjc1IDkuNTg1OTM4IDEuNjAxNTYyIDkuNDkyMTg4IDEuNTA3ODEyIFogTSA5LjQ5MjE4OCAxLjUwNzgxMiAiLz4KICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0gOS4zMjgxMjUgMS40MzM1OTQgQyA5LjE5NTMxMiAxLjQzMzU5NCA5LjA4NTkzOCAxLjUzOTA2MiA5LjA4NTkzOCAxLjY3MTg3NSBMIDkuMDg1OTM4IDQuNTQyOTY5IEMgOS4wODU5MzggNC42NzE4NzUgOS4xOTUzMTIgNC43ODEyNSA5LjMyODEyNSA0Ljc4MTI1IEMgOS40NjA5MzggNC43ODEyNSA5LjU2NjQwNiA0LjY3MTg3NSA5LjU2NjQwNiA0LjU0Mjk2OSBMIDkuNTY2NDA2IDEuNjcxODc1IEMgOS41NjY0MDYgMS41MzkwNjIgOS40NjA5MzggMS40MzM1OTQgOS4zMjgxMjUgMS40MzM1OTQgWiBNIDkuMzI4MTI1IDEuNDMzNTk0ICIvPgogICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTSA5LjMyODEyNSAxLjQzMzU5NCBMIDYuNDU3MDMxIDEuNDMzNTk0IEMgNi4zMjgxMjUgMS40MzM1OTQgNi4yMTg3NSAxLjUzOTA2MiA2LjIxODc1IDEuNjcxODc1IEMgNi4yMTg3NSAxLjgwNDY4OCA2LjMyODEyNSAxLjkxNDA2MiA2LjQ1NzAzMSAxLjkxNDA2MiBMIDkuMzI4MTI1IDEuOTE0MDYyIEMgOS40NjA5MzggMS45MTQwNjIgOS41NjY0MDYgMS44MDQ2ODggOS41NjY0MDYgMS42NzE4NzUgQyA5LjU2NjQwNiAxLjUzOTA2MiA5LjQ2MDkzOCAxLjQzMzU5NCA5LjMyODEyNSAxLjQzMzU5NCBaIE0gOS4zMjgxMjUgMS40MzM1OTQgIi8+CiAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNIDUuMTg3NSA1LjgxMjUgQyA1LjA5NzY1NiA1LjcxODc1IDQuOTQ1MzEyIDUuNzE4NzUgNC44NTE1NjIgNS44MTI1IEwgMS41MDM5MDYgOS4xNTYyNSBDIDEuNDEwMTU2IDkuMjUgMS40MTAxNTYgOS40MDIzNDQgMS41MDM5MDYgOS40OTYwOTQgQyAxLjU1NDY4OCA5LjU0Mjk2OSAxLjYxMzI4MSA5LjU2NjQwNiAxLjY3MTg3NSA5LjU2NjQwNiBDIDEuNzM0Mzc1IDkuNTY2NDA2IDEuNzk2ODc1IDkuNTQyOTY5IDEuODQzNzUgOS40OTYwOTQgTCA1LjE4NzUgNi4xNDg0MzggQyA1LjI4MTI1IDYuMDU0Njg4IDUuMjgxMjUgNS45MDIzNDQgNS4xODc1IDUuODEyNSBaIE0gNS4xODc1IDUuODEyNSAiLz4KICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0gMS42NzE4NzUgNi4yMTg3NSBDIDEuNTM5MDYyIDYuMjE4NzUgMS40MzM1OTQgNi4zMjgxMjUgMS40MzM1OTQgNi40NTcwMzEgTCAxLjQzMzU5NCA5LjMyODEyNSBDIDEuNDMzNTk0IDkuNDYwOTM4IDEuNTM5MDYyIDkuNTY2NDA2IDEuNjcxODc1IDkuNTY2NDA2IEMgMS44MDQ2ODggOS41NjY0MDYgMS45MTQwNjIgOS40NjA5MzggMS45MTQwNjIgOS4zMjgxMjUgTCAxLjkxNDA2MiA2LjQ1NzAzMSBDIDEuOTE0MDYyIDYuMzI4MTI1IDEuODA0Njg4IDYuMjE4NzUgMS42NzE4NzUgNi4yMTg3NSBaIE0gMS42NzE4NzUgNi4yMTg3NSAiLz4KICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0gNC41NDI5NjkgOS4wODU5MzggTCAxLjY3MTg3NSA5LjA4NTkzOCBDIDEuNTM5MDYyIDkuMDg1OTM4IDEuNDMzNTk0IDkuMTk1MzEyIDEuNDMzNTk0IDkuMzI4MTI1IEMgMS40MzM1OTQgOS40NjA5MzggMS41MzkwNjIgOS41NjY0MDYgMS42NzE4NzUgOS41NjY0MDYgTCA0LjU0Mjk2OSA5LjU2NjQwNiBDIDQuNjcxODc1IDkuNTY2NDA2IDQuNzgxMjUgOS40NjA5MzggNC43ODEyNSA5LjMyODEyNSBDIDQuNzgxMjUgOS4xOTUzMTIgNC42NzE4NzUgOS4wODU5MzggNC41NDI5NjkgOS4wODU5MzggWiBNIDQuNTQyOTY5IDkuMDg1OTM4ICIvPgogICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTSAxMC4yODEyNSAwIEwgMC43MTg3NSAwIEMgMC4zMjAzMTIgMCAwIDAuMzIwMzEyIDAgMC43MTg3NSBMIDAgMTAuMjgxMjUgQyAwIDEwLjY3OTY4OCAwLjMyMDMxMiAxMSAwLjcxODc1IDExIEwgMTAuMjgxMjUgMTEgQyAxMC42Nzk2ODggMTEgMTEgMTAuNjc5Njg4IDExIDEwLjI4MTI1IEwgMTEgMC43MTg3NSBDIDExIDAuMzIwMzEyIDEwLjY3OTY4OCAwIDEwLjI4MTI1IDAgWiBNIDEwLjUyMzQzOCAxMC4yODEyNSBDIDEwLjUyMzQzOCAxMC40MTQwNjIgMTAuNDE0MDYyIDEwLjUyMzQzOCAxMC4yODEyNSAxMC41MjM0MzggTCAwLjcxODc1IDEwLjUyMzQzOCBDIDAuNTg1OTM4IDEwLjUyMzQzOCAwLjQ3NjU2MiAxMC40MTQwNjIgMC40NzY1NjIgMTAuMjgxMjUgTCAwLjQ3NjU2MiAwLjcxODc1IEMgMC40NzY1NjIgMC41ODU5MzggMC41ODU5MzggMC40NzY1NjIgMC43MTg3NSAwLjQ3NjU2MiBMIDEwLjI4MTI1IDAuNDc2NTYyIEMgMTAuNDE0MDYyIDAuNDc2NTYyIDEwLjUyMzQzOCAwLjU4NTkzOCAxMC41MjM0MzggMC43MTg3NSBaIE0gMTAuNTIzNDM4IDEwLjI4MTI1ICIvPgogIDwvZz4KPC9zeW1ib2w+CjwhLS0gIC0tPgo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LWRyYXciIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPgogICAgICAgIDxwYXRoIGQ9Ik0wIDFIMTJWMTNIMHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNTYgLTgwNCkgdHJhbnNsYXRlKDE1NiA4MDMpIi8+CiAgICAgICAgPHBhdGggc3Ryb2tlPSIjNDM0MzQzIiBkPSJNOS42MjIgMS41ODRsMS44MzUgMS42NTgtOC4zMSA4LjQwN0wuNSAxMi41VjExbDkuMTIyLTkuNDE2eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE1NiAtODA0KSB0cmFuc2xhdGUoMTU2IDgwMykiLz4KICAgICAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNNy42MjggMy43NTNMMTAuMzc4IDMuNzUzIDEwLjM3OCA0LjI1MyA3LjYyOCA0LjI1M3oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNTYgLTgwNCkgdHJhbnNsYXRlKDE1NiA4MDMpIHJvdGF0ZSg0NSA5LjAwMyA0LjAwMykiLz4KICAgIDwvZz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktZmlsdGVyIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiID4KICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjc2IC04MDQpIHRyYW5zbGF0ZSgyNzYgODA0KSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0xMiAzdjFIOVYzaDN6TTcgNEgwVjNoN3YxeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI3NiAtODA0KSB0cmFuc2xhdGUoMjc2IDgwNCkiLz4KICAgICAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNMTIgOHYxSDlWOGgzek03IDlIMFY4aDd2MXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNzYgLTgwNCkgdHJhbnNsYXRlKDI3NiA4MDQpIG1hdHJpeCgtMSAwIDAgMSAxMiAwKSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik04IDFjMS4xMDUgMCAyIC44OTUgMiAycy0uODk1IDItMiAyLTItLjg5NS0yLTIgLjg5NS0yIDItMnptMCAxYy0uNTUyIDAtMSAuNDQ4LTEgMXMuNDQ4IDEgMSAxIDEtLjQ0OCAxLTEtLjQ0OC0xLTEtMXpNNCA3YzEuMTA1IDAgMiAuODk1IDIgMnMtLjg5NSAyLTIgMi0yLS44OTUtMi0yIC44OTUtMiAyLTJ6bTAgMWMtLjU1MiAwLTEgLjQ0OC0xIDFzLjQ0OCAxIDEgMSAxLS40NDggMS0xLS40NDgtMS0xLTF6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjc2IC04MDQpIHRyYW5zbGF0ZSgyNzYgODA0KSIvPgogICAgPC9nPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaGlzdG9yeS1mbGlwIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiID4KICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTA4IC04MDQpIHRyYW5zbGF0ZSgxMDggODA0KSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik02IDBMNyAwIDcgMTIgNiAxMnpNMTEgMTBWOWgxdjEuNWMwIC4yNzYtLjIyNC41LS41LjVIMTB2LTFoMXpNNSAxdjFIMXY4aDR2MUguNWMtLjI3NiAwLS41LS4yMjQtLjUtLjV2LTljMC0uMjc2LjIyNC0uNS41LS41SDV6bTcgNXYyaC0xVjZoMXptMC0zdjJoLTFWM2gxek05IDF2MUg3VjFoMnptMi41IDBjLjI3NiAwIC41LjIyNC41LjVWMmgtMlYxaDEuNXpNOSAxMUg3di0xaDJ2MXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMDggLTgwNCkgdHJhbnNsYXRlKDEwOCA4MDQpIi8+CiAgICA8L2c+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LWljb24iIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPgogICAgICAgIDxwYXRoIGQ9Ik0wIDBIMTJWMTJIMHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMDQgLTgwNCkgdHJhbnNsYXRlKDIwNCA4MDQpIi8+CiAgICAgICAgPHBhdGggc3Ryb2tlPSIjNDM0MzQzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS4xIiBkPSJNNiA5LjU2OEwyLjYwMSAxMSAyLjk3NSA3LjQ2NyAwLjUgNC44MiA0LjEzIDQuMDY4IDYgMSA3Ljg3IDQuMDY4IDExLjUgNC44MiA5LjAyNSA3LjQ2NyA5LjM5OSAxMXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMDQgLTgwNCkgdHJhbnNsYXRlKDIwNCA4MDQpIi8+CiAgICA8L2c+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LW1hc2siIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPgogICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNTIgLTgwNCkgdHJhbnNsYXRlKDI1MiA4MDQpIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAgMEgxMlYxMkgweiIvPgogICAgICAgICAgICA8Y2lyY2xlIGN4PSI2IiBjeT0iNiIgcj0iMi41IiBzdHJva2U9IiM0NDQiLz4KICAgICAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTExLjUgMGMuMjc2IDAgLjUuMjI0LjUuNXYxMWMwIC4yNzYtLjIyNC41LS41LjVILjVjLS4yNzYgMC0uNS0uMjI0LS41LS41Vi41QzAgLjIyNC4yMjQgMCAuNSAwaDExek0xMSAxSDF2MTBoMTBWMXoiLz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1oaXN0b3J5LXJvdGF0ZSIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxkZWZzPgogICAgICAgIDxwYXRoIGlkPSJyZm40cnlsZmZhIiBkPSJNNyAxMmMtLjMzNSAwLS42NjMtLjAyNS0uOTgzLS4wNzRDMy4xNzEgMTEuNDkyIDEgOS4yMDUgMSA2LjQ0NGMwLTEuMzYzLjUzNC0yLjYxMyAxLjQxNS0zLjU4Ii8+CiAgICAgICAgPG1hc2sgaWQ9IjZmOWduMmR5c2IiIHdpZHRoPSI2IiBoZWlnaHQ9IjkuMTM2IiB4PSIwIiB5PSIwIiBtYXNrVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94Ij4KICAgICAgICAgICAgPHVzZSB4bGluazpocmVmPSIjcmZuNHJ5bGZmYSIgc3Ryb2tlPSI0MzQzNDMiLz4KICAgICAgICA8L21hc2s+CiAgICA8L2RlZnM+CiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPgogICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMzIgLTgwNCkgdHJhbnNsYXRlKDEzMiA4MDQpIj4KICAgICAgICAgICAgPHBhdGggZD0iTTAgMC41SDEyVjEyLjVIMHoiLz4KICAgICAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTYuNSAxQzkuNTM4IDEgMTIgMy40NjIgMTIgNi41YzAgMi4zNy0xLjUgNC4zOS0zLjYgNS4xNjNsLS40MDctLjkxNkM5Ljc0NCAxMC4xMyAxMSA4LjQ2MiAxMSA2LjUgMTEgNC4wMTUgOC45ODUgMiA2LjUgMmMtLjc3NyAwLTEuNTA5LjE5Ny0yLjE0Ny41NDRMNCAxLjc1bC0uMjA1LS4wNEM0LjU5NCAxLjI1OCA1LjUxNyAxIDYuNSAxeiIvPgogICAgICAgICAgICA8dXNlIHN0cm9rZT0iIzQzNDM0MyIgc3Ryb2tlLWRhc2hhcnJheT0iMiAxLjI1IiBzdHJva2Utd2lkdGg9IjEiIG1hc2s9InVybCgjNmY5Z24yZHlzYikiIHhsaW5rOmhyZWY9IiNyZm40cnlsZmZhIi8+CiAgICAgICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik00LjI3OSAwTDYgMS43NSA0LjI1IDMuNTcxIDMuNTQzIDIuODY0IDQuNTg2IDEuNzUgMy41NzIgMC43MDd6IiB0cmFuc2Zvcm09Im1hdHJpeCgtMSAwIDAgMSA5LjU0MyAwKSIvPgogICAgICAgIDwvZz4KICAgIDwvZz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWhpc3Rvcnktc2hhcGUiIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8ZyBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgPgogICAgICAgIDxwYXRoIGQ9Ik0wIDBIMTJWMTJIMHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xODAgLTgwNCkgdHJhbnNsYXRlKDE4MCA4MDQpIi8+CiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTExLjUgNGMuMjc2IDAgLjUuMjI0LjUuNXY3YzAgLjI3Ni0uMjI0LjUtLjUuNWgtN2MtLjI3NiAwLS41LS4yMjQtLjUtLjVWOC44aDFWMTFoNlY1SDguMzQxbC0uNTY4LTFIMTEuNXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xODAgLTgwNCkgdHJhbnNsYXRlKDE4MCA4MDQpIi8+CiAgICAgICAgPHBhdGggc3Ryb2tlPSIjNDM0MzQzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik00LjUgMC41TDguNSA3LjYxMSAwLjUgNy42MTF6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTgwIC04MDQpIHRyYW5zbGF0ZSgxODAgODA0KSIvPgogICAgPC9nPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaGlzdG9yeS10ZXh0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiID4KICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjI4IC04MDQpIHRyYW5zbGF0ZSgyMjggODA0KSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0yIDFoOGMuNTUyIDAgMSAuNDQ4IDEgMUgxYzAtLjU1Mi40NDgtMSAxLTF6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjI4IC04MDQpIHRyYW5zbGF0ZSgyMjggODA0KSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik0xIDFIMlYzSDF6TTEwIDFIMTFWM0gxMHpNNS41IDFMNi41IDEgNi41IDExIDUuNSAxMXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMjggLTgwNCkgdHJhbnNsYXRlKDIyOCA4MDQpIi8+CiAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTQgMTBIOFYxMUg0eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIyOCAtODA0KSB0cmFuc2xhdGUoMjI4IDgwNCkiLz4KICAgIDwvZz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktbG9hZCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8cGF0aCBkPSJNMCAwSDEyVjEySDB6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzI0IC04MDUpIHRyYW5zbGF0ZSgzMjQgODA1KSIvPgogICAgICAgIDxwYXRoIGZpbGw9IiM0MzQzNDMiIGQ9Ik01IDBjLjU1MiAwIDEgLjQ0OCAxIDF2MWg1LjVjLjI3NiAwIC41LjIyNC41LjV2OGMwIC4yNzYtLjIyNC41LS41LjVILjVjLS4yNzYgMC0uNS0uMjI0LS41LS41VjFjMC0uNTUyLjQ0OC0xIDEtMWg0em0wIDFIMXY5aDEwVjNINVYxeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTMyNCAtODA1KSB0cmFuc2xhdGUoMzI0IDgwNSkiLz4KICAgICAgICA8cGF0aCBmaWxsPSIjNDM0MzQzIiBkPSJNMSAyTDUgMiA1IDMgMSAzeiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTMyNCAtODA1KSB0cmFuc2xhdGUoMzI0IDgwNSkiLz4KICAgIDwvZz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWhpc3RvcnktZGVsZXRlIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICAgIDxnIGZpbGw9IiM0MzQzNDMiPgogICAgICAgICAgICA8cGF0aCBkPSJNMiA5aDhWMWgxdjguNWMwIC4yNzYtLjIyNC41LS41LjVoLTljLS4yNzYgMC0uNS0uMjI0LS41LS41VjFoMXY4ek0wIDBIMTJWMUgweiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTMwMCAtODA0KSB0cmFuc2xhdGUoMzAwIDgwNCkgdHJhbnNsYXRlKDAgMikiLz4KICAgICAgICAgICAgPHBhdGggZD0iTTQgM0g1VjdINHpNNyAzSDhWN0g3eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTMwMCAtODA0KSB0cmFuc2xhdGUoMzAwIDgwNCkgdHJhbnNsYXRlKDAgMikiLz4KICAgICAgICAgICAgPHBhdGggZD0iTTQgMWg0VjBoMXYxLjVjMCAuMjc2LS4yMjQuNS0uNS41aC01Yy0uMjc2IDAtLjUtLjIyNC0uNS0uNVYwaDF2MXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0zMDAgLTgwNCkgdHJhbnNsYXRlKDMwMCA4MDQpIG1hdHJpeCgxIDAgMCAtMSAwIDIpIi8+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaGlzdG9yeS1ncm91cCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxnIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMzQ4IC04MDQpIHRyYW5zbGF0ZSgzNDggODA0KSI+CiAgICAgICAgICAgIDxwYXRoIGQ9Ik0wIDBIMTJWMTJIMHoiLz4KICAgICAgICAgICAgPHBhdGggZmlsbD0iIzQzNDM0MyIgZD0iTTEgOXYyaDF2MUguNWMtLjI3NiAwLS41LS4yMjQtLjUtLjVWOWgxem0xMSAxdjEuNWMwIC4yNzYtLjIyNC41LS41LjVIOXYtMWgydi0xaDF6bS00IDF2MUg2di0xaDJ6bS0zIDB2MUgzdi0xaDJ6bTctNHYyaC0xVjdoMXpNMSA2djJIMFY2aDF6bTExLTJ2MmgtMVY0aDF6TTEgM3YySDBWM2gxem0xMC41LTNjLjI3NiAwIC41LjIyNC41LjVWM2gtMVYxaC0xVjBoMS41ek02IDB2MUg0VjBoMnptMyAwdjFIN1YwaDJ6TTAgLjVDMCAuMjI0LjIyNCAwIC41IDBIM3YxSDF2MUgwVi41ek05LjUgNGMuMjc2IDAgLjUuMjI0LjUuNXY1YzAgLjI3Ni0uMjI0LjUtLjUuNWgtNWMtLjI3NiAwLS41LS4yMjQtLjUtLjVWOC4zNTVjLjMxNy4wOTQuNjUyLjE0NSAxIC4xNDVWOWg0VjVoLS41YzAtLjM0OC0uMDUtLjY4My0uMTQ1LTFIOS41eiIvPgogICAgICAgICAgICA8Y2lyY2xlIGN4PSI1IiBjeT0iNSIgcj0iMi41IiBzdHJva2U9IiM0MzQzNDMiLz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1pY29uLWFycm93LTIiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTIxLjc5MyAxOC41SDIuNXYtNWgxOC45MzVsLTcuNi04aDUuODcybDEwLjUgMTAuNS0xMC41IDEwLjVoLTUuOTE0bDgtOHoiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWljb24tYXJyb3ctMyIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMjUuMjg4IDE2LjQyTDE0LjIwOCAyNy41SDYuNzkybDExLjI5MS0xMS4yOTFMNi44MjYgNC41aDcuMzgxbDExLjY2MSAxMS42NjEtLjU4LjI1OHoiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWljb24tYXJyb3ciIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0yLjUgMTEuNXY5aDE4djUuMjkzTDMwLjI5MyAxNiAyMC41IDYuMjA3VjExLjVoLTE4eiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaWNvbi1idWJibGUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTIyLjIwNyAyNC41TDE2LjUgMzAuMjA3VjI0LjVIOEE2LjUgNi41IDAgMCAxIDEuNSAxOFY5QTYuNSA2LjUgMCAwIDEgOCAyLjVoMTZBNi41IDYuNSAwIDAgMSAzMC41IDl2OWE2LjUgNi41IDAgMCAxLTYuNSA2LjVoLTEuNzkzeiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaWNvbi1oZWFydCIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNMTUuOTk2IDMwLjY3NWwxLjk4MS0xLjc5YzcuODk4LTcuMTc3IDEwLjM2NS05LjcxOCAxMi4xMzUtMTMuMDEyLjkyMi0xLjcxNiAxLjM3Ny0zLjM3IDEuMzc3LTUuMDc2IDAtNC42NS0zLjY0Ny04LjI5Ny04LjI5Ny04LjI5Ny0yLjMzIDAtNC44NiAxLjUyNy02LjgxNyAzLjgyNGwtLjM4LjQ0Ny0uMzgxLS40NDdDMTMuNjU4IDQuMDI3IDExLjEyNiAyLjUgOC43OTcgMi41IDQuMTQ3IDIuNS41IDYuMTQ3LjUgMTAuNzk3YzAgMS43MTQuNDYgMy4zNzUgMS4zODkgNS4wOTggMS43NzUgMy4yODggNC4yNiA1Ljg0MyAxMi4xMjMgMTIuOTc0bDEuOTg0IDEuODA2eiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaWNvbi1sb2FkIiB2aWV3Qm94PSIwIDAgMzIgMzIiPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0xNy4zMTQgMTguODY3bDEuOTUxLTIuNTMgNCA1LjE4NGgtMTdsNi41LTguODQgNC41NDkgNi4xODZ6Ii8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0xOC4wMSA0YTExLjc5OCAxMS43OTggMCAwIDAgMCAxSDN2MjRoMjRWMTQuOTg2YTguNzM4IDguNzM4IDAgMCAwIDEgMFYyOWExIDEgMCAwIDEtMSAxSDNhMSAxIDAgMCAxLTEtMVY1YTEgMSAwIDAgMSAxLTFoMTUuMDF6Ii8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0yNSAzaDF2OWgtMXoiLz4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTTIyIDZsMy41LTMuNUwyOSA2Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1pY29uLWxvY2F0aW9uIiB2aWV3Qm94PSIwIDAgMzIgMzIiPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNMTYgMzEuMjhDMjMuNjc1IDIzLjMwMiAyNy41IDE3LjE4MSAyNy41IDEzYzAtNi4zNTEtNS4xNDktMTEuNS0xMS41LTExLjVTNC41IDYuNjQ5IDQuNSAxM2MwIDQuMTgxIDMuODI1IDEwLjMwMiAxMS41IDE4LjI4eiIvPgogICAgPGNpcmNsZSBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGN4PSIxNiIgY3k9IjEzIiByPSI0LjUiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLWljb24tcG9seWdvbiIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgZD0iTS41NzYgMTZMOC4yOSAyOS41aDE1LjQyTDMxLjQyNCAxNiAyMy43MSAyLjVIOC4yOUwuNTc2IDE2eiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaWNvbi1zdGFyLTIiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0xOS40NDYgMzEuNTkybDIuMjY1LTMuMjcyIDMuOTQ2LjI1LjYzNi0zLjk0IDMuNjY1LTEuNTA1LTEuMTItMy44MzIgMi42NTUtMi45NjItMi42NTYtMi45NjIgMS4xMi0zLjgzMi0zLjY2NC0xLjUwNS0uNjM2LTMuOTQxLTMuOTQ2LjI1LTIuMjY1LTMuMjcxTDE2IDMuMDI0IDEyLjU1NCAxLjA3IDEwLjI4OSA0LjM0bC0zLjk0Ni0uMjUtLjYzNiAzLjk0MS0zLjY2NSAxLjUwNSAxLjEyIDMuODMyTC41MDggMTYuMzNsMi42NTYgMi45NjItMS4xMiAzLjgzMiAzLjY2NCAxLjUwNC42MzYgMy45NDIgMy45NDYtLjI1IDIuMjY1IDMuMjdMMTYgMjkuNjM4bDMuNDQ2IDEuOTU1eiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaWNvbi1zdGFyIiB2aWV3Qm94PSIwIDAgMzIgMzIiPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBkPSJNMjUuMjkyIDI5Ljg3OGwtMS43NzUtMTAuMzQ2IDcuNTE3LTcuMzI3LTEwLjM4OC0xLjUxTDE2IDEuMjgybC00LjY0NiA5LjQxMy0xMC4zODggMS41MSA3LjUxNyA3LjMyNy0xLjc3NSAxMC4zNDZMMTYgMjQuOTkzbDkuMjkyIDQuODg1eiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaWNvbiIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMTEuOTIzIDE5LjEzNkw1LjQyNCAyMmwuNzE1LTcuMDY1LTQuNzMxLTUuMjk2IDYuOTQtMS41MDNMMTEuOTIzIDJsMy41NzQgNi4xMzYgNi45NCAxLjUwMy00LjczMSA1LjI5NkwxOC40MiAyMnoiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLW1hc2stbG9hZCIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgZD0iTTAgMGgzMnYzMkgweiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTguMDEgNGExMS43OTggMTEuNzk4IDAgMCAwIDAgMUgzdjI0aDI0VjE0Ljk4NmE4LjczOCA4LjczOCAwIDAgMCAxIDBWMjlhMSAxIDAgMCAxLTEgMUgzYTEgMSAwIDAgMS0xLTFWNWExIDEgMCAwIDEgMS0xaDE1LjAxek0xNSAyM2E2IDYgMCAxIDEgMC0xMiA2IDYgMCAwIDEgMCAxMnptMC0xYTUgNSAwIDEgMCAwLTEwIDUgNSAwIDAgMCAwIDEweiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMjUgM2gxdjloLTF6Ii8+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIGQ9Ik0yMiA2bDMuNS0zLjVMMjkgNiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtbWFzayIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjQuNSIgc3Ryb2tlPSJpbmhlcml0IiBmaWxsPSJub25lIi8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGQ9Ik0yIDFoMjBhMSAxIDAgMCAxIDEgMXYyMGExIDEgMCAwIDEtMSAxSDJhMSAxIDAgMCAxLTEtMVYyYTEgMSAwIDAgMSAxLTF6bTAgMXYyMGgyMFYySDJ6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1pbWFnZSIgdmlld0JveD0iMCAwIDE3IDEzIiBmaWxsPSJub25lIj4KICAgIDxwYXRoIGQ9Ik0xMy4yMzE1IDExLjU3NTlMMy4yMzE3NyAxMS41MDQzTDUuNzU2NzcgOC4wMjIyNkw3LjQwOTA3IDEwLjAzNDFMOS45MzQwNyA2LjU1MjE1TDEzLjIzMTUgMTEuNTc1OVoiIGZpbGw9IiM2QjdDOTQiLz4KICAgIDxyZWN0IHg9IjAuODA3MDYxIiB5PSIwLjk4NjY2NiIgd2lkdGg9IjE1IiBoZWlnaHQ9IjEzIiB0cmFuc2Zvcm09InJvdGF0ZSgwLjQxMDM4OSAwLjgwNzA2MSAwLjk4NjY2NikiIHN0cm9rZT0iIzZCN0M5NCIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtaW1hZ2UtbG9hZCIgdmlld0JveD0iMCAwIDE3IDEzIiBmaWxsPSJub25lIj4KICAgIDxwYXRoIGQ9Ik0xMy4yMzE1IDExLjU3NTlMMy4yMzE3NyAxMS41MDQzTDUuNzU2NzcgOC4wMjIyNkw3LjQwOTA3IDEwLjAzNDFMOS45MzQwNyA2LjU1MjE1TDEzLjIzMTUgMTEuNTc1OVoiIGZpbGw9IiM2QjdDOTQiLz4KICAgIDxyZWN0IHg9IjAuODA3MDYxIiB5PSIwLjk4NjY2NiIgd2lkdGg9IjE1IiBoZWlnaHQ9IjEzIiB0cmFuc2Zvcm09InJvdGF0ZSgwLjQxMDM4OSAwLjgwNzA2MSAwLjk4NjY2NikiIHN0cm9rZT0iIzZCN0M5NCIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtbG9nbyIgdmlld0JveD0iMCAwIDE2IDE5IiBmaWxsPSJub25lIj4KICAgIDxwYXRoIGQ9Ik05Ljg3OTc4IDEwLjEyMThMOS44MTEzNiAxMC4xODEyTDkuODMyMDMgMTAuMjY5NEwxMC40OTI0IDEzLjA4NjFMOC4wMjAyMiAxMS42MDM0TDcuOTQyNjYgMTEuNTU2OUw3Ljg2NTMxIDExLjYwMzhMNS40MDAzOSAxMy4wOTc5TDYuMDQ3MjcgMTAuMjg2NUw2LjA2NzYgMTAuMTk4MUw1Ljk5ODg1IDEwLjEzOTFMMy44MTc2MiA4LjI2NDgxTDYuNjkxNDcgOC4wMTEyOUw2Ljc4MTYzIDguMDAzMzNMNi44MTY2MiA3LjkxOTg1TDcuOTI4MTMgNS4yNjgxNEw5LjA1MTY5IDcuOTA2Nkw5LjA4NzExIDcuOTg5NzlMOS4xNzcyMiA3Ljk5NzMxTDEyLjA1MjIgOC4yMzczOEw5Ljg3OTc4IDEwLjEyMThaTTcuOTgyMjIgMi40Mzc5Mkw3LjkyMTI1IDIuNDExTDcuODYwNDEgMi40MzgyTDIuMTU4NTUgNC45ODc0NUwyLjA2OTU0IDUuMDI3MjVMMi4wNjk3NyA1LjEyNDc0TDIuMDc4NzQgOC45NTcxMkMyLjA4NzUxIDEyLjcwMzUgNC41NjM3NSAxNi4xNTk3IDcuOTExNjEgMTcuMTgzOEw3Ljk1NTg2IDE3LjE5NzNMOC4wMDAwNCAxNy4xODM2QzExLjM0MzEgMTYuMTQzOCAxMy44MDMxIDEyLjY3NjEgMTMuNzk0MyA4LjkyOTdMMTMuNzg1NCA1LjA5NzMyTDEzLjc4NTEgNC45OTk4MkwxMy42OTU5IDQuOTYwNDVMNy45ODIyMiAyLjQzNzkyWk0wLjczNjcyIDQuMTY1MzJMNy45MTc4NCAwLjk1MzU1OUwxNS4xMTM5IDQuMTMxNjdMMTUuMTI1MSA4LjkyNjU4QzE1LjEzNTYgMTMuMzc2MyAxMi4wNzMzIDE3LjUzOTQgNy45NTkwOCAxOC41NzM3QzMuODQwMTEgMTcuNTU4NiAwLjc1ODM1OCAxMy40MSAwLjc0Nzk0MyA4Ljk2MDIzTDAuNzM2NzIgNC4xNjUzMloiIGZpbGw9IiM2QjdDOTQiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMC4zIi8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1sb2dvLWxvYWQiIHZpZXdCb3g9IjAgMCAxNiAxOSIgZmlsbD0ibm9uZSI+CiAgICA8cGF0aCBkPSJNOS44Nzk3OCAxMC4xMjE4TDkuODExMzYgMTAuMTgxMkw5LjgzMjAzIDEwLjI2OTRMMTAuNDkyNCAxMy4wODYxTDguMDIwMjIgMTEuNjAzNEw3Ljk0MjY2IDExLjU1NjlMNy44NjUzMSAxMS42MDM4TDUuNDAwMzkgMTMuMDk3OUw2LjA0NzI3IDEwLjI4NjVMNi4wNjc2IDEwLjE5ODFMNS45OTg4NSAxMC4xMzkxTDMuODE3NjIgOC4yNjQ4MUw2LjY5MTQ3IDguMDExMjlMNi43ODE2MyA4LjAwMzMzTDYuODE2NjIgNy45MTk4NUw3LjkyODEzIDUuMjY4MTRMOS4wNTE2OSA3LjkwNjZMOS4wODcxMSA3Ljk4OTc5TDkuMTc3MjIgNy45OTczMUwxMi4wNTIyIDguMjM3MzhMOS44Nzk3OCAxMC4xMjE4Wk03Ljk4MjIyIDIuNDM3OTJMNy45MjEyNSAyLjQxMUw3Ljg2MDQxIDIuNDM4MkwyLjE1ODU1IDQuOTg3NDVMMi4wNjk1NCA1LjAyNzI1TDIuMDY5NzcgNS4xMjQ3NEwyLjA3ODc0IDguOTU3MTJDMi4wODc1MSAxMi43MDM1IDQuNTYzNzUgMTYuMTU5NyA3LjkxMTYxIDE3LjE4MzhMNy45NTU4NiAxNy4xOTczTDguMDAwMDQgMTcuMTgzNkMxMS4zNDMxIDE2LjE0MzggMTMuODAzMSAxMi42NzYxIDEzLjc5NDMgOC45Mjk3TDEzLjc4NTQgNS4wOTczMkwxMy43ODUxIDQuOTk5ODJMMTMuNjk1OSA0Ljk2MDQ1TDcuOTgyMjIgMi40Mzc5MlpNMC43MzY3MiA0LjE2NTMyTDcuOTE3ODQgMC45NTM1NTlMMTUuMTEzOSA0LjEzMTY3TDE1LjEyNTEgOC45MjY1OEMxNS4xMzU2IDEzLjM3NjMgMTIuMDczMyAxNy41Mzk0IDcuOTU5MDggMTguNTczN0MzLjg0MDExIDE3LjU1ODYgMC43NTgzNTggMTMuNDEgMC43NDc5NDMgOC45NjAyM0wwLjczNjcyIDQuMTY1MzJaIiBmaWxsPSIjNkI3Qzk0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjAuMyIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtcmVkbyIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIGQ9Ik0xMS41IDhDMTQuMTUgOCAxNi41NSA4Ljk5IDE4LjQgMTAuNkwyMiA3VjE2SDEzTDE2LjYyIDEyLjM4QzE1LjIzIDExLjIyIDEzLjQ2IDEwLjUgMTEuNSAxMC41QzcuOTYgMTAuNSA0Ljk1IDEyLjgxIDMuOSAxNkwxLjUzIDE1LjIyQzIuOTIgMTEuMDMgNi44NSA4IDExLjUgOFoiIGZpbGw9IiM4NDkyQTYiLz4KPC9zeW1ib2w+CiAgICA8c3ltYm9sIGlkPSJpYy1yZXNldCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIG9wYWNpdHk9Ii41IiBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiLz4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTIgMTN2LTFhNyA3IDAgMCAxIDctN2gxM3YxaC0xdjVoMXYxYTcgNyAwIDAgMS03IDdIMnYtMWgxdi01SDJ6bTctN2E2IDYgMCAwIDAtNiA2djZoMTJhNiA2IDAgMCAwIDYtNlY2SDl6Ii8+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIGQ9Ik0xOSAzbDIuNSAyLjVMMTkgOE01IDE2bC0yLjUgMi41TDUgMjEiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLXByZXZpZXciIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8cGF0aCBkPSJNMTEgMkMxNC43OSAyIDE4LjE3IDQuMTMgMTkuODIgNy41QzE4LjE3IDEwLjg3IDE0LjggMTMgMTEgMTNDNy4yIDEzIDMuODMgMTAuODcgMi4xOCA3LjVDMy44MyA0LjEzIDcuMjEgMiAxMSAyWk0xMSAwQzYgMCAxLjczIDMuMTEgMCA3LjVDMS43MyAxMS44OSA2IDE1IDExIDE1QzE2IDE1IDIwLjI3IDExLjg5IDIyIDcuNUMyMC4yNyAzLjExIDE2IDAgMTEgMFpNMTEgNUMxMi4zOCA1IDEzLjUgNi4xMiAxMy41IDcuNUMxMy41IDguODggMTIuMzggMTAgMTEgMTBDOS42MiAxMCA4LjUgOC44OCA4LjUgNy41QzguNSA2LjEyIDkuNjIgNSAxMSA1Wk0xMSAzQzguNTIgMyA2LjUgNS4wMiA2LjUgNy41QzYuNSA5Ljk4IDguNTIgMTIgMTEgMTJDMTMuNDggMTIgMTUuNSA5Ljk4IDE1LjUgNy41QzE1LjUgNS4wMiAxMy40OCAzIDExIDNaIiBmaWxsPSIjODQ5MkE2Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1yb3RhdGUtY2xvY2t3aXNlIiB2aWV3Qm94PSIwIDAgMzIgMzIiPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMjkgMTdoLS45MjRjMCA2LjYyNy01LjM3MyAxMi0xMiAxMi02LjYyOCAwLTEyLTUuMzczLTEyLTEyQzQuMDc2IDEwLjM5OCA5LjQwNyA1LjA0MSAxNiA1VjRDOC44MiA0IDMgOS44MiAzIDE3czUuODIgMTMgMTMgMTMgMTMtNS44MiAxMy0xM3oiLz4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgZD0iTTE2IDEuNWw0IDMtNCAzIi8+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9ImluaGVyaXQiIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTE2IDRoNHYxaC00eiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtcm90YXRlLWNvdW50ZXJjbG9ja3dpc2UiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGQ9Ik0zIDE3aC45MjRjMCA2LjYyNyA1LjM3MyAxMiAxMiAxMiA2LjYyOCAwIDEyLTUuMzczIDEyLTEyIDAtNi42MDItNS4zMzEtMTEuOTYtMTEuOTI0LTEyVjRjNy4xOCAwIDEzIDUuODIgMTMgMTNzLTUuODIgMTMtMTMgMTNTMyAyNC4xOCAzIDE3eiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik0xMiA0aDR2MWgtNHoiLz4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIgZD0iTTE2IDEuNWwtNCAzIDQgMyIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtcm90YXRlIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPHBhdGggZD0iTTAgMGgyNHYyNEgweiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJub25lIiAvPgogICAgPHBhdGggZmlsbD0iaW5oZXJpdCIgc3Ryb2tlPSJub25lIiBkPSJNOC4zNDkgMjIuMjU0YTEwLjAwMiAxMC4wMDIgMCAwIDEtMi43NzgtMS43MTlsLjY1LS43NmE5LjAwMiA5LjAwMiAwIDAgMCAyLjQ5NSAxLjU0OGwtLjM2Ny45MzF6bTIuODczLjcwNGwuMDc4LS45OTdhOSA5IDAgMSAwLS41NTctMTcuODUybC0uMTQtLjk5QTEwLjA3NiAxMC4wNzYgMCAwIDEgMTIuMTQ1IDNjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC40NzcgMTAtMTAgMTBjLS4zMTIgMC0uNjItLjAxNC0uOTI0LS4wNDJ6bS03LjU1Ni00LjY1NWE5Ljk0MiA5Ljk0MiAwIDAgMS0xLjI1My0yLjk5NmwuOTczLS4yMzRhOC45NDggOC45NDggMCAwIDAgMS4xMjQgMi42OTNsLS44NDQuNTM3em0tMS41MDItNS45MUE5Ljk0OSA5Ljk0OSAwIDAgMSAyLjg4IDkuMjNsLjkyNS4zODJhOC45NTQgOC45NTQgMCAwIDAtLjY0NCAyLjg0NGwtLjk5OC0uMDYyem0yLjIxLTUuNjg2Yy42ODctLjg0OCAxLjUxLTEuNTggMi40MzYtMi4xNjZsLjUyMy44NTJhOS4wNDggOS4wNDggMCAwIDAtMi4xODggMS45NWwtLjc3MS0uNjM2eiIvPgogICAgPHBhdGggc3Ryb2tlPSJpbmhlcml0IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIiBkPSJNMTMgMWwtMi41IDIuNUwxMyA2Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1zaGFwZS1jaXJjbGUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNC41IiBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLXNoYXBlLXJlY3RhbmdsZSIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxyZWN0IHdpZHRoPSIyNyIgaGVpZ2h0PSIyNyIgeD0iMi41IiB5PSIyLjUiIGZpbGw9Im5vbmUiIHN0cm9rZT0iaW5oZXJpdCIgcng9IjEiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLXNoYXBlLXRyaWFuZ2xlIiB2aWV3Qm94PSIwIDAgMzIgMzIiPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJNMTYgMi41bDE1LjUgMjdILjV6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1zaGFwZSIgdmlld0JveD0iMCAwIDI0IDI0Ij4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTE0LjcwNiA4SDIxYTEgMSAwIDAgMSAxIDF2MTJhMSAxIDAgMCAxLTEgMUg5YTEgMSAwIDAgMS0xLTF2LTRoMXY0aDEyVjloLTUuNzA2bC0uNTg4LTF6Ii8+CiAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImluaGVyaXQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTguNSAxLjVsNy41IDEzSDF6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIHdpZHRoPSIyOCIgaGVpZ2h0PSIyMiIgdmlld0JveD0iMCAwIDI4IDIyIiBpZD0iaWMtdGV4dC1hbGlnbi1jZW50ZXIiPgogICAgPHBhdGggZD0iTTI4IDAuOTk5OTY5SDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8cGF0aCBkPSJNMjggMTNIMCIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxwYXRoIGQ9Ik0yMiA2Ljk5OTk3SDUiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8cGF0aCBkPSJNMjIgMjFINSIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zeW1ib2w+CjxzeW1ib2wgd2lkdGg9IjI4IiBoZWlnaHQ9IjIyIiB2aWV3Qm94PSIwIDAgMjggMjIiIGlkPSJpYy10ZXh0LWFsaWduLWxlZnQiPgogICAgPHBhdGggZD0iTTI4IDAuOTk5OTY5SDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8cGF0aCBkPSJNMjggMTNIMCIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxwYXRoIGQ9Ik0xNyA2Ljk5OTk3SDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8cGF0aCBkPSJNMTcgMjFIMCIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zeW1ib2w+CjxzeW1ib2wgd2lkdGg9IjI4IiBoZWlnaHQ9IjIyIiB2aWV3Qm94PSIwIDAgMjggMjIiIGlkPSJpYy10ZXh0LWFsaWduLXJpZ2h0Ij4KICAgIDxwYXRoIGQ9Ik0yOCAwLjk5OTk2OUgwIiBzdHJva2U9IiM2QjdDOTQiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHBhdGggZD0iTTI4IDEzSDAiIHN0cm9rZT0iIzZCN0M5NCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8cGF0aCBkPSJNMjggNi45OTk5N0gxMSIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxwYXRoIGQ9Ik0yOCAyMUgxMSIgc3Ryb2tlPSIjNkI3Qzk0IiBzdHJva2Utd2lkdGg9IjIiLz4KPC9zeW1ib2w+CjxzeW1ib2wgIHdpZHRoPSIzMyIgaGVpZ2h0PSI0OCIgaWQ9ImljLXRleHQtYm9sZCIgdmlld0JveD0iMCAwIDMzIDQ4Ij4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgZD0iTTAgMGgzMnYzMkgweiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNNyAyaDJ2Mkg3ek03IDI4aDJ2Mkg3eiIvPgogICAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSJpbmhlcml0IiBzdHJva2Utd2lkdGg9IjIiIGQ9Ik05IDN2MTJoOWE2IDYgMCAxIDAgMC0xMkg5ek05IDE1djE0aDEwYTcgNyAwIDAgMCAwLTE0SDl6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy10ZXh0LWl0YWxpYyIgdmlld0JveD0iMCAwIDMyIDMyIj4KICAgIDxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgZD0iTTAgMGgzMnYzMkgweiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTUgMmg1djFoLTV6TTExIDI5aDV2MWgtNXpNMTcgM2gxbC00IDI2aC0xeiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtdGV4dC11bmRlcmxpbmUiIHZpZXdCb3g9IjAgMCAzMiAzMiI+CiAgICA8cGF0aCBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMzJ2MzJIMHoiLz4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTggMnYxNGE4IDggMCAxIDAgMTYgMFYyaDF2MTRhOSA5IDAgMCAxLTE4IDBWMmgxek0zIDI5aDI2djFIM3oiLz4KICAgIDxwYXRoIHN0cm9rZT0ibm9uZSIgZmlsbD0iaW5oZXJpdCIgZD0iTTUgMmg1djFINXpNMjIgMmg1djFoLTV6Ii8+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy10ZXh0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNNCAzaDE1YTEgMSAwIDAgMSAxIDFIM2ExIDEgMCAwIDEgMS0xek0zIDRoMXYxSDN6TTE5IDRoMXYxaC0xeiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTEgM2gxdjE4aC0xeiIvPgogICAgPHBhdGggc3Ryb2tlPSJub25lIiBmaWxsPSJpbmhlcml0IiBkPSJNMTAgMjBoM3YxaC0zeiIvPgo8L3N5bWJvbD4KPHN5bWJvbCBpZD0iaWMtdW5kbyIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KICAgIDxwYXRoIGQ9Ik0xMi41IDhDOS44NSA4IDcuNDUgOC45OSA1LjYgMTAuNkwyIDdWMTZIMTFMNy4zOCAxMi4zOEM4Ljc3IDExLjIyIDEwLjU0IDEwLjUgMTIuNSAxMC41QzE2LjA0IDEwLjUgMTkuMDUgMTIuODEgMjAuMSAxNkwyMi40NyAxNS4yMkMyMS4wOCAxMS4wMyAxNy4xNSA4IDEyLjUgOFoiIGZpbGw9IiM4NDkyQTYiLz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLXpvb20taW4iIHZpZXdCb3g9IjAgMCAyNCAyNCI+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjI5IC0yOTApIHRyYW5zbGF0ZSgyMjkgMjkwKSI+CiAgICAgICAgPGNpcmNsZSBjeD0iMTAuNSIgY3k9IjEwLjUiIHI9IjkiIHN0cm9rZT0iaW5oZXJpdCIgZmlsbD0ibm9uZSIvPgogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGQ9Ik0xOC44MjggMTUuODI4SDE5LjgyOFYyMi44MjhIMTguODI4eiIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDE5LjMyOCAxOS4zMjgpIi8+CiAgICAgICAgPHBhdGggZmlsbD0iaW5oZXJpdCIgZD0iTTcgMTBIMTRWMTFIN3oiLz4KICAgICAgICA8cGF0aCBmaWxsPSJpbmhlcml0IiBkPSJNMTAgN0gxMVYxNEgxMHoiLz4KICAgIDwvZz4KPC9zeW1ib2w+CjxzeW1ib2wgaWQ9ImljLXpvb20tb3V0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2MyAtMjkwKSB0cmFuc2xhdGUoMjYzIDI5MCkiPgogICAgICAgIDxjaXJjbGUgY3g9IjEwLjUiIGN5PSIxMC41IiByPSI5IiBzdHJva2U9ImluaGVyaXQiIGZpbGw9Im5vbmUiLz4KICAgICAgICA8cGF0aCBmaWxsPSJpbmhlcml0IiBkPSJNMTguODI4IDE1LjgyOEgxOS44MjhWMjIuODI4SDE4LjgyOHoiIHRyYW5zZm9ybT0icm90YXRlKC00NSAxOS4zMjggMTkuMzI4KSIvPgogICAgICAgIDxwYXRoIGZpbGw9ImluaGVyaXQiIGQ9Ik03IDEwSDE0VjExSDd6Ii8+CiAgICA8L2c+Cjwvc3ltYm9sPgo8c3ltYm9sIGlkPSJpYy1oYW5kIiB2aWV3Qm94PSIwIDAgMjQgMjQiPgogICAgPGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KICAgICAgICA8cGF0aCBmaWxsPSJpbmhlcml0IiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik04LjY3MiAzLjM2YzEuMzI4IDAgMi4xMTQuNzggMi4yOSAxLjg2OWwuMDE0LjEwMS4wMjMuMDA2djEuMDQybC0uNjM4LS4xODVjLS4xODctLjA1NS0uMzIzLS4yMTEtLjM1NC0uMzk5TDEwIDUuNzEzYzAtLjgyNS0uNDItMS4zNTMtMS4zMjgtMS4zNTNDNy42OTUgNC4zNiA3IDUuMDQxIDcgNS43MTN2Ny45NDFjMCAuNDM5LS41MjQuNjY1LS44NDMuMzY0bC0xLjg2OC0xLjc2MWMtLjU5NS0uNTI4LTEuMzE2LS42MTctMS45MTgtLjIxNi0uNTIyLjM0OC0uNTYyIDEuMjAzLS4xOCAxLjhMNy43MzggMjJoMTEuMDEzbC4yODUtLjUxOGMxLjI0Ny0yLjMyNiAxLjg5Ny00LjI1OSAxLjk2LTUuNzg1bC4wMDQtLjIzOVY4LjAzNWMwLS42NTYtLjUtMS4xNy0xLTEuMTctLjUwMyAwLTEgLjQ1Ni0xIDEuMTcgMCAuMzMzLS4zMi41NzMtLjY0LjQ4TDE4IDguNDFWNy4zNjhsLjA4Ni4wMjYuMDQyLS4xMzZjLjI3OS0uODA1Ljk3OC0xLjMzMiAxLjczOC0xLjM4OEwyMCA1Ljg2NWMxLjA1NyAwIDIgLjk2NyAyIDIuMTd2Ny40MjNjMCAxLjkyOS0uODQ1IDQuMzUyLTIuNTIxIDcuMjktLjA5LjE1Ni0uMjU1LjI1Mi0uNDM1LjI1Mkg3LjQ3NGMtLjE2NiAwLS4zMjEtLjA4Mi0uNDE0LS4yMTlsLTUuNzA0LTguMzljLS42NTMtMS4wMTktLjU4NC0yLjQ4Ni40Ni0zLjE4MiAxLS42NjYgMi4yMTYtLjUxNiAzLjE0OC4zMUw2IDEyLjQ5NVY1LjcxM2MwLTEuMTggMS4wNTgtMi4yNjMgMi40OS0yLjM0OHoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yOTcgLTI5MCkgdHJhbnNsYXRlKDI5NyAyOTApIi8+CiAgICAgICAgPHBhdGggZmlsbD0iaW5oZXJpdCIgZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMTIuNSAxLjVjMS4zMjUgMCAyLjQxIDEuMDMyIDIuNDk1IDIuMzM2TDE1IDR2Ny4yMmgtMVY0YzAtLjgyOC0uNjcyLTEuNS0xLjUtMS41LS43OCAwLTEuNDIuNTk1LTEuNDkzIDEuMzU2TDExIDR2Ny4yMmgtMVY0YzAtMS4zOCAxLjEyLTIuNSAyLjUtMi41eiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI5NyAtMjkwKSB0cmFuc2xhdGUoMjk3IDI5MCkiLz4KICAgICAgICA8cGF0aCBmaWxsPSJpbmhlcml0IiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik0xNi41IDMuNWMxLjMyNSAwIDIuNDEgMS4wMzIgMi40OTUgMi4zMzZMMTkgNnY2LjNoLTFWNmMwLS44MjgtLjY3Mi0xLjUtMS41LTEuNS0uNzggMC0xLjQyLjU5NS0xLjQ5MyAxLjM1NkwxNSA2djIuNDRoLTFWNmMwLTEuMzggMS4xMi0yLjUgMi41LTIuNXoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yOTcgLTI5MCkgdHJhbnNsYXRlKDI5NyAyOTApIi8+CiAgICA8L2c+Cjwvc3ltYm9sPgo8L2RlZnM+Cjwvc3ZnPgo=";
 
 /***/ }),
 
@@ -54411,7 +54713,7 @@ var text_Text = /*#__PURE__*/function (_Component) {
     key: "_onFabricSelect",
     value: function _onFabricSelect(fEvent) {
       this.isPrevEditing = true;
-      this.setSelectedInfo(fEvent.target, true);
+      this.setSelectedInfo(fEvent.selected[0], true);
     }
     /**
      * Fabric 'mousedown' event handler
@@ -59753,7 +60055,16 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_onObjectModified",
     value: function _onObjectModified(fEvent) {
-      var target = fEvent.target;
+      var _this7 = this;
+
+      var target = fEvent.target,
+          action = fEvent.action;
+
+      if (action === 'drag') {
+        this._lazyFire(eventNames.OBJECT_END_MOVE, function (object) {
+          return [_this7.createObjectProperties(object), fEvent];
+        }, fEvent.target);
+      }
 
       if (target.type === 'activeSelection') {
         var items = target.getObjects();
@@ -59773,10 +60084,10 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_onObjectRotated",
     value: function _onObjectRotated(fEvent) {
-      var _this7 = this;
+      var _this8 = this;
 
       this._lazyFire(eventNames.OBJECT_ROTATED, function (object) {
-        return _this7.createObjectProperties(object);
+        return _this8.createObjectProperties(object);
       }, fEvent.target);
     }
     /**
@@ -59790,14 +60101,14 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_lazyFire",
     value: function _lazyFire(eventName, paramsMaker, target) {
-      var _this8 = this;
+      var _this9 = this;
 
       var existEventDelegation = target && target.canvasEventDelegation;
       var delegationState = existEventDelegation ? target.canvasEventDelegation(eventName) : 'none';
 
       if (delegationState === 'unregistered') {
         target.canvasEventRegister(eventName, function (object) {
-          _this8.fire(eventName, paramsMaker(object));
+          _this9.fire(eventName, paramsMaker(object));
         });
       }
 
@@ -59814,8 +60125,8 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_onObjectSelected",
     value: function _onObjectSelected(fEvent) {
-      var target = fEvent.target;
-      var params = this.createObjectProperties(target);
+      var selected = fEvent.selected;
+      var params = this.createObjectProperties(selected[0]);
       this.fire(eventNames.OBJECT_ACTIVATED, params, fEvent);
     }
     /**
@@ -59857,10 +60168,10 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_onSelectionCreated",
     value: function _onSelectionCreated(fEvent) {
-      var target = fEvent.target;
-      var params = this.createObjectProperties(target);
+      var selected = fEvent.selected;
+      var params = this.createObjectProperties(selected[0]);
       this.fire(eventNames.OBJECT_ACTIVATED, params, fEvent);
-      this.fire(eventNames.SELECTION_CREATED, fEvent.target);
+      this.fire(eventNames.SELECTION_CREATED, selected[0]);
     }
     /**
      * Canvas discard selection all
@@ -59972,7 +60283,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "pasteObject",
     value: function pasteObject() {
-      var _this9 = this;
+      var _this10 = this;
 
       if (!this.targetObjectForCopyPaste) {
         return core_js_stable_promise_default().resolve([]);
@@ -59985,16 +60296,16 @@ var Graphics = /*#__PURE__*/function () {
       this.discardSelection();
       return this._cloneObject(targetObjects).then(function (addedObjects) {
         if (addedObjects.length > 1) {
-          newTargetObject = _this9.getActiveSelectionFromObjects(addedObjects);
+          newTargetObject = _this10.getActiveSelectionFromObjects(addedObjects);
         } else {
           var _addedObjects = _slicedToArray(addedObjects, 1);
 
           newTargetObject = _addedObjects[0];
         }
 
-        _this9.targetObjectForCopyPaste = newTargetObject;
+        _this10.targetObjectForCopyPaste = newTargetObject;
 
-        _this9.setActiveObject(newTargetObject);
+        _this10.setActiveObject(newTargetObject);
       });
     }
     /**
@@ -60007,10 +60318,10 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_cloneObject",
     value: function _cloneObject(targetObjects) {
-      var _this10 = this;
+      var _this11 = this;
 
       var addedObjects = map_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), targetObjects, function (targetObject) {
-        return _this10._cloneObjectItem(targetObject);
+        return _this11._cloneObjectItem(targetObject);
       });
 
       return core_js_stable_promise_default().all(addedObjects);
@@ -60025,14 +60336,14 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_cloneObjectItem",
     value: function _cloneObjectItem(targetObject) {
-      var _this11 = this;
+      var _this12 = this;
 
       return this._copyFabricObjectForPaste(targetObject).then(function (clonedObject) {
-        var objectProperties = _this11.createObjectProperties(clonedObject);
+        var objectProperties = _this12.createObjectProperties(clonedObject);
 
-        _this11.add(clonedObject);
+        _this12.add(clonedObject);
 
-        _this11.fire(eventNames.ADD_OBJECT, objectProperties);
+        _this12.fire(eventNames.ADD_OBJECT, objectProperties);
 
         return clonedObject;
       });
@@ -60047,7 +60358,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_copyFabricObjectForPaste",
     value: function _copyFabricObjectForPaste(targetObject) {
-      var _this12 = this;
+      var _this13 = this;
 
       var addExtraPx = function addExtraPx(value, isReverse) {
         return isReverse ? value - EXTRA_PX_FOR_PASTE : value + EXTRA_PX_FOR_PASTE;
@@ -60059,9 +60370,9 @@ var Graphics = /*#__PURE__*/function () {
             width = clonedObject.width,
             height = clonedObject.height;
 
-        var _this12$getCanvasSize = _this12.getCanvasSize(),
-            canvasWidth = _this12$getCanvasSize.width,
-            canvasHeight = _this12$getCanvasSize.height;
+        var _this13$getCanvasSize = _this13.getCanvasSize(),
+            canvasWidth = _this13$getCanvasSize.width,
+            canvasHeight = _this13$getCanvasSize.height;
 
         var rightEdge = left + width / 2;
         var bottomEdge = top + height / 2;
@@ -60082,11 +60393,11 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "_copyFabricObject",
     value: function _copyFabricObject(targetObject) {
-      var _this13 = this;
+      var _this14 = this;
 
       return new (core_js_stable_promise_default())(function (resolve) {
         targetObject.clone(function (cloned) {
-          var shapeComp = _this13.getComponent(componentNames.SHAPE);
+          var shapeComp = _this14.getComponent(componentNames.SHAPE);
 
           if (isShape(cloned)) {
             shapeComp.processForCopiedObject(cloned, targetObject);

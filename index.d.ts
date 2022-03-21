@@ -1,7 +1,7 @@
-// Type definitions for TOAST UI Image Editor v3.18.5
+// Type definitions for TOAST UI Image Editor v1.0.3
 // TypeScript Version: 3.2.2
 // TypeScript Version: 3.2.2
-declare module 'vumu-image-editor' {
+declare module '@vumuio/vumu-image-editor-module' {
   import { fabric } from 'fabric';
   import Graphics from '@/graphics';
   export interface IThemeConfig {

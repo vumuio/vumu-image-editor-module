@@ -1222,7 +1222,14 @@ class Graphics {
    * @private
    */
   _onObjectModified(fEvent) {
-    const { target } = fEvent;
+    const { target, action } = fEvent;
+    if (action === 'drag') {
+      this._lazyFire(
+        events.OBJECT_END_MOVE,
+        (object) => [this.createObjectProperties(object), fEvent],
+        fEvent.target
+      );
+    }
     if (target.type === 'activeSelection') {
       const items = target.getObjects();
 

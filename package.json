@@ -1,11 +1,12 @@
 {
-  "name": "vumu-image-editor",
-  "version": "3.18.6",
-  "description": "TOAST UI ImageEditor",
+  "name": "@vumuio/vumu-image-editor-module",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/vumuio"
+  },
+  "version": "1.0.4",
+  "description": "Vumu image Editor",
   "keywords": [
-    "nhn",
-    "nhnent",
-    "tui",
+    "vumu",
     "component",
     "image",
     "editor",
@@ -34,12 +35,12 @@
     "publish:cdn": "node scripts/publishToCDN.js",
     "style": "stylelint --fix 'examples/css/editorModule.css'"
   },
-  "homepage": "https://github.com/nhn/tui.image-editor",
-  "bugs": "https://github.com/nhn/tui.image-editor/issues",
+  "homepage": "https://github.com/vumuio/vumu-image-editor-module",
+  "bugs": "https://github.com/vumuio/vumu-image-editor-module",
   "author": "NHN. FE Development Team <dl_javascript@nhn.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nhn/tui.image-editor.git"
+    "url": "https://github.com/vumuio/vumu-image-editor-module.git"
   },
   "license": "MIT",
   "browserslist": [
