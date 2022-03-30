@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/vumuio"
   },
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Vumu image Editor",
   "keywords": [
     "vumu",
