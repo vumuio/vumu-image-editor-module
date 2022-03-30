@@ -36,6 +36,9 @@ class Text extends Submenu {
       textAddNewTextButton: this.selector('.tie-add-new-text-button'),
       addFallbackLabels: this.selector('.tie-fallback-label'),
       textFontFamily: this.selector('.tie-font-family-select'),
+      fontFamilyList: this.selector('.font-family-list'),
+      fontName: this.selector('.selected-font'),
+      fontFamilyWrapper: this.selector('.font-family-wrapper'),
       textAlignButton: this.selector('.tie-text-align-button'),
       textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
         defaultColor: '#000000',
@@ -68,7 +71,8 @@ class Text extends Submenu {
     this.colorPickerInputBox = this._els.textColorpicker.colorpickerElement.querySelector(
       selectorNames.COLOR_PICKER_INPUT_BOX
     );
-    this._els.textFontFamily.style.fontFamily = 'Alef'; // init style for select
+    this._els.fontName.style.fontFamily = 'Alef'; // init style for select
+    this._els.fontName.innerHTML = 'Alef'; // init style for select
   }
 
   /**
@@ -93,8 +97,11 @@ class Text extends Submenu {
     const setTextEffect = this._setTextEffectHandler.bind(this);
     const setTextAlign = this._setTextAlignHandler.bind(this);
     const setFontFamily = this._changeFontFamilyHandler.bind(this);
+    const selectFontFamily = this._selectFontFamily.bind(this);
+    const clickFontFamily = this._clickFontFamily.bind(this);
     const callAddNewText = this._addNewTextHandler.bind(this);
     const callAddFallbackLabels = this._addFallbackLabels.bind(this);
+    const hideSelect = this._hideFontFamily.bind(this);
 
     this.eventHandler = {
       setTextEffect,
@@ -110,6 +117,8 @@ class Text extends Submenu {
     this._els.textAddNewTextButton.addEventListener('click', callAddNewText);
     this._els.addFallbackLabels.addEventListener('click', callAddFallbackLabels);
     this._els.textFontFamily.addEventListener('change', setFontFamily);
+    this._els.fontFamilyWrapper.addEventListener('click', clickFontFamily);
+    this._els.fontFamilyList.addEventListener('click', selectFontFamily);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
     this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this));
@@ -123,6 +132,7 @@ class Text extends Submenu {
       eventNames.BLUR,
       this._onStopEditingInputBox.bind(this)
     );
+    document.addEventListener('click', hideSelect);
   }
 
   /**
@@ -130,14 +140,22 @@ class Text extends Submenu {
    * @private
    */
   _removeEvent() {
-    const { setTextEffect, setTextAlign, setFontFamily, callAddNewText, callAddFallbackLabels } =
-      this.eventHandler;
+    const {
+      setTextEffect,
+      setTextAlign,
+      setFontFamily,
+      callAddNewText,
+      callAddFallbackLabels,
+      selectFontFamily,
+      hideSelect,
+    } = this.eventHandler;
 
     this._els.textEffectButton.removeEventListener('click', setTextEffect);
     this._els.textAlignButton.removeEventListener('click', setTextAlign);
     this._els.textAddNewTextButton.removeEventListener('click', callAddNewText);
     this._els.addFallbackLabels.removeEventListener('click', callAddFallbackLabels);
     this._els.textFontFamily.removeEventListener('change', setFontFamily);
+    this._els.fontFamilyList.removeEventListener('click', selectFontFamily);
     this._els.textRange.off();
     this._els.textColorpicker.off();
 
@@ -149,6 +167,7 @@ class Text extends Submenu {
       eventNames.BLUR,
       this._onStopEditingInputBox.bind(this)
     );
+    document.removeEventListener('click', hideSelect);
   }
 
   /**
@@ -262,7 +281,8 @@ class Text extends Submenu {
     this.textColor = fill;
     this.fontSize = fontSize;
     this.fontFamily = fontFamily;
-    this._els.textFontFamily.style.fontFamily = fontFamily;
+    this._els.fontName.style.fontFamily = fontFamily;
+    this._els.fontName.innerHTML = fontFamily;
     this.skewX = skewX;
     this.skewY = skewY;
     this.setEffectState('italic', fontStyle);
@@ -393,6 +413,36 @@ class Text extends Submenu {
     this.actions.changeTextStyle({
       fontFamily: font,
     });
+  }
+  _selectFontFamily(event) {
+    event.stopPropagation();
+    const { target } = event;
+    const fontFamily = target.dataset.value;
+
+    if (fontFamily) {
+      this._els.fontName.innerHTML = fontFamily;
+      this._els.fontName.style.fontFamily = fontFamily;
+      this.actions.changeTextStyle({
+        fontFamily,
+      });
+    }
+    this._hideFontFamily();
+  }
+
+  _clickFontFamily(event) {
+    event.stopPropagation();
+    const fontName = this._els.fontName.innerHTML;
+    const seletedFont = this.selector(`li[data-value="${fontName}"]`);
+
+    this._els.fontFamilyList.classList.add('active');
+    if (seletedFont) {
+      seletedFont.scrollIntoView();
+    }
+  }
+
+  _hideFontFamily() {
+    console.log('first');
+    this._els.fontFamilyList.classList.remove('active');
   }
 
   _addNewTextHandler() {

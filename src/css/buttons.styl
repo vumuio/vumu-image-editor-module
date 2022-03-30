@@ -113,20 +113,7 @@
     &:focus
         outline: none
 .tie-font-family-select
-    -o-appearance: none;
-    -ms-appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background: transparent;
-    padding: 7px 36px 7px 13px;
-    border: 1px solid #f2f2f2;
-    width: 215px;
-    height: 42px;
-    line-height: 18px;
-    font-size: 14px;
-    color: #6b7c94;
-    text-overflow: ellipsis;
+    display: none;
     &:active, &:focus
         outline: none;
     &::-webkit-scrollbar
@@ -137,6 +124,44 @@
     //     background: #aaa;
     // &::-webkit-scrollbar-thumb:hover
     //     background: #555;
+.font-family-wrapper
+    position: relative;
+
+    & .selected-font
+      width: 200px;
+      height: 36px;
+      line-height: 36px;
+      background: #fff;
+      border: 2px solid #c4c4c4; 
+   
+    && .font-family-list.active
+        display: block;
+
+    & .font-family-list
+        display: none;
+        border: 2px solid lightgrey;
+        position: absolute;
+        background: #fff;
+        z-index: 10;
+        top: 40px;
+        max-height: 300px;
+        overflow-y: scroll;
+        & li.font-family-item
+            display: block;
+            max-height: 30px;
+            margin-top: 0 !important;
+            text-align: center;
+            line-height: 30px;
+            &:hover
+                background lightgrey;
+        &::-webkit-scrollbar
+          width: 10px;
+        &::-webkit-scrollbar-track
+          background: #f1f1f1; 
+        &::-webkit-scrollbar-thumb
+          background: #888; 
+        &::-webkit-scrollbar-thumb:hover
+          background: #555; 
 
 .tie-font-family-container
     position: relative;
@@ -144,6 +169,7 @@
     & svg
         position: absolute;
         right: 13px;
+        z-index: 1
         top: 50%;
         transform: translateY(-50%);
 
