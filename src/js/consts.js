@@ -461,7 +461,6 @@ export const googleFonts = [
   'Codystar',
   'Cormorant',
   'Covered By Your Grace',
-  'OpenSans',
   'Creepster',
   'Crimson Text',
   'DM Sans',
