@@ -47929,6 +47929,21 @@ var Icon = /*#__PURE__*/function (_Submenu) {
     value: function setIconPickerColor(iconColor) {
       this._els.iconColorpicker.color = iconColor;
     }
+  }, {
+    key: "skewX",
+    set: function set(value) {
+      this._els.skewX.value = value;
+    }
+    /**
+     * Set skew size
+     * @param {Number} value - text size
+     */
+
+  }, {
+    key: "skewY",
+    set: function set(value) {
+      this._els.skewY.value = value;
+    }
     /**
      * Returns the menu to its default state.
      */
@@ -47949,7 +47964,9 @@ var Icon = /*#__PURE__*/function (_Submenu) {
     key: "_changeColorHandler",
     value: function _changeColorHandler(color) {
       color = color || 'transparent';
-      this.actions.changeColor(color);
+      this.actions.changeIcon({
+        color: color
+      });
     }
     /**
      * skew x set handler
@@ -47990,8 +48007,7 @@ var Icon = /*#__PURE__*/function (_Submenu) {
       if (button) {
         var iconType = button.getAttribute('data-icontype');
         var iconColor = this._els.iconColorpicker.color;
-        this.actions.discardSelection();
-        this.actions.changeSelectableAll(false);
+        this.actions.discardSelection(); // this.actions.changeSelectableAll(false);
 
         this._els.addIconButton.classList.remove(this.iconType);
 
@@ -51614,9 +51630,9 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
     var _this2 = this;
 
     return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-      changeColor: function changeColor(color) {
+      changeIcon: function changeIcon(changeIconObject, isSilent) {
         if (_this2.activeObjectId) {
-          _this2.changeIconColor(_this2.activeObjectId, color);
+          _this2.changeIconColor(_this2.activeObjectId, changeIconObject, isSilent);
         }
       },
       addIcon: function addIcon(iconType, defaultIconOptions) {
@@ -55389,22 +55405,26 @@ var icon_Icon = /*#__PURE__*/function (_Component) {
 
   }, {
     key: "_onFabricMouseDown",
-    value: function _onFabricMouseDown(fEvent) {// const canvas = this.getCanvas();
-      //
-      // this._startPoint = canvas.getPointer(fEvent.e);
-      // const { x: left, y: top } = this._startPoint;
-      //
-      // this.add(this._type, {
-      //   left,
-      //   top,
-      //   fill: this._iconColor,
-      //   skewY: 30,
-      //   skewX: 20,
-      // }).then(() => {
-      //   this.fire(events.ADD_OBJECT, this.graphics.createObjectProperties(this._icon));
-      //   canvas.on('mouse:move', this._handlers.mousemove);
-      //   canvas.on('mouse:up', this._handlers.mouseup);
-      // });
+    value: function _onFabricMouseDown(fEvent) {
+      var _this4 = this;
+
+      var canvas = this.getCanvas();
+      this._startPoint = canvas.getPointer(fEvent.e);
+      var _this$_startPoint = this._startPoint,
+          left = _this$_startPoint.x,
+          top = _this$_startPoint.y;
+      this.add(this._type, {
+        left: left,
+        top: top,
+        fill: this._iconColor,
+        skewY: 30,
+        skewX: 20
+      }).then(function () {
+        _this4.fire(eventNames.ADD_OBJECT, _this4.graphics.createObjectProperties(_this4._icon));
+
+        canvas.on('mouse:move', _this4._handlers.mousemove);
+        canvas.on('mouse:up', _this4._handlers.mouseup);
+      });
     }
     /**
      * MouseMove event handler on canvas
@@ -62693,8 +62713,8 @@ var ImageEditor = /*#__PURE__*/function () {
 
   }, {
     key: "changeIconColor",
-    value: function changeIconColor(id, color) {
-      return this.execute(consts_commandNames.CHANGE_ICON_COLOR, id, color);
+    value: function changeIconColor(id, options, isSilent) {
+      return this.execute(consts_commandNames.CHANGE_ICON_COLOR, id, options.color, isSilent);
     }
     /**
      * Remove an object or group by id
