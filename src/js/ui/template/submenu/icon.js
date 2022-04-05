@@ -87,22 +87,35 @@ export default ({ locale, makeSvgIcon }) => `
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
-        <li class="tie-icon-add-button">
-            <div class="tui-image-editor-button" style="margin:0">
-                <div>
-                    <input type="file" accept="image/*" class="tie-icon-image-file">
-                    ${makeSvgIcon(['normal', 'active'], 'icon-load', true)}
-                </div>
-                <label>
-                    ${locale.localize('Custom icon')}
-                </label>
-            </div>
-        </li>
-        <li class="tui-image-editor-partition">
-            <div></div>
-        </li>
+  
         <li>
             <div class="tie-icon-color" title="${locale.localize('Color')}"></div>
         </li>
+         <li class="tui-image-editor-partition">
+            <div></div>
+        </li>
+        <li class="tui-image-editor-newline tui-image-editor-range-wrap">
+            <span class="font-centered-class ">X</span>        
+            <div class="tie-skewx-icon-range"></div>
+            <input class="tie-skewx-icon-range-value tui-image-editor-range-value range-value" value="0" />
+            <br/>
+            <span class="font-centered-class">Y</span>
+            <div class="tie-skewy-icon-range"></div>
+            <input class="tie-skewy-icon-range-value tui-image-editor-range-value range-value" value="0" />
+        </li>
+        <li>
+            <span class="font-centered-class ">Skew</span>
+        </li>
     </ul>
 `;
+// <li className="tie-icon-add-button">
+//     <div className="tui-image-editor-button" style="margin:0">
+//         <div>
+//             <input type="file" accept="image/!*" className="tie-icon-image-file">
+//                 ${makeSvgIcon(['normal', 'active'], 'icon-load', true)}
+//         </div>
+//         <label>
+//             ${locale.localize('Custom icon')}
+//         </label>
+//     </div>
+// </li>

@@ -19,6 +19,7 @@ import {
   OBJ_TYPE,
   fObjectOptions,
 } from '@/consts';
+import resizeHelper from 'tui-color-picker';
 
 const { isUndefined, forEach, CustomEvents } = snippet;
 
@@ -1391,14 +1392,48 @@ k   * @param {number} id - object id
       styles: { fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
       autofocus: false,
     }).then((newText) => {
-      const { left, top, width, height } = newText;
-      const activeObj = canvas.getActiveObject();
-      activeObj.set({
-        left: left - Math.floor(width / 2),
-        top: top - Math.floor(height / 2),
-      });
-      canvas.requestRenderAll();
+      // const { left, top, width, height } = newText;
+      // const activeObj = canvas.getActiveObject();
+      // activeObj.set({
+      //   left: left - Math.floor(width / 2),
+      //   top: top - Math.floor(height / 2),
+      // });
+      // canvas.requestRenderAll();
       this.fire(ADD_NEW_TEXT, newText);
+    });
+  }
+
+  async _onAddNewShape(shapeType, shapeDefaultOptions) {
+    console.log('new shape will be added here', shapeType);
+    const canvas = this.getCanvasInstance();
+    canvas.discardActiveObject();
+    await this.addShape(shapeType, shapeDefaultOptions).then((newShape) => {
+      // canvas.requestRenderAll();
+      // console.log(newShape);
+      // const { left, top, width, height } = newShape;
+      // const activeObj = canvas.getActiveObject();
+      // activeObj.set({
+      //   left: left - Math.floor(width / 2),
+      //   top: top - Math.floor(height / 2),
+      // });
+      // resizeHelper.resize(newShape);
+      // canvas.requestRenderAll();
+    });
+  }
+  async _addNewIcon(iconType, iconDefaultOptions) {
+    const canvas = this.getCanvasInstance();
+    canvas.discardActiveObject();
+    await this.addIcon(iconType, iconDefaultOptions).then((newShape) => {
+      // canvas.requestRenderAll();
+      // console.log(newShape);
+      // const { left, top, width, height } = newShape;
+      // const activeObj = canvas.getActiveObject();
+      // activeObj.set({
+      //   left: left - Math.floor(width / 2),
+      //   top: top - Math.floor(height / 2),
+      // });
+      // resizeHelper.resize(newShape);
+      // canvas.requestRenderAll();
     });
   }
 
@@ -1544,8 +1579,8 @@ k   * @param {number} id - object id
    * @example
    * imageEditor.changeIconColor(id, '#000000');
    */
-  changeIconColor(id, color) {
-    return this.execute(commands.CHANGE_ICON_COLOR, id, color);
+  changeIconColor(id, options, isSilent) {
+    return this.execute(commands.CHANGE_ICON_COLOR, id, options.color, isSilent);
   }
 
   /**

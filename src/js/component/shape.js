@@ -40,6 +40,8 @@ const SHAPE_INIT_OPTIONS = extend(
     height: 1,
     rx: 0,
     ry: 0,
+    skewX: 0,
+    skewY: 0,
   },
   SHAPE_DEFAULT_OPTIONS
 );

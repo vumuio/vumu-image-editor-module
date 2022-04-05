@@ -4,12 +4,23 @@ import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/shape';
 import { toInteger, assignmentForDestroy } from '@/util';
-import { defaultShapeStrokeValues, eventNames, selectorNames } from '@/consts';
+import {
+  defaultShapeStrokeValues,
+  defaultSkewRangeValues,
+  eventNames,
+  selectorNames,
+} from '@/consts';
 
 const SHAPE_DEFAULT_OPTION = {
-  stroke: '#ffbb3b',
-  fill: '',
+  stroke: '#00a9ff',
+  fill: '#ffbb3b',
   strokeWidth: 3,
+  width: 200,
+  height: 200,
+  scaleX: 1,
+  scaleY: 1,
+  skewY: 0,
+  skewX: 0,
 };
 
 /**
@@ -39,6 +50,20 @@ class Shape extends Submenu {
           input: this.selector('.tie-stroke-range-value'),
         },
         defaultShapeStrokeValues
+      ),
+      skewX: new Range(
+        {
+          slider: this.selector('.tie-skewx-shape-range'),
+          input: this.selector('.tie-skewx-shape-range-value'),
+        },
+        defaultSkewRangeValues
+      ),
+      skewY: new Range(
+        {
+          slider: this.selector('.tie-skewy-shape-range'),
+          input: this.selector('.tie-skewy-shape-range-value'),
+        },
+        defaultSkewRangeValues
       ),
       fillColorpicker: new Colorpicker(this.selector('.tie-color-fill'), {
         defaultColor: '',
@@ -74,6 +99,8 @@ class Shape extends Submenu {
   destroy() {
     this._removeEvent();
     this._els.strokeRange.destroy();
+    this._els.skewX.destroy();
+    this._els.skewY.destroy();
     this._els.fillColorpicker.destroy();
     this._els.strokeColorpicker.destroy();
 
@@ -92,6 +119,8 @@ class Shape extends Submenu {
 
     this._els.shapeSelectButton.addEventListener('click', this.eventHandler.shapeTypeSelected);
     this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
+    this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
+    this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this));
     this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
     this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
     this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
@@ -114,6 +143,8 @@ class Shape extends Submenu {
   _removeEvent() {
     this._els.shapeSelectButton.removeEventListener('click', this.eventHandler.shapeTypeSelected);
     this._els.strokeRange.off();
+    this._els.skewX.off();
+    this._els.skewY.off();
     this._els.fillColorpicker.off();
     this._els.strokeColorpicker.off();
 
@@ -134,15 +165,19 @@ class Shape extends Submenu {
    *   @param {string} strokeColor - stroke color
    *   @param {string} fillColor - fill color
    */
-  setShapeStatus({ strokeWidth, strokeColor, fillColor }) {
+  setShapeStatus({ strokeWidth, strokeColor, fillColor, skewX, skewY }) {
     this._els.strokeRange.value = strokeWidth;
+    this._els.skewX.value = skewX;
+    this._els.skewY.value = skewY;
     this._els.strokeColorpicker.color = strokeColor;
     this._els.fillColorpicker.color = fillColor;
     this.options.stroke = strokeColor;
     this.options.fill = fillColor;
     this.options.strokeWidth = strokeWidth;
+    this.options.skewX = skewX;
+    this.options.skewY = skewY;
 
-    this.actions.setDrawingShape(this.type, { strokeWidth });
+    this.actions.setDrawingShape(this.type, { strokeWidth, skewX, skewY });
   }
 
   /**
@@ -183,6 +218,16 @@ class Shape extends Submenu {
     this._els.strokeRange.value = value;
     this._els.strokeRange.trigger('change');
   }
+  set skewX(value) {
+    this._els.skewX.value = value;
+  }
+  /**
+   * Set skew size
+   * @param {Number} value - text size
+   */
+  set skewY(value) {
+    this._els.skewY.value = value;
+  }
 
   /**
    * Get stroke value
@@ -200,20 +245,27 @@ class Shape extends Submenu {
   _changeShapeHandler(event) {
     const button = event.target.closest('.tui-image-editor-button');
     if (button) {
-      this.actions.stopDrawingMode();
-      this.actions.discardSelection();
       const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
-
-      if (this.type === shapeType) {
-        this.changeStandbyMode();
-
-        return;
-      }
-      this.changeStandbyMode();
       this.type = shapeType;
-      event.currentTarget.classList.add(shapeType);
-      this.actions.changeSelectableAll(false);
-      this.actions.modeChange('shape');
+      this.actions.addNewShape(
+        shapeType,
+        shapeType === 'circle'
+          ? { ...SHAPE_DEFAULT_OPTION, rx: 100, ry: 100 }
+          : SHAPE_DEFAULT_OPTION
+      );
+      return;
+      // this.actions.stopDrawingMode();
+      // this.actions.discardSelection();
+      // if (this.type === shapeType) {
+      //   this.changeStandbyMode();
+      //
+      //   return;
+      // }
+      // this.changeStandbyMode();
+      // this.type = shapeType;
+      // event.currentTarget.classList.add(shapeType);
+      // this.actions.changeSelectableAll(false);
+      // this.actions.modeChange('shape');
     }
   }
 
@@ -224,7 +276,7 @@ class Shape extends Submenu {
    * @private
    */
   _changeStrokeRangeHandler(value, isLast) {
-    this.options.strokeWidth = toInteger(value);
+    // this.options.strokeWidth = toInteger(value);
     this.actions.changeShape(
       {
         strokeWidth: value,
@@ -233,6 +285,36 @@ class Shape extends Submenu {
     );
 
     this.actions.setDrawingShape(this.type, this.options);
+  }
+  /**
+   * skew x set handler
+   * @param {number} value - range value
+   * @param {boolean} isLast - Is last change
+   * @private
+   */
+  _changeSkewXRangeHandler(value, isLast) {
+    // this.options.skewX = value;
+    this.actions.changeShape(
+      {
+        skewX: value,
+      },
+      !isLast
+    );
+  }
+  /**
+   * skew y align set handler
+   * @param {number} value - range value
+   * @param {boolean} isLast - Is last change
+   * @private
+   */
+  _changeSkewYRangeHandler(value, isLast) {
+    // this.options.skewY = value;
+    this.actions.changeShape(
+      {
+        skewY: value,
+      },
+      !isLast
+    );
   }
 
   /**

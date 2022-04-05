@@ -197,6 +197,8 @@ class Icon extends Component {
       left,
       top,
       fill: this._iconColor,
+      skewY: 30,
+      skewX: 20,
     }).then(() => {
       this.fire(events.ADD_OBJECT, this.graphics.createObjectProperties(this._icon));
       canvas.on('mouse:move', this._handlers.mousemove);
@@ -235,6 +237,7 @@ class Icon extends Component {
    */
   _onFabricMouseUp() {
     const canvas = this.getCanvas();
+    console.log(this._icon);
 
     this.fire(events.OBJECT_ADDED, this.graphics.createObjectProperties(this._icon));
 

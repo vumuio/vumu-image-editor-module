@@ -1364,6 +1364,8 @@ class Graphics {
       'strokeWidth',
       'opacity',
       'angle',
+      'skewX',
+      'skewY',
     ];
     const props = {
       id: stamp(obj),

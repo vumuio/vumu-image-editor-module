@@ -3,13 +3,21 @@ import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/icon';
 import { isSupportFileApi, assignmentForDestroy } from '@/util';
-import { defaultIconPath, eventNames, selectorNames } from '@/consts';
+import { defaultIconPath, defaultSkewRangeValues, eventNames, selectorNames } from '@/consts';
+import Range from '@/ui/tools/range';
 
 /**
  * Icon ui class
  * @class
  * @ignore
  */
+const ICON_DEFAULT_OPTION = {
+  left: 200,
+  top: 200,
+  fill: '#ffbb3b',
+  skewY: 0,
+  skewX: 0,
+};
 class Icon extends Submenu {
   constructor(subMenuElement, { locale, makeSvgIcon, menuBarPosition, usageStatistics }) {
     super(subMenuElement, {
@@ -25,13 +33,27 @@ class Icon extends Submenu {
     this._iconMap = {};
 
     this._els = {
-      registerIconButton: this.selector('.tie-icon-image-file'),
+      // registerIconButton: this.selector('.tie-icon-image-file'),
       addIconButton: this.selector('.tie-icon-add-button'),
       iconColorpicker: new Colorpicker(this.selector('.tie-icon-color'), {
         defaultColor: '#ffbb3b',
         toggleDirection: this.toggleDirection,
         usageStatistics: this.usageStatistics,
       }),
+      skewX: new Range(
+        {
+          slider: this.selector('.tie-skewx-icon-range'),
+          input: this.selector('.tie-skewx-icon-range-value'),
+        },
+        defaultSkewRangeValues
+      ),
+      skewY: new Range(
+        {
+          slider: this.selector('.tie-skewy-icon-range'),
+          input: this.selector('.tie-skewy-icon-range-value'),
+        },
+        defaultSkewRangeValues
+      ),
     };
 
     this.colorPickerInputBox = this._els.iconColorpicker.colorpickerElement.querySelector(
@@ -67,7 +89,9 @@ class Icon extends Submenu {
 
     this.actions = actions;
     this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
-    this._els.registerIconButton.addEventListener('change', registerIcon);
+    this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
+    this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this));
+    // this._els.registerIconButton.addEventListener('change', registerIcon);
     this._els.addIconButton.addEventListener('click', addIcon);
 
     this.colorPickerInputBox.addEventListener(
@@ -86,7 +110,7 @@ class Icon extends Submenu {
    */
   _removeEvent() {
     this._els.iconColorpicker.off();
-    this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
+    // this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
     this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
 
     this.colorPickerInputBox.removeEventListener(
@@ -123,6 +147,16 @@ class Icon extends Submenu {
   setIconPickerColor(iconColor) {
     this._els.iconColorpicker.color = iconColor;
   }
+  set skewX(value) {
+    this._els.skewX.value = value;
+  }
+  /**
+   * Set skew size
+   * @param {Number} value - text size
+   */
+  set skewY(value) {
+    this._els.skewY.value = value;
+  }
 
   /**
    * Returns the menu to its default state.
@@ -139,7 +173,25 @@ class Icon extends Submenu {
    */
   _changeColorHandler(color) {
     color = color || 'transparent';
-    this.actions.changeColor(color);
+    this.actions.changeIcon({ color });
+  }
+  /**
+   * skew x set handler
+   * @param {number} value - range value
+   * @param {boolean} isLast - Is last change
+   * @private
+   */
+  _changeSkewXRangeHandler(value, isLast) {
+    console.log('skew-change');
+  }
+  /**
+   * skew y align set handler
+   * @param {number} value - range value
+   * @param {boolean} isLast - Is last change
+   * @private
+   */
+  _changeSkewYRangeHandler(value, isLast) {
+    console.log('skew-change');
   }
 
   /**
@@ -148,20 +200,21 @@ class Icon extends Submenu {
    * @private
    */
   _addIconHandler(event) {
+    debugger;
     const button = event.target.closest('.tui-image-editor-button');
 
     if (button) {
       const iconType = button.getAttribute('data-icontype');
       const iconColor = this._els.iconColorpicker.color;
       this.actions.discardSelection();
-      this.actions.changeSelectableAll(false);
+      // this.actions.changeSelectableAll(false);
       this._els.addIconButton.classList.remove(this.iconType);
       this._els.addIconButton.classList.add(iconType);
 
       if (this.iconType === iconType) {
         this.changeStandbyMode();
       } else {
-        this.actions.addIcon(iconType, iconColor);
+        this.actions.addIcon(iconType, ICON_DEFAULT_OPTION);
         this.iconType = iconType;
       }
     }

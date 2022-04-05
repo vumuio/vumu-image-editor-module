@@ -1,7 +1,14 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
 import { isSupportFileApi, toInteger, isEmptyCropzone, includes, getNewBorderStyle } from '@/util';
-import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
+import {
+  eventNames,
+  historyNames,
+  drawingModes,
+  drawingMenuNames,
+  zoomModes,
+  eventNames as events,
+} from '@/consts';
 import _throttle from 'lodash/throttle';
 
 export default {
@@ -214,14 +221,15 @@ export default {
   _iconAction() {
     return extend(
       {
-        changeColor: (color) => {
+        changeIcon: (changeIconObject, isSilent) => {
           if (this.activeObjectId) {
-            this.changeIconColor(this.activeObjectId, color);
+            this.changeIconColor(this.activeObjectId, changeIconObject, isSilent);
           }
         },
-        addIcon: (iconType, iconColor) => {
-          this.startDrawingMode('ICON');
-          this.setDrawingIcon(iconType, iconColor);
+        addIcon: (iconType, defaultIconOptions) => {
+          // this.startDrawingMode('ICON');
+          // this.setDrawingIcon(iconType, iconColor);
+          this._addNewIcon(iconType, defaultIconOptions);
         },
         cancelAddIcon: () => {
           this.ui.icon.clearIconType();
@@ -407,6 +415,9 @@ export default {
         },
         setDrawingShape: (shapeType) => {
           this.setDrawingShape(shapeType);
+        },
+        addNewShape: (shapeType, shapeDefaultOptions) => {
+          this._onAddNewShape(shapeType, shapeDefaultOptions);
         },
       },
       this._commonAction()
@@ -653,6 +664,8 @@ export default {
             strokeColor: obj.stroke,
             strokeWidth: obj.strokeWidth,
             fillColor: obj.fill,
+            skewX: obj.skewX,
+            skewY: obj.skewY,
           });
 
           this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));

@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 1.0.3
+ * @version 1.0.6
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -77,6 +77,27 @@ module.exports = __webpack_require__(2348);
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 module.exports = __webpack_require__(6361);
+
+/***/ }),
+
+/***/ 4074:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(9427);
+
+/***/ }),
+
+/***/ 9649:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(2857);
+
+/***/ }),
+
+/***/ 4310:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+module.exports = __webpack_require__(9534);
 
 /***/ }),
 
@@ -853,6 +874,45 @@ var defineProperty = module.exports = function defineProperty(it, key, desc) {
 };
 
 if (Object.defineProperty.sham) defineProperty.sham = true;
+
+
+/***/ }),
+
+/***/ 286:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(6924);
+var path = __webpack_require__(4058);
+
+var Object = path.Object;
+
+var getOwnPropertyDescriptor = module.exports = function getOwnPropertyDescriptor(it, key) {
+  return Object.getOwnPropertyDescriptor(it, key);
+};
+
+if (Object.getOwnPropertyDescriptor.sham) getOwnPropertyDescriptor.sham = true;
+
+
+/***/ }),
+
+/***/ 2766:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(8482);
+var path = __webpack_require__(4058);
+
+module.exports = path.Object.getOwnPropertyDescriptors;
+
+
+/***/ }),
+
+/***/ 498:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+__webpack_require__(5824);
+var path = __webpack_require__(4058);
+
+module.exports = path.Object.getOwnPropertySymbols;
 
 
 /***/ }),
@@ -5509,6 +5569,60 @@ $({ target: 'Object', stat: true, forced: Object.defineProperty !== defineProper
 
 /***/ }),
 
+/***/ 6924:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+var $ = __webpack_require__(6887);
+var fails = __webpack_require__(5981);
+var toIndexedObject = __webpack_require__(4529);
+var nativeGetOwnPropertyDescriptor = (__webpack_require__(9677).f);
+var DESCRIPTORS = __webpack_require__(5746);
+
+var FAILS_ON_PRIMITIVES = fails(function () { nativeGetOwnPropertyDescriptor(1); });
+var FORCED = !DESCRIPTORS || FAILS_ON_PRIMITIVES;
+
+// `Object.getOwnPropertyDescriptor` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
+$({ target: 'Object', stat: true, forced: FORCED, sham: !DESCRIPTORS }, {
+  getOwnPropertyDescriptor: function getOwnPropertyDescriptor(it, key) {
+    return nativeGetOwnPropertyDescriptor(toIndexedObject(it), key);
+  }
+});
+
+
+/***/ }),
+
+/***/ 8482:
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+var $ = __webpack_require__(6887);
+var DESCRIPTORS = __webpack_require__(5746);
+var ownKeys = __webpack_require__(1136);
+var toIndexedObject = __webpack_require__(4529);
+var getOwnPropertyDescriptorModule = __webpack_require__(9677);
+var createProperty = __webpack_require__(5449);
+
+// `Object.getOwnPropertyDescriptors` method
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptors
+$({ target: 'Object', stat: true, sham: !DESCRIPTORS }, {
+  getOwnPropertyDescriptors: function getOwnPropertyDescriptors(object) {
+    var O = toIndexedObject(object);
+    var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
+    var keys = ownKeys(O);
+    var result = {};
+    var index = 0;
+    var key, descriptor;
+    while (keys.length > index) {
+      descriptor = getOwnPropertyDescriptor(O, key = keys[index++]);
+      if (descriptor !== undefined) createProperty(result, key, descriptor);
+    }
+    return result;
+  }
+});
+
+
+/***/ }),
+
 /***/ 7405:
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
@@ -8540,6 +8654,36 @@ module.exports = parent;
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var parent = __webpack_require__(8171);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 9427:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(286);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 2857:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(2766);
+
+module.exports = parent;
+
+
+/***/ }),
+
+/***/ 9534:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var parent = __webpack_require__(498);
 
 module.exports = parent;
 
@@ -42073,8 +42217,8 @@ var external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_s
 // EXTERNAL MODULE: ./node_modules/fabric/dist/fabric.js
 var fabric = __webpack_require__(2777);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/keys.js
-var keys = __webpack_require__(6902);
-var keys_default = /*#__PURE__*/__webpack_require__.n(keys);
+var object_keys = __webpack_require__(6902);
+var keys_default = /*#__PURE__*/__webpack_require__.n(object_keys);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayWithHoles.js
 
 function _arrayWithHoles(arr) {
@@ -42527,7 +42671,7 @@ var defaultResizePixelValues = {
   max: 4088,
   value: 800
 };
-var googleFonts = ['Alef', 'Alegreya', 'Alegreya Sans', 'Allerta Stencil', 'Anonymous Pro', 'Archivo Narrow', 'Arvo', 'Audiowide', 'Barlow', 'Bitter', 'Bungee', 'Bungee Inline', 'Bungee Shade', 'Cabin', 'Cardo', 'Caveat', 'Caveat Brush', 'Chivo', 'Codystar', 'Cormorant', 'Covered By Your Grace', 'OpenSans', 'Creepster', 'Crimson Text', 'DM Sans', 'Domine', 'Eczar', 'EB Garamond', 'Eraser', 'Ewert', 'Faster One', 'Fira Sans', 'Gochi Hand', 'Hammersmith One', 'Heebo', 'Homemade Apple', 'Inconsolata', 'Inknut Antiqua', 'Inter', 'Just Me Again Down Here', 'Karla', 'Kranky', 'Krub', 'Lato', 'Libre Baskerville', 'Libre Franklin', 'Londrina Outline', 'Londrina Shadow', 'Lora', 'Loved by the King', 'Megrim', 'Merriweather', 'Monoton', 'Montserrat', 'Montserrat Subrayada', 'Motorway', 'Mountains of Christmas', 'Neuton', 'Nosifer', 'Nothing You Could Do', 'Noto Sans', 'Noto Sans SC', 'Open Sans', 'Oswald', 'Patrick Hand SC', 'Permanent Marker', 'Playfair Display', 'Poppins', 'Prompt', 'Proza Libre', 'PT Sans', 'PT Serif', 'Raleway', 'Raleway Dots', 'Reenie Beanie', 'Rock Salt', 'Roboto', 'Roboto Slab', 'Rye', 'Sriracha', 'Source Sans Pro', 'Space Mono', 'Spectral', 'Tangerine', 'Vast Shadow', 'Waiting for the Sunrise', 'Work Sans', 'Yeon Sung']; // We need this to load default font without fetch them from Google Font
+var googleFonts = ['Alef', 'Alegreya', 'Alegreya Sans', 'Allerta Stencil', 'Anonymous Pro', 'Archivo Narrow', 'Arvo', 'Audiowide', 'Barlow', 'Bitter', 'Bungee', 'Bungee Inline', 'Bungee Shade', 'Cabin', 'Cardo', 'Caveat', 'Caveat Brush', 'Chivo', 'Codystar', 'Cormorant', 'Covered By Your Grace', 'Creepster', 'Crimson Text', 'DM Sans', 'Domine', 'Eczar', 'EB Garamond', 'Eraser', 'Ewert', 'Faster One', 'Fira Sans', 'Gochi Hand', 'Hammersmith One', 'Heebo', 'Homemade Apple', 'Inconsolata', 'Inknut Antiqua', 'Inter', 'Just Me Again Down Here', 'Karla', 'Kranky', 'Krub', 'Lato', 'Libre Baskerville', 'Libre Franklin', 'Londrina Outline', 'Londrina Shadow', 'Lora', 'Loved by the King', 'Megrim', 'Merriweather', 'Monoton', 'Montserrat', 'Montserrat Subrayada', 'Motorway', 'Mountains of Christmas', 'Neuton', 'Nosifer', 'Nothing You Could Do', 'Noto Sans', 'Noto Sans SC', 'Open Sans', 'Oswald', 'Patrick Hand SC', 'Permanent Marker', 'Playfair Display', 'Poppins', 'Prompt', 'Proza Libre', 'PT Sans', 'PT Serif', 'Raleway', 'Raleway Dots', 'Reenie Beanie', 'Rock Salt', 'Roboto', 'Roboto Slab', 'Rye', 'Sriracha', 'Source Sans Pro', 'Space Mono', 'Spectral', 'Tangerine', 'Vast Shadow', 'Waiting for the Sunrise', 'Work Sans', 'Yeon Sung']; // We need this to load default font without fetch them from Google Font
 
 var displayFonts = sort_default()(_context2 = concat_default()(_context3 = slice_default()(googleFonts).call(googleFonts)).call(_context3, 'Times New Roman')).call(_context2);
 ;// CONCATENATED MODULE: ./src/js/util.js
@@ -44371,6 +44515,18 @@ var Theme = /*#__PURE__*/function () {
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/reflect/construct.js
 var construct = __webpack_require__(1068);
 var construct_default = /*#__PURE__*/__webpack_require__.n(construct);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-symbols.js
+var get_own_property_symbols = __webpack_require__(4310);
+var get_own_property_symbols_default = /*#__PURE__*/__webpack_require__.n(get_own_property_symbols);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
+var filter = __webpack_require__(116);
+var filter_default = /*#__PURE__*/__webpack_require__.n(filter);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor.js
+var get_own_property_descriptor = __webpack_require__(4074);
+var get_own_property_descriptor_default = /*#__PURE__*/__webpack_require__.n(get_own_property_descriptor);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors.js
+var get_own_property_descriptors = __webpack_require__(9649);
+var get_own_property_descriptors_default = /*#__PURE__*/__webpack_require__.n(get_own_property_descriptors);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js/object/create.js
 var object_create = __webpack_require__(189);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js/object/set-prototype-of.js
@@ -45315,7 +45471,7 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'shape-rectangle', true), "\n                </div>\n                <label> ")).call(_context8, locale.localize('Rectangle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    ")).call(_context7, makeSvgIcon(['normal', 'active'], 'shape-circle', true), "\n                </div>\n                <label> ")).call(_context6, locale.localize('Circle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    ")).call(_context5, makeSvgIcon(['normal', 'active'], 'shape-triangle', true), "\n                </div>\n                <label> ")).call(_context4, locale.localize('Triangle'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-shape-color-button\">\n            <div class=\"tie-color-fill\" title=\"")).call(_context3, locale.localize('Fill'), "\"></div>\n            <div class=\"tie-color-stroke\" title=\"")).call(_context2, locale.localize('Stroke'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Stroke'), "</label>\n            <div class=\"tie-stroke-range\"></div>\n            <input class=\"tie-stroke-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n");
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'shape-rectangle', true), "\n                </div>\n                <label> ")).call(_context8, locale.localize('Rectangle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    ")).call(_context7, makeSvgIcon(['normal', 'active'], 'shape-circle', true), "\n                </div>\n                <label> ")).call(_context6, locale.localize('Circle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    ")).call(_context5, makeSvgIcon(['normal', 'active'], 'shape-triangle', true), "\n                </div>\n                <label> ")).call(_context4, locale.localize('Triangle'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-shape-color-button\">\n            <div class=\"tie-color-fill\" title=\"")).call(_context3, locale.localize('Background Color'), "\"></div>\n            <div class=\"tie-color-stroke\" title=\"")).call(_context2, locale.localize('Border Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Stroke'), "</label>\n            <div class=\"tie-stroke-range\"></div>\n            <input class=\"tie-stroke-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Stroke Width</span>\n        </li>\n         <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">X</span>        \n            <div class=\"tie-skewx-shape-range\"></div>\n            <input class=\"tie-skewx-shape-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-shape-range\"></div>\n            <input class=\"tie-skewy-shape-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Skew</span>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/shape.js
 
@@ -45324,6 +45480,16 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
 
 
 
+
+
+
+
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); enumerableOnly && (symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : (get_own_property_descriptors_default()) ? Object.defineProperties(target, get_own_property_descriptors_default()(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, get_own_property_descriptor_default()(source, key)); }); } return target; }
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
@@ -45337,9 +45503,15 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(c
 
 
 var SHAPE_DEFAULT_OPTION = {
-  stroke: '#ffbb3b',
-  fill: '',
-  strokeWidth: 3
+  stroke: '#00a9ff',
+  fill: '#ffbb3b',
+  strokeWidth: 3,
+  width: 200,
+  height: 200,
+  scaleX: 1,
+  scaleY: 1,
+  skewY: 0,
+  skewX: 0
 };
 /**
  * Shape ui class
@@ -45379,6 +45551,14 @@ var Shape = /*#__PURE__*/function (_Submenu) {
         slider: _this.selector('.tie-stroke-range'),
         input: _this.selector('.tie-stroke-range-value')
       }, defaultShapeStrokeValues),
+      skewX: new range({
+        slider: _this.selector('.tie-skewx-shape-range'),
+        input: _this.selector('.tie-skewx-shape-range-value')
+      }, defaultSkewRangeValues),
+      skewY: new range({
+        slider: _this.selector('.tie-skewy-shape-range'),
+        input: _this.selector('.tie-skewy-shape-range-value')
+      }, defaultSkewRangeValues),
       fillColorpicker: new colorpicker(_this.selector('.tie-color-fill'), {
         defaultColor: '',
         toggleDirection: _this.toggleDirection,
@@ -45415,6 +45595,10 @@ var Shape = /*#__PURE__*/function (_Submenu) {
 
       this._els.strokeRange.destroy();
 
+      this._els.skewX.destroy();
+
+      this._els.skewY.destroy();
+
       this._els.fillColorpicker.destroy();
 
       this._els.strokeColorpicker.destroy();
@@ -45439,6 +45623,10 @@ var Shape = /*#__PURE__*/function (_Submenu) {
       this._els.shapeSelectButton.addEventListener('click', this.eventHandler.shapeTypeSelected);
 
       this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
+
+      this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
+
+      this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this));
 
       this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
 
@@ -45467,6 +45655,10 @@ var Shape = /*#__PURE__*/function (_Submenu) {
 
       this._els.strokeRange.off();
 
+      this._els.skewX.off();
+
+      this._els.skewY.off();
+
       this._els.fillColorpicker.off();
 
       this._els.strokeColorpicker.off();
@@ -45489,15 +45681,23 @@ var Shape = /*#__PURE__*/function (_Submenu) {
     value: function setShapeStatus(_ref2) {
       var strokeWidth = _ref2.strokeWidth,
           strokeColor = _ref2.strokeColor,
-          fillColor = _ref2.fillColor;
+          fillColor = _ref2.fillColor,
+          skewX = _ref2.skewX,
+          skewY = _ref2.skewY;
       this._els.strokeRange.value = strokeWidth;
+      this._els.skewX.value = skewX;
+      this._els.skewY.value = skewY;
       this._els.strokeColorpicker.color = strokeColor;
       this._els.fillColorpicker.color = fillColor;
       this.options.stroke = strokeColor;
       this.options.fill = fillColor;
       this.options.strokeWidth = strokeWidth;
+      this.options.skewX = skewX;
+      this.options.skewY = skewY;
       this.actions.setDrawingShape(this.type, {
-        strokeWidth: strokeWidth
+        strokeWidth: strokeWidth,
+        skewX: skewX,
+        skewY: skewY
       });
     }
     /**
@@ -45553,6 +45753,21 @@ var Shape = /*#__PURE__*/function (_Submenu) {
 
       this._els.strokeRange.trigger('change');
     }
+  }, {
+    key: "skewX",
+    set: function set(value) {
+      this._els.skewX.value = value;
+    }
+    /**
+     * Set skew size
+     * @param {Number} value - text size
+     */
+
+  }, {
+    key: "skewY",
+    set: function set(value) {
+      this._els.skewY.value = value;
+    }
     /**
      * Get stroke value
      * @returns {number} - stroke range value
@@ -45575,20 +45790,24 @@ var Shape = /*#__PURE__*/function (_Submenu) {
       var button = event.target.closest('.tui-image-editor-button');
 
       if (button) {
-        this.actions.stopDrawingMode();
-        this.actions.discardSelection();
         var shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
-
-        if (this.type === shapeType) {
-          this.changeStandbyMode();
-          return;
-        }
-
-        this.changeStandbyMode();
         this.type = shapeType;
-        event.currentTarget.classList.add(shapeType);
-        this.actions.changeSelectableAll(false);
-        this.actions.modeChange('shape');
+        this.actions.addNewShape(shapeType, shapeType === 'circle' ? _objectSpread(_objectSpread({}, SHAPE_DEFAULT_OPTION), {}, {
+          rx: 100,
+          ry: 100
+        }) : SHAPE_DEFAULT_OPTION);
+        return; // this.actions.stopDrawingMode();
+        // this.actions.discardSelection();
+        // if (this.type === shapeType) {
+        //   this.changeStandbyMode();
+        //
+        //   return;
+        // }
+        // this.changeStandbyMode();
+        // this.type = shapeType;
+        // event.currentTarget.classList.add(shapeType);
+        // this.actions.changeSelectableAll(false);
+        // this.actions.modeChange('shape');
       }
     }
     /**
@@ -45601,11 +45820,41 @@ var Shape = /*#__PURE__*/function (_Submenu) {
   }, {
     key: "_changeStrokeRangeHandler",
     value: function _changeStrokeRangeHandler(value, isLast) {
-      this.options.strokeWidth = toInteger(value);
+      // this.options.strokeWidth = toInteger(value);
       this.actions.changeShape({
         strokeWidth: value
       }, !isLast);
       this.actions.setDrawingShape(this.type, this.options);
+    }
+    /**
+     * skew x set handler
+     * @param {number} value - range value
+     * @param {boolean} isLast - Is last change
+     * @private
+     */
+
+  }, {
+    key: "_changeSkewXRangeHandler",
+    value: function _changeSkewXRangeHandler(value, isLast) {
+      // this.options.skewX = value;
+      this.actions.changeShape({
+        skewX: value
+      }, !isLast);
+    }
+    /**
+     * skew y align set handler
+     * @param {number} value - range value
+     * @param {boolean} isLast - Is last change
+     * @private
+     */
+
+  }, {
+    key: "_changeSkewYRangeHandler",
+    value: function _changeSkewYRangeHandler(value, isLast) {
+      // this.options.skewY = value;
+      this.actions.changeShape({
+        skewY: value
+      }, !isLast);
     }
     /**
      * Change shape color
@@ -46513,11 +46762,11 @@ var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context10, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <select class=\"tie-font-family-select\">\n                ")).call(_context9, map_default()(displayFonts).call(displayFonts, function (fontName) {
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context10, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <div class=\"font-family-wrapper\">\n              <select class=\"tie-font-family-select\"></select>\n              <div class=\"selected-font\">Select Font</div>\n              <div class=\"font-family-list\">\n                <ul>\n                ")).call(_context9, map_default()(displayFonts).call(displayFonts, function (fontName) {
     var _context15, _context16;
 
-    return concat_default()(_context15 = concat_default()(_context16 = "<option style=\"font-family: ".concat(fontName, "\" value=\"")).call(_context16, fontName, "\">")).call(_context15, fontName, "</option>");
-  }).join(''), "\n            </select>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context4, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context3, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context2, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">Skew X</span>        \n            <div class=\"tie-skewx-range\"></div>\n            <input class=\"tie-skewx-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Skew Y</span>\n            <div class=\"tie-skewy-range\"></div>\n            <input class=\"tie-skewy-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"submenu-buttons\">\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n            <button class=\"tie-fallback-label\">Add Fallback Labels</button>\n        </li>\n    </ul>\n");
+    return concat_default()(_context15 = concat_default()(_context16 = "<li class=\"font-family-item\" style=\"font-family: ".concat(fontName, "\" data-value=\"")).call(_context16, fontName, "\">")).call(_context15, fontName, "</li>");
+  }).join(''), "\n                </ul>\n              </div>\n            </div>\n          </div>\n        </li>\n        <li class=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    ")).call(_context8, makeSvgIcon(['normal', 'active'], 'text-align-left', true), "\n                </div>\n                <label> ")).call(_context7, locale.localize('Left'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    ")).call(_context6, makeSvgIcon(['normal', 'active'], 'text-align-center', true), "\n                </div>\n                <label> ")).call(_context5, locale.localize('Center'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    ")).call(_context4, makeSvgIcon(['normal', 'active'], 'text-align-right', true), "\n                </div>\n                <label> ")).call(_context3, locale.localize('Right'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-text-color\" title=\"")).call(_context2, locale.localize('Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Text size'), "</label>\n            <div class=\"tie-text-range\"></div>\n            <input class=\"tie-text-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">Skew X</span>        \n            <div class=\"tie-skewx-range\"></div>\n            <input class=\"tie-skewx-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Skew Y</span>\n            <div class=\"tie-skewy-range\"></div>\n            <input class=\"tie-skewy-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"submenu-buttons\">\n            <button class=\"tie-add-new-text-button\">Add New Text</button>\n            <button class=\"tie-fallback-label\">Add Fallback Labels</button>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/text.js
 
@@ -46579,6 +46828,9 @@ var Text = /*#__PURE__*/function (_Submenu) {
       textAddNewTextButton: _this.selector('.tie-add-new-text-button'),
       addFallbackLabels: _this.selector('.tie-fallback-label'),
       textFontFamily: _this.selector('.tie-font-family-select'),
+      fontFamilyList: _this.selector('.font-family-list'),
+      fontName: _this.selector('.selected-font'),
+      fontFamilyWrapper: _this.selector('.font-family-wrapper'),
       textAlignButton: _this.selector('.tie-text-align-button'),
       textColorpicker: new colorpicker(_this.selector('.tie-text-color'), {
         defaultColor: '#000000',
@@ -46599,7 +46851,9 @@ var Text = /*#__PURE__*/function (_Submenu) {
       }, defaultSkewRangeValues)
     };
     _this.colorPickerInputBox = _this._els.textColorpicker.colorpickerElement.querySelector(selectorNames.COLOR_PICKER_INPUT_BOX);
-    _this._els.textFontFamily.style.fontFamily = 'Alef'; // init style for select
+    _this._els.fontName.style.fontFamily = 'Alef'; // init style for select
+
+    _this._els.fontName.innerHTML = 'Alef'; // init style for select
 
     return _this;
   }
@@ -46638,9 +46892,15 @@ var Text = /*#__PURE__*/function (_Submenu) {
 
       var setFontFamily = this._changeFontFamilyHandler.bind(this);
 
+      var selectFontFamily = this._selectFontFamily.bind(this);
+
+      var clickFontFamily = this._clickFontFamily.bind(this);
+
       var callAddNewText = this._addNewTextHandler.bind(this);
 
       var callAddFallbackLabels = this._addFallbackLabels.bind(this);
+
+      var hideSelect = this._hideFontFamily.bind(this);
 
       this.eventHandler = {
         setTextEffect: setTextEffect,
@@ -46661,6 +46921,10 @@ var Text = /*#__PURE__*/function (_Submenu) {
 
       this._els.textFontFamily.addEventListener('change', setFontFamily);
 
+      this._els.fontFamilyWrapper.addEventListener('click', clickFontFamily);
+
+      this._els.fontFamilyList.addEventListener('click', selectFontFamily);
+
       this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
 
       this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
@@ -46671,6 +46935,7 @@ var Text = /*#__PURE__*/function (_Submenu) {
 
       this.colorPickerInputBox.addEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
       this.colorPickerInputBox.addEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
+      document.addEventListener('click', hideSelect);
     }
     /**
      * Remove event
@@ -46685,7 +46950,9 @@ var Text = /*#__PURE__*/function (_Submenu) {
           setTextAlign = _this$eventHandler.setTextAlign,
           setFontFamily = _this$eventHandler.setFontFamily,
           callAddNewText = _this$eventHandler.callAddNewText,
-          callAddFallbackLabels = _this$eventHandler.callAddFallbackLabels;
+          callAddFallbackLabels = _this$eventHandler.callAddFallbackLabels,
+          selectFontFamily = _this$eventHandler.selectFontFamily,
+          hideSelect = _this$eventHandler.hideSelect;
 
       this._els.textEffectButton.removeEventListener('click', setTextEffect);
 
@@ -46697,12 +46964,15 @@ var Text = /*#__PURE__*/function (_Submenu) {
 
       this._els.textFontFamily.removeEventListener('change', setFontFamily);
 
+      this._els.fontFamilyList.removeEventListener('click', selectFontFamily);
+
       this._els.textRange.off();
 
       this._els.textColorpicker.off();
 
       this.colorPickerInputBox.removeEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
       this.colorPickerInputBox.removeEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
+      document.removeEventListener('click', hideSelect);
     }
     /**
      * Returns the menu to its default state.
@@ -46839,7 +47109,8 @@ var Text = /*#__PURE__*/function (_Submenu) {
       this.textColor = fill;
       this.fontSize = fontSize;
       this.fontFamily = fontFamily;
-      this._els.textFontFamily.style.fontFamily = fontFamily;
+      this._els.fontName.style.fontFamily = fontFamily;
+      this._els.fontName.innerHTML = fontFamily;
       this.skewX = skewX;
       this.skewY = skewY;
       this.setEffectState('italic', fontStyle);
@@ -46988,6 +47259,43 @@ var Text = /*#__PURE__*/function (_Submenu) {
       this.actions.changeTextStyle({
         fontFamily: font
       });
+    }
+  }, {
+    key: "_selectFontFamily",
+    value: function _selectFontFamily(event) {
+      event.stopPropagation();
+      var target = event.target;
+      var fontFamily = target.dataset.value;
+
+      if (fontFamily) {
+        this._els.fontName.innerHTML = fontFamily;
+        this._els.fontName.style.fontFamily = fontFamily;
+        this.actions.changeTextStyle({
+          fontFamily: fontFamily
+        });
+      }
+
+      this._hideFontFamily();
+    }
+  }, {
+    key: "_clickFontFamily",
+    value: function _clickFontFamily(event) {
+      event.stopPropagation();
+      var fontName = this._els.fontName.innerHTML;
+      var seletedFont = this.selector("li[data-value=\"".concat(fontName, "\"]"));
+
+      this._els.fontFamilyList.classList.add('active');
+
+      if (seletedFont) {
+        seletedFont.scrollIntoView();
+      }
+    }
+  }, {
+    key: "_hideFontFamily",
+    value: function _hideFontFamily() {
+      console.log('first');
+
+      this._els.fontFamilyList.classList.remove('active');
     }
   }, {
     key: "_addNewTextHandler",
@@ -47428,12 +47736,22 @@ var Logo = /*#__PURE__*/function (_Submenu) {
  * @returns {string}
  */
 /* harmony default export */ var icon = (function (_ref) {
-  var _context, _context2, _context3, _context4, _context5, _context6, _context7, _context8, _context9, _context10, _context11, _context12, _context13, _context14, _context15, _context16, _context17, _context18, _context19, _context20;
+  var _context, _context2, _context3, _context4, _context5, _context6, _context7, _context8, _context9, _context10, _context11, _context12, _context13, _context14, _context15, _context16, _context17, _context18;
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = concat_default()(_context15 = concat_default()(_context16 = concat_default()(_context17 = concat_default()(_context18 = concat_default()(_context19 = concat_default()(_context20 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'icon-arrow', true), "\n                </div>\n                <label>\n                    ")).call(_context20, locale.localize('Arrow'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-2\">\n                <div>\n                    ")).call(_context19, makeSvgIcon(['normal', 'active'], 'icon-arrow-2', true), "\n                </div>\n                <label>\n                    ")).call(_context18, locale.localize('Arrow-2'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-3\">\n                <div>\n                    ")).call(_context17, makeSvgIcon(['normal', 'active'], 'icon-arrow-3', true), "\n                </div>\n                <label>\n                    ")).call(_context16, locale.localize('Arrow-3'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star\">\n                <div>\n                    ")).call(_context15, makeSvgIcon(['normal', 'active'], 'icon-star', true), "\n                </div>\n                <label>\n                    ")).call(_context14, locale.localize('Star-1'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star-2\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'icon-star-2', true), "\n                </div>\n                <label>\n                    ")).call(_context12, locale.localize('Star-2'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-polygon\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'icon-polygon', true), "\n                </div>\n                <label>\n                    ")).call(_context10, locale.localize('Polygon'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-location\">\n                <div>\n                    ")).call(_context9, makeSvgIcon(['normal', 'active'], 'icon-location', true), "\n                </div>\n                <label>\n                    ")).call(_context8, locale.localize('Location'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-heart\">\n                <div>\n                    ")).call(_context7, makeSvgIcon(['normal', 'active'], 'icon-heart', true), "\n                </div>\n                <label>\n                    ")).call(_context6, locale.localize('Heart'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-bubble\">\n                <div>\n                    ")).call(_context5, makeSvgIcon(['normal', 'active'], 'icon-bubble', true), "\n                </div>\n                <label>\n                    ")).call(_context4, locale.localize('Bubble'), "\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" style=\"margin:0\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" class=\"tie-icon-image-file\">\n                    ")).call(_context3, makeSvgIcon(['normal', 'active'], 'icon-load', true), "\n                </div>\n                <label>\n                    ")).call(_context2, locale.localize('Custom icon'), "\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tie-icon-color\" title=\"")).call(_context, locale.localize('Color'), "\"></div>\n        </li>\n    </ul>\n");
-});
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = concat_default()(_context15 = concat_default()(_context16 = concat_default()(_context17 = concat_default()(_context18 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'icon-arrow', true), "\n                </div>\n                <label>\n                    ")).call(_context18, locale.localize('Arrow'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-2\">\n                <div>\n                    ")).call(_context17, makeSvgIcon(['normal', 'active'], 'icon-arrow-2', true), "\n                </div>\n                <label>\n                    ")).call(_context16, locale.localize('Arrow-2'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-3\">\n                <div>\n                    ")).call(_context15, makeSvgIcon(['normal', 'active'], 'icon-arrow-3', true), "\n                </div>\n                <label>\n                    ")).call(_context14, locale.localize('Arrow-3'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'icon-star', true), "\n                </div>\n                <label>\n                    ")).call(_context12, locale.localize('Star-1'), "\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star-2\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'icon-star-2', true), "\n                </div>\n                <label>\n                    ")).call(_context10, locale.localize('Star-2'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-polygon\">\n                <div>\n                    ")).call(_context9, makeSvgIcon(['normal', 'active'], 'icon-polygon', true), "\n                </div>\n                <label>\n                    ")).call(_context8, locale.localize('Polygon'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-location\">\n                <div>\n                    ")).call(_context7, makeSvgIcon(['normal', 'active'], 'icon-location', true), "\n                </div>\n                <label>\n                    ")).call(_context6, locale.localize('Location'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-heart\">\n                <div>\n                    ")).call(_context5, makeSvgIcon(['normal', 'active'], 'icon-heart', true), "\n                </div>\n                <label>\n                    ")).call(_context4, locale.localize('Heart'), "\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-bubble\">\n                <div>\n                    ")).call(_context3, makeSvgIcon(['normal', 'active'], 'icon-bubble', true), "\n                </div>\n                <label>\n                    ")).call(_context2, locale.localize('Bubble'), "\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n  \n        <li>\n            <div class=\"tie-icon-color\" title=\"")).call(_context, locale.localize('Color'), "\"></div>\n        </li>\n         <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">X</span>        \n            <div class=\"tie-skewx-icon-range\"></div>\n            <input class=\"tie-skewx-icon-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-icon-range\"></div>\n            <input class=\"tie-skewy-icon-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Skew</span>\n        </li>\n    </ul>\n");
+}); // <li className="tie-icon-add-button">
+//     <div className="tui-image-editor-button" style="margin:0">
+//         <div>
+//             <input type="file" accept="image/!*" className="tie-icon-image-file">
+//                 ${makeSvgIcon(['normal', 'active'], 'icon-load', true)}
+//         </div>
+//         <label>
+//             ${locale.localize('Custom icon')}
+//         </label>
+//     </div>
+// </li>
 ;// CONCATENATED MODULE: ./src/js/ui/icon.js
 
 
@@ -47454,11 +47772,20 @@ function icon_isNativeReflectConstruct() { if (typeof Reflect === "undefined" ||
 
 
 
+
 /**
  * Icon ui class
  * @class
  * @ignore
  */
+
+var ICON_DEFAULT_OPTION = {
+  left: 200,
+  top: 200,
+  fill: '#ffbb3b',
+  skewY: 0,
+  skewX: 0
+};
 
 var Icon = /*#__PURE__*/function (_Submenu) {
   _inherits(Icon, _Submenu);
@@ -47486,13 +47813,21 @@ var Icon = /*#__PURE__*/function (_Submenu) {
     _this.iconType = null;
     _this._iconMap = {};
     _this._els = {
-      registerIconButton: _this.selector('.tie-icon-image-file'),
+      // registerIconButton: this.selector('.tie-icon-image-file'),
       addIconButton: _this.selector('.tie-icon-add-button'),
       iconColorpicker: new colorpicker(_this.selector('.tie-icon-color'), {
         defaultColor: '#ffbb3b',
         toggleDirection: _this.toggleDirection,
         usageStatistics: _this.usageStatistics
-      })
+      }),
+      skewX: new range({
+        slider: _this.selector('.tie-skewx-icon-range'),
+        input: _this.selector('.tie-skewx-icon-range-value')
+      }, defaultSkewRangeValues),
+      skewY: new range({
+        slider: _this.selector('.tie-skewy-icon-range'),
+        input: _this.selector('.tie-skewy-icon-range-value')
+      }, defaultSkewRangeValues)
     };
     _this.colorPickerInputBox = _this._els.iconColorpicker.colorpickerElement.querySelector(selectorNames.COLOR_PICKER_INPUT_BOX);
     return _this;
@@ -47534,7 +47869,10 @@ var Icon = /*#__PURE__*/function (_Submenu) {
 
       this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
 
-      this._els.registerIconButton.addEventListener('change', registerIcon);
+      this._els.skewX.on('change', this._changeSkewXRangeHandler.bind(this));
+
+      this._els.skewY.on('change', this._changeSkewYRangeHandler.bind(this)); // this._els.registerIconButton.addEventListener('change', registerIcon);
+
 
       this._els.addIconButton.addEventListener('click', addIcon);
 
@@ -47549,9 +47887,8 @@ var Icon = /*#__PURE__*/function (_Submenu) {
   }, {
     key: "_removeEvent",
     value: function _removeEvent() {
-      this._els.iconColorpicker.off();
+      this._els.iconColorpicker.off(); // this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
 
-      this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
 
       this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
 
@@ -47615,6 +47952,30 @@ var Icon = /*#__PURE__*/function (_Submenu) {
       this.actions.changeColor(color);
     }
     /**
+     * skew x set handler
+     * @param {number} value - range value
+     * @param {boolean} isLast - Is last change
+     * @private
+     */
+
+  }, {
+    key: "_changeSkewXRangeHandler",
+    value: function _changeSkewXRangeHandler(value, isLast) {
+      console.log('skew-change');
+    }
+    /**
+     * skew y align set handler
+     * @param {number} value - range value
+     * @param {boolean} isLast - Is last change
+     * @private
+     */
+
+  }, {
+    key: "_changeSkewYRangeHandler",
+    value: function _changeSkewYRangeHandler(value, isLast) {
+      console.log('skew-change');
+    }
+    /**
      * Change icon color
      * @param {object} event - add button event object
      * @private
@@ -47623,6 +47984,7 @@ var Icon = /*#__PURE__*/function (_Submenu) {
   }, {
     key: "_addIconHandler",
     value: function _addIconHandler(event) {
+      debugger;
       var button = event.target.closest('.tui-image-editor-button');
 
       if (button) {
@@ -47638,7 +48000,7 @@ var Icon = /*#__PURE__*/function (_Submenu) {
         if (this.iconType === iconType) {
           this.changeStandbyMode();
         } else {
-          this.actions.addIcon(iconType, iconColor);
+          this.actions.addIcon(iconType, ICON_DEFAULT_OPTION);
           this.iconType = iconType;
         }
       }
@@ -47923,7 +48285,7 @@ var Draw = /*#__PURE__*/function (_Submenu) {
  * @param {Locale} locale - Translate text
  * @returns {string}
  */
-/* harmony default export */ var filter = (function (_ref) {
+/* harmony default export */ var submenu_filter = (function (_ref) {
   var _context, _context2, _context3, _context4, _context5, _context6, _context7, _context8, _context9, _context10, _context11, _context12, _context13, _context14, _context15, _context16;
 
   var locale = _ref.locale;
@@ -48000,7 +48362,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
       locale: locale,
       name: 'filter',
       menuBarPosition: menuBarPosition,
-      templateHtml: filter,
+      templateHtml: submenu_filter,
       usageStatistics: usageStatistics
     });
     _this.selectBoxShow = false;
@@ -48644,11 +49006,11 @@ var Ui = /*#__PURE__*/function () {
         selectionStyle: {
           cornerStyle: 'circle',
           cornerSize: 16,
-          cornerColor: '#fff',
-          cornerStrokeColor: '#fff',
+          cornerColor: '#0057FF',
+          cornerStrokeColor: '#0057FF',
           transparentCorners: false,
           lineWidth: 2,
-          borderColor: '#fff'
+          borderColor: '#0057FF'
         }
       }, option);
     }
@@ -49558,9 +49920,6 @@ var Ui = /*#__PURE__*/function () {
 
 CustomEvents.mixin(Ui);
 /* harmony default export */ var ui = (Ui);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
-var instance_filter = __webpack_require__(116);
-var filter_default = /*#__PURE__*/__webpack_require__.n(instance_filter);
 ;// CONCATENATED MODULE: ./src/js/helper/imagetracer.js
 
 
@@ -51260,10 +51619,10 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
           _this2.changeIconColor(_this2.activeObjectId, color);
         }
       },
-      addIcon: function addIcon(iconType, iconColor) {
-        _this2.startDrawingMode('ICON');
-
-        _this2.setDrawingIcon(iconType, iconColor);
+      addIcon: function addIcon(iconType, defaultIconOptions) {
+        // this.startDrawingMode('ICON');
+        // this.setDrawingIcon(iconType, iconColor);
+        _this2._addNewIcon(iconType, defaultIconOptions);
       },
       cancelAddIcon: function cancelAddIcon() {
         _this2.ui.icon.clearIconType();
@@ -51466,6 +51825,9 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
       },
       setDrawingShape: function setDrawingShape(shapeType) {
         _this8.setDrawingShape(shapeType);
+      },
+      addNewShape: function addNewShape(shapeType, shapeDefaultOptions) {
+        _this8._onAddNewShape(shapeType, shapeDefaultOptions);
       }
     }, this._commonAction());
   },
@@ -51764,7 +52126,9 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
           _this13.ui.shape.setShapeStatus({
             strokeColor: obj.stroke,
             strokeWidth: obj.strokeWidth,
-            fillColor: fill_default()(obj)
+            fillColor: fill_default()(obj),
+            skewX: obj.skewX,
+            skewY: obj.skewY
           });
 
           _this13.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
@@ -55025,24 +55389,22 @@ var icon_Icon = /*#__PURE__*/function (_Component) {
 
   }, {
     key: "_onFabricMouseDown",
-    value: function _onFabricMouseDown(fEvent) {
-      var _this4 = this;
-
-      var canvas = this.getCanvas();
-      this._startPoint = canvas.getPointer(fEvent.e);
-      var _this$_startPoint = this._startPoint,
-          left = _this$_startPoint.x,
-          top = _this$_startPoint.y;
-      this.add(this._type, {
-        left: left,
-        top: top,
-        fill: this._iconColor
-      }).then(function () {
-        _this4.fire(eventNames.ADD_OBJECT, _this4.graphics.createObjectProperties(_this4._icon));
-
-        canvas.on('mouse:move', _this4._handlers.mousemove);
-        canvas.on('mouse:up', _this4._handlers.mouseup);
-      });
+    value: function _onFabricMouseDown(fEvent) {// const canvas = this.getCanvas();
+      //
+      // this._startPoint = canvas.getPointer(fEvent.e);
+      // const { x: left, y: top } = this._startPoint;
+      //
+      // this.add(this._type, {
+      //   left,
+      //   top,
+      //   fill: this._iconColor,
+      //   skewY: 30,
+      //   skewX: 20,
+      // }).then(() => {
+      //   this.fire(events.ADD_OBJECT, this.graphics.createObjectProperties(this._icon));
+      //   canvas.on('mouse:move', this._handlers.mousemove);
+      //   canvas.on('mouse:up', this._handlers.mouseup);
+      // });
     }
     /**
      * MouseMove event handler on canvas
@@ -55081,6 +55443,7 @@ var icon_Icon = /*#__PURE__*/function (_Component) {
     key: "_onFabricMouseUp",
     value: function _onFabricMouseUp() {
       var canvas = this.getCanvas();
+      console.log(this._icon);
       this.fire(eventNames.OBJECT_ADDED, this.graphics.createObjectProperties(this._icon));
       this._icon = null;
       canvas.off('mouse:down', this._handlers.mousedown);
@@ -56324,7 +56687,9 @@ var SHAPE_INIT_OPTIONS = (0,external_commonjs_tui_code_snippet_commonjs2_tui_cod
   width: 1,
   height: 1,
   rx: 0,
-  ry: 0
+  ry: 0,
+  skewX: 0,
+  skewY: 0
 }, SHAPE_DEFAULT_OPTIONS);
 var DEFAULT_TYPE = 'rect';
 var DEFAULT_WIDTH = 20;
@@ -60206,7 +60571,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "createObjectProperties",
     value: function createObjectProperties(obj) {
-      var predefinedKeys = ['left', 'top', 'width', 'height', 'fill', 'stroke', 'strokeWidth', 'opacity', 'angle'];
+      var predefinedKeys = ['left', 'top', 'width', 'height', 'fill', 'stroke', 'strokeWidth', 'opacity', 'angle', 'skewX', 'skewY'];
       var props = {
         id: stamp(obj),
         type: obj.type
@@ -60476,6 +60841,7 @@ graphics_CustomEvents.mixin(Graphics);
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image-editor application class
  */
+
 
 
 
@@ -62056,17 +62422,13 @@ var ImageEditor = /*#__PURE__*/function () {
                   },
                   autofocus: false
                 }).then(function (newText) {
-                  var left = newText.left,
-                      top = newText.top,
-                      width = newText.width,
-                      height = newText.height;
-                  var activeObj = canvas.getActiveObject();
-                  activeObj.set({
-                    left: left - Math.floor(width / 2),
-                    top: top - Math.floor(height / 2)
-                  });
-                  canvas.requestRenderAll();
-
+                  // const { left, top, width, height } = newText;
+                  // const activeObj = canvas.getActiveObject();
+                  // activeObj.set({
+                  //   left: left - Math.floor(width / 2),
+                  //   top: top - Math.floor(height / 2),
+                  // });
+                  // canvas.requestRenderAll();
                   _this6.fire(ADD_NEW_TEXT, newText);
                 });
 
@@ -62083,6 +62445,83 @@ var ImageEditor = /*#__PURE__*/function () {
       }
 
       return _onAddNewText;
+    }()
+  }, {
+    key: "_onAddNewShape",
+    value: function () {
+      var _onAddNewShape2 = _asyncToGenerator( /*#__PURE__*/regenerator_default().mark(function _callee3(shapeType, shapeDefaultOptions) {
+        var canvas;
+        return regenerator_default().wrap(function _callee3$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                console.log('new shape will be added here', shapeType);
+                canvas = this.getCanvasInstance();
+                canvas.discardActiveObject();
+                _context7.next = 5;
+                return this.addShape(shapeType, shapeDefaultOptions).then(function (newShape) {// canvas.requestRenderAll();
+                  // console.log(newShape);
+                  // const { left, top, width, height } = newShape;
+                  // const activeObj = canvas.getActiveObject();
+                  // activeObj.set({
+                  //   left: left - Math.floor(width / 2),
+                  //   top: top - Math.floor(height / 2),
+                  // });
+                  // resizeHelper.resize(newShape);
+                  // canvas.requestRenderAll();
+                });
+
+              case 5:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function _onAddNewShape(_x3, _x4) {
+        return _onAddNewShape2.apply(this, arguments);
+      }
+
+      return _onAddNewShape;
+    }()
+  }, {
+    key: "_addNewIcon",
+    value: function () {
+      var _addNewIcon2 = _asyncToGenerator( /*#__PURE__*/regenerator_default().mark(function _callee4(iconType, iconDefaultOptions) {
+        var canvas;
+        return regenerator_default().wrap(function _callee4$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                canvas = this.getCanvasInstance();
+                canvas.discardActiveObject();
+                _context8.next = 4;
+                return this.addIcon(iconType, iconDefaultOptions).then(function (newShape) {// canvas.requestRenderAll();
+                  // console.log(newShape);
+                  // const { left, top, width, height } = newShape;
+                  // const activeObj = canvas.getActiveObject();
+                  // activeObj.set({
+                  //   left: left - Math.floor(width / 2),
+                  //   top: top - Math.floor(height / 2),
+                  // });
+                  // resizeHelper.resize(newShape);
+                  // canvas.requestRenderAll();
+                });
+
+              case 4:
+              case "end":
+                return _context8.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function _addNewIcon(_x5, _x6) {
+        return _addNewIcon2.apply(this, arguments);
+      }
+
+      return _addNewIcon;
     }()
   }, {
     key: "_onSaveAsTemplate",

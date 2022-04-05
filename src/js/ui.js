@@ -120,11 +120,11 @@ class Ui {
         selectionStyle: {
           cornerStyle: 'circle',
           cornerSize: 16,
-          cornerColor: '#fff',
-          cornerStrokeColor: '#fff',
+          cornerColor: '#0057FF',
+          cornerStrokeColor: '#0057FF',
           transparentCorners: false,
           lineWidth: 2,
-          borderColor: '#fff',
+          borderColor: '#0057FF',
         },
       },
       option
