@@ -12,10 +12,10 @@ export const ZOOM_HELP_MENUS = [
   'zoomIn',
   'zoomOut',
   'hand',
-  'bringForward',
-  'sendBackwards',
-  'sendToBack',
-  'bringToFront',
+  // 'bringForward',
+  // 'sendBackwards',
+  // 'sendToBack',
+  // 'bringToFront',
 ];
 /**
  * Help features for command
@@ -34,7 +34,7 @@ export const DELETE_HELP_MENUS = ['delete', 'deleteAll'];
  * @type {Array.<string>}
  */
 export const HELP_MENUS = [
-  // ...ZOOM_HELP_MENUS,
+  ...ZOOM_HELP_MENUS,
   ...COMMAND_HELP_MENUS,
   //  ...DELETE_HELP_MENUS
 ];
