@@ -1,7 +1,7 @@
 import snippet from 'tui-code-snippet';
 import { getSelector, assignmentForDestroy, cls, getHistoryTitle, isSilentCommand } from '@/util';
 import {
-  // ZOOM_HELP_MENUS,
+  ZOOM_HELP_MENUS,
   COMMAND_HELP_MENUS,
   // DELETE_HELP_MENUS,
   eventNames,
@@ -92,7 +92,7 @@ class Ui {
     this._makeSubMenu();
 
     // this._attachHistoryEvent();
-    // this._attachZoomEvent();
+    this._attachZoomEvent();
   }
 
   /**
@@ -330,13 +330,13 @@ class Ui {
    * Attach zoom event
    * @private
    */
-  // _attachZoomEvent() {
-  //   this.on(eventNames.HAND_STARTED, () => {
-  //     this.offZoomInButtonStatus();
-  //     this.changeHandButtonStatus(true);
-  //   });
-  //   this.on(eventNames.HAND_STOPPED, () => this.changeHandButtonStatus(false));
-  // }
+  _attachZoomEvent() {
+    this.on(eventNames.HAND_STARTED, () => {
+      this.offZoomInButtonStatus();
+      this.changeHandButtonStatus(true);
+    });
+    this.on(eventNames.HAND_STOPPED, () => this.changeHandButtonStatus(false));
+  }
 
   /**
    * Make primary ui dom element
@@ -398,18 +398,18 @@ class Ui {
     //   makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
     // });
 
-    // this._activateZoomMenus();
+    this._activateZoomMenus();
   }
 
   /**
    * Activate help menus for zoom.
    * @private
    */
-  // _activateZoomMenus() {
-  //   snippet.forEach(ZOOM_HELP_MENUS, (menu) => {
-  //     this.changeHelpButtonEnabled(menu, true);
-  //   });
-  // }
+  _activateZoomMenus() {
+    snippet.forEach(ZOOM_HELP_MENUS, (menu) => {
+      this.changeHelpButtonEnabled(menu, true);
+    });
+  }
 
   /**
    * make array for help menu output, including partitions.
@@ -418,7 +418,8 @@ class Ui {
    */
   _makeHelpMenuWithPartition() {
     return [
-      // ...ZOOM_HELP_MENUS, '',
+      ...ZOOM_HELP_MENUS,
+      // '',
       ...COMMAND_HELP_MENUS,
       //  '', ...DELETE_HELP_MENUS
     ];

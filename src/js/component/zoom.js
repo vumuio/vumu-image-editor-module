@@ -32,6 +32,7 @@ const DEFAULT_HORIZONTAL_SCROLL_RATIO = {
   BORDER_RADIUS: 0.003,
 };
 const DEFAULT_ZOOM_LEVEL = 1.0;
+const MIN_ZOOM_LEVEL = 0.25;
 const {
   ZOOM_CHANGED,
   ADD_TEXT,
@@ -80,6 +81,12 @@ class Zoom extends Component {
     this.zoomLevel = DEFAULT_ZOOM_LEVEL;
 
     /**
+     * Minimum zoom level (default: 25%(1.0), max: 400%(4.0))
+     * @type {number}
+     */
+    this.minZoomLevel = MIN_ZOOM_LEVEL;
+
+    /**
      * Zoom mode ('normal', 'zoom', 'hand')
      * @type {string}
      */
@@ -98,8 +105,8 @@ class Zoom extends Component {
       moveHand: this._onMouseMoveWithHandMode.bind(this),
       stopHand: this._onMouseUpWithHandMode.bind(this),
       zoomChanged: this._changeScrollState.bind(this),
-      // keydown: this._startHandModeWithSpaceBar.bind(this),
-      // keyup: this._endHandModeWithSpaceBar.bind(this),
+      keydown: this._startHandModeWithSpaceBar.bind(this),
+      keyup: this._endHandModeWithSpaceBar.bind(this),
     };
 
     const canvas = this.getCanvas();
@@ -168,28 +175,28 @@ class Zoom extends Component {
    * @param {KeyboardEvent} e - Event object
    * @private
    */
-  // _startHandModeWithSpaceBar(e) {
-  //   if (this.withSpace || this.isTextEditing) {
-  //     return;
-  //   }
+  _startHandModeWithSpaceBar(e) {
+    if (this.withSpace || this.isTextEditing) {
+      return;
+    }
 
-  //   if (e.keyCode === keyCodes.SPACE) {
-  //     this.withSpace = true;
-  //     this.startHandMode();
-  //   }
-  // }
+    if (e.keyCode === keyCodes.SPACE) {
+      this.withSpace = true;
+      this.startHandMode();
+    }
+  }
 
   /**
    * Handler who turns off hand mode when space bar is up
    * @param {KeyboardEvent} e - Event object
    * @private
    */
-  // _endHandModeWithSpaceBar(e) {
-  //   if (e.keyCode === keyCodes.SPACE) {
-  //     this.withSpace = false;
-  //     this.endHandMode();
-  //   }
-  // }
+  _endHandModeWithSpaceBar(e) {
+    if (e.keyCode === keyCodes.SPACE) {
+      this.withSpace = false;
+      this.endHandMode();
+    }
+  }
 
   /**
    * Start zoom-in mode
@@ -443,7 +450,7 @@ class Zoom extends Component {
     }
 
     canvas.zoomToPoint({ x, y }, zoomLevel);
-    if (!this._isDefaultZoomLevel(zoomLevel)) {
+    if (!this._isMinZoomLevel(zoomLevel)) {
       this._centerPoints.push({
         x,
         y,
@@ -470,7 +477,7 @@ class Zoom extends Component {
     const point = centerPoints.pop();
     const { x, y, prevZoomLevel } = point;
 
-    if (this._isDefaultZoomLevel(prevZoomLevel)) {
+    if (this._isMinZoomLevel(prevZoomLevel)) {
       canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     } else {
       canvas.zoomToPoint({ x, y }, prevZoomLevel);
@@ -598,7 +605,7 @@ class Zoom extends Component {
     canvas.remove(this._verticalScroll);
     canvas.remove(this._horizontalScroll);
 
-    if (this._isDefaultZoomLevel(zoomLevel)) {
+    if (this._isMinZoomLevel(zoomLevel)) {
       return;
     }
 
@@ -690,6 +697,14 @@ class Zoom extends Component {
    */
   _isDefaultZoomLevel(zoomLevel) {
     return zoomLevel === DEFAULT_ZOOM_LEVEL;
+  }
+  /**
+   * Check zoom level is default zoom level (1.0)
+   * @param {number} zoomLevel - zoom level
+   * @returns {boolean} - whether zoom level is 1.0
+   */
+  _isMinZoomLevel(zoomLevel) {
+    return zoomLevel === MIN_ZOOM_LEVEL;
   }
 
   /**
