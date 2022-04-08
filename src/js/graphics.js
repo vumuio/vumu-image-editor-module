@@ -14,6 +14,7 @@ import Text from '@/component/text';
 import Icon from '@/component/icon';
 import Filter from '@/component/filter';
 import Shape from '@/component/shape';
+import Image from '@/component/image';
 import Zoom from '@/component/zoom';
 import CropperDrawingMode from '@/drawingMode/cropper';
 import FreeDrawingMode from '@/drawingMode/freeDrawing';
@@ -1031,6 +1032,7 @@ class Graphics {
     this._register(this._componentMap, new Icon(this));
     this._register(this._componentMap, new Filter(this));
     this._register(this._componentMap, new Shape(this));
+    this._register(this._componentMap, new Image(this));
     this._register(this._componentMap, new Zoom(this));
     this._register(this._componentMap, new Resize(this));
   }

@@ -381,6 +381,10 @@ class ImageEditor {
   _attachDomEvents() {
     // ImageEditor supports IE 9 higher
     document.addEventListener('keydown', this._handlers.keydown);
+    // const canvasContainer = document.getElementsByClassName('.tui-image-editor-canvas-container');
+    // if (canvasContainer) {
+    //   canvasContainer[0].addEventListener('keydown', this._handlers.keydown);
+    // }
   }
 
   /**
@@ -399,7 +403,8 @@ class ImageEditor {
    */
   /* eslint-disable complexity */
   _onKeyDown(e) {
-    const { ctrlKey, keyCode, metaKey } = e;
+    const { ctrlKey, keyCode, metaKey, target } = e;
+    const keyAreaTagName = target.tagName;
     const isModifierKey = ctrlKey || metaKey;
 
     if (isModifierKey) {
@@ -420,7 +425,12 @@ class ImageEditor {
     const isDeleteKey = keyCode === keyCodes.BACKSPACE || keyCode === keyCodes.DEL;
     const isRemoveReady = this._graphics.isReadyRemoveObject();
 
-    if (!this.isColorPickerInputBoxEditing && isRemoveReady && isDeleteKey) {
+    if (
+      !this.isColorPickerInputBoxEditing &&
+      isRemoveReady &&
+      isDeleteKey &&
+      keyAreaTagName !== 'INPUT'
+    ) {
       e.preventDefault();
       this.removeActiveObject();
     }
@@ -1183,6 +1193,43 @@ class ImageEditor {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
     return this[executeMethodName](commands.CHANGE_SHAPE, id, options);
+  }
+  /**
+   * Change image
+   * @param {number} id - object id
+   * @param {Object} options - Image options
+   *      @param {(ImageFillOption | string)} [options.fill] - {@link ShapeFillOption} or
+   *        Shape foreground color (ex: '#fff', 'transparent')
+   *      @param {string} [options.stroke] - Shape outline color
+   *      @param {number} [options.strokeWidth] - Shape outline width
+   *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+   *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+   *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+   *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+   *      @param {boolean} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+   * @param {boolean} isSilent - is silent execution or not
+   * @returns {Promise}
+   * @example
+   * // call after selecting shape object on canvas
+   * imageEditor.changeShape(id, { // change rectagle or triangle
+   *     fill: 'red',
+   *     stroke: 'blue',
+   *     strokeWidth: 3,
+   *     width: 100,
+   *     height: 200
+   * });
+   * @example
+   * // call after selecting shape object on canvas
+   * imageEditor.changeShape(id, { // change circle
+   *     fill: 'red',
+   *     stroke: 'blue',
+   *     strokeWidth: 3
+   * });
+   */
+  changeImage(id, options, isSilent) {
+    const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+    return this[executeMethodName](commands.CHANGE_IMAGE, id, options);
   }
 
   /**

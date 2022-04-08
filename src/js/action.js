@@ -324,6 +324,11 @@ export default {
   _imageAction() {
     return extend(
       {
+        changeImageAction: (changeImageObject, isSilent) => {
+          if (this.activeObjectId) {
+            this.changeImage(this.activeObjectId, changeImageObject, isSilent);
+          }
+        },
         insertImg: (imgUrl, file) => {
           this.addImageObject(imgUrl).then(() => {
             this._onAddImage(file);
@@ -669,7 +674,19 @@ export default {
           });
 
           this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
-        } else if (obj.type === 'path' || obj.type === 'line') {
+        }else if (['image'].indexOf(obj.type) > -1) {
+            this.stopDrawingMode();
+            if (this.ui.submenu !== 'image') {
+                this.ui.changeMenu('image', false, false);
+            }
+            this.ui.image.setImageStatus({
+                width: obj.width,
+                height: obj.height,
+                skewX: obj.skewX,
+                skewY: obj.skewY,
+            });
+        }
+        else if (obj.type === 'path' || obj.type === 'line') {
           if (this.ui.submenu !== 'draw') {
             this.ui.changeMenu('draw', false, false);
             this.ui.draw.changeStandbyMode();

@@ -91,6 +91,7 @@ export const componentNames = keyMirror(
   'ICON',
   'FILTER',
   'SHAPE',
+  'IMAGE',
   'ZOOM',
   'RESIZE'
 );
@@ -142,6 +143,7 @@ export const commandNames = {
   CHANGE_TEXT: 'changeText',
   CHANGE_TEXT_STYLE: 'changeTextStyle',
   ADD_IMAGE_OBJECT: 'addImageObject',
+  CHANGE_IMAGE: 'changeImage',
   RESIZE_CANVAS_DIMENSION: 'resizeCanvasDimension',
   SET_OBJECT_PROPERTIES: 'setObjectProperties',
   SET_OBJECT_POSITION: 'setObjectPosition',
@@ -217,6 +219,7 @@ export const historyNames = {
   // LOAD_MASK_IMAGE: 'Mask',
   // ADD_MASK_IMAGE: 'Mask',
   ADD_IMAGE_OBJECT: 'Image',
+  CHANGE_IMAGE: 'Image',
   ADD_LOGO: 'Logo',
   CROP: 'Crop',
   RESIZE: 'Resize',

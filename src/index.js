@@ -12,6 +12,7 @@ import '@/command/addText';
 import '@/command/applyFilter';
 import '@/command/changeIconColor';
 import '@/command/changeShape';
+import '@/command/changeImage';
 import '@/command/changeText';
 import '@/command/changeTextStyle';
 import '@/command/clearObjects';

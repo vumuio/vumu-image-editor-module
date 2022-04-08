@@ -14,6 +14,7 @@ import changeTextStyleCommand from '@/command/changeTextStyle';
 import rotateCommand from '@/command/rotate';
 import addShapeCommand from '@/command/addShape';
 import changeShapeCommand from '@/command/changeShape';
+import changeImageCommand from '@/command/changeImage';
 import clearObjectsCommand from '@/command/clearObjects';
 import removeObjectCommand from '@/command/removeObject';
 import resizeCommand from '@/command/resize';
@@ -34,6 +35,7 @@ describe('commandFactory', () => {
     commandFactory.register(rotateCommand);
     commandFactory.register(addShapeCommand);
     commandFactory.register(changeShapeCommand);
+    commandFactory.register(changeImageCommand);
     commandFactory.register(clearObjectsCommand);
     commandFactory.register(removeObjectCommand);
     commandFactory.register(resizeCommand);

@@ -345,6 +345,14 @@ export function getFillTypeFromObject(shapeObj) {
 export function isShape(obj) {
   return inArray(obj.get('type'), SHAPE_TYPE) >= 0;
 }
+/**
+ * Check if the object is a shape object.
+ * @param {fabric.Object} obj - fabric object
+ * @returns {boolean}
+ */
+export function isImage(obj) {
+  return inArray(obj.get('type'), ['Image']) >= 0;
+}
 
 /**
  * Get object type
@@ -429,6 +437,7 @@ export function getHistoryTitle(command) {
     CHANGE_TEXT_STYLE,
     CLEAR_OBJECTS,
     ADD_IMAGE_OBJECT,
+    CHANGE_IMAGE,
     ADD_LOGO,
     REMOVE_OBJECT,
     RESIZE_IMAGE,
@@ -466,6 +475,10 @@ export function getHistoryTitle(command) {
       break;
     case ADD_IMAGE_OBJECT:
       historyInfo = { name: historyNames.ADD_IMAGE_OBJECT, detail: 'Add' };
+      break;
+    case CHANGE_IMAGE:
+      historyInfo = { name: historyNames.CHANGE_IMAGE, detail: 'Change' };
+      break;
     case ADD_LOGO:
       historyInfo = { name: historyNames.ADD_LOGO, detail: 'Add' };
       break;

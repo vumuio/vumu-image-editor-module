@@ -200,7 +200,6 @@ class Icon extends Submenu {
    * @private
    */
   _addIconHandler(event) {
-    debugger;
     const button = event.target.closest('.tui-image-editor-button');
 
     if (button) {
