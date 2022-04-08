@@ -77,9 +77,9 @@ const command = {
    */
   undo(graphics) {
     const imageComp = graphics.getComponent(IMAGE);
-    const { object: shape, options } = this.undoData;
+    const { object: image, options } = this.undoData;
 
-    return imageComp.change(shape, options);
+    return imageComp.change(image, options);
   },
 };
 

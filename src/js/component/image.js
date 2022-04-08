@@ -247,21 +247,34 @@ export default class Image extends Component {
    *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
    *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
    *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+   *      @param {string} [options.clipPath] - Radius y value (When type option is 'circle', this options can use)
    *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
    * @returns {Promise}
    */
   change(imageObject, options) {
     return new Promise((resolve, reject) => {
-      const hasFillOption = getFillTypeFromOption(options.fill) === 'filter';
-      const { canvasImage, createStaticCanvas } = this.graphics;
-
-      imageObject.set(
-        hasFillOption ? makeFabricFillOption(options, canvasImage, createStaticCanvas) : options
-      );
-
-      if (hasFillOption) {
-        this._resetPositionFillFilter(imageObject);
+      const radius =
+        imageObject.width > imageObject.height ? imageObject.height / 2 : imageObject.width / 2;
+      const clipPath = new fabric.Circle({
+        radius: radius,
+        top: -radius,
+        left: -radius,
+      });
+      if (options.width) {
+        imageObject.set('scaleX', options.width / imageObject.width);
+      } else if (options.height) {
+        imageObject.set('scaleY', options.height / imageObject.height);
+      } else if (options.clipPath === 'circle') {
+        imageObject.set('clipPath', clipPath);
+      } else if (options.clipPath === 'rect') {
+        imageObject.set('clipPath', '');
+      } else {
+        imageObject.set(options);
       }
+
+      // if (hasFillOption) {
+      //   this._resetPositionFillFilter(imageObject);
+      // }
 
       this.getCanvas().renderAll();
       resolve();

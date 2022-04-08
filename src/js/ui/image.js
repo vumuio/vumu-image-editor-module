@@ -94,11 +94,20 @@ class Image extends Submenu {
     this._els.skewY.on('change', this._changeSkewYHandler.bind(this));
   }
 
-  setImageStatus({ width, height, skewX, skewY }) {
+  setImageStatus({ width, height, skewX, skewY, clipPath }) {
     this._els.imageWidth.value = width;
     this._els.imageHeight.value = height;
     this._els.skewX.value = skewX;
     this._els.skewY.value = skewY;
+    const imageShapeElement = this._els.imageShape;
+    const childElements = imageShapeElement.getElementsByTagName('div');
+    if (clipPath) {
+      childElements[0].classList.remove('active');
+      childElements[1].classList.add('active');
+    } else {
+      childElements[0].classList.add('active');
+      childElements[1].classList.remove('active');
+    }
   }
   _changeImageShapeHandler(event) {
     const button = event.target.closest('.tie-image-shape');
@@ -123,8 +132,7 @@ class Image extends Submenu {
   changeImageShape(type) {
     this.actions.changeImageAction(
       {
-        scaleY: 0.3,
-        scaleX: 0.3,
+        clipPath: type,
       },
       true
     );

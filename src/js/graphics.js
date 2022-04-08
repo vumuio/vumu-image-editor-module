@@ -695,6 +695,7 @@ class Graphics {
       );
     });
   }
+
   addLogoObject(imgUrl) {
     const callback = this._callbackAfterLoadingLogoObject.bind(this);
 
@@ -1084,6 +1085,18 @@ class Graphics {
       height: Math.floor(cssMaxHeight),
     };
   }
+  roundedCorners(ctx) {
+    var rect = new fabric.Rect({
+      left: 0,
+      top: 0,
+      rx: 150,
+      ry: 150,
+      width: this.width,
+      height: this.height,
+      fill: '#fefefefe',
+    });
+    rect._render(ctx, false);
+  }
 
   /**
    * Callback function after loading image
@@ -1092,14 +1105,16 @@ class Graphics {
    */
   _callbackAfterLoadingImageObject(obj) {
     const centerPos = this.getCanvasImage().getCenterPoint();
-
+    obj.width > obj.height ? obj.scaleToWidth(200) : obj.scaleToHeight(200);
     obj.set(fObjectOptions.SELECTION_STYLE);
     obj.set({
+      preserveAspectRatio: true,
       left: centerPos.x,
       top: centerPos.y,
       crossOrigin: 'Anonymous',
+      objectCaching: false,
     });
-
+    // obj.clipPath = '';
     this.getCanvas().add(obj).setActiveObject(obj);
   }
 
@@ -1368,6 +1383,9 @@ class Graphics {
       'angle',
       'skewX',
       'skewY',
+      'scaleX',
+      'scaleY',
+      'clipPath',
     ];
     const props = {
       id: stamp(obj),

@@ -31,7 +31,7 @@ export default ({ locale, makeSvgIcon }) => `
             <div style="margin-top: 10px" class="number-input-row">
                 <span class="font-centered-class ">Image Style</span>  
                 <div class="number-input-align-right image-shape-button">
-                    <div class="tie-image-shape rect"></div>
+                    <div class="tie-image-shape rect active"></div>
                     <div class="tie-image-shape circle"></div>
                 </div>
             </div>

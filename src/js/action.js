@@ -680,10 +680,11 @@ export default {
                 this.ui.changeMenu('image', false, false);
             }
             this.ui.image.setImageStatus({
-                width: obj.width,
-                height: obj.height,
+                width: obj.width * obj.scaleX,
+                height: obj.height * obj.scaleY,
                 skewX: obj.skewX,
                 skewY: obj.skewY,
+                clipPath: obj.clipPath
             });
         }
         else if (obj.type === 'path' || obj.type === 'line') {
@@ -738,6 +739,14 @@ export default {
           if (height < strokeValue) {
             this.ui.shape.setStrokeValue(height);
           }
+        } else if (['image'].indexOf(obj.type) > -1) {
+            this.ui.image.setImageStatus({
+                width: obj.width * obj.scaleX,
+                height: obj.height * obj.scaleY,
+                skewX: obj.skewX,
+                skewY: obj.skewY,
+                clipPath: obj.clipPath
+            });
         }
       },
       selectionCleared: () => {
