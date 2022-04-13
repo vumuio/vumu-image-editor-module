@@ -711,7 +711,7 @@ export default {
         const { textColor: fill, fontSize, fontStyle, fontWeight, underline } = this.ui.text;
         const fontFamily = this.fontFamily;
 
-        this.addText('Double Click', {
+        this.addText('New Text', {
           position: pos.originPosition,
           styles: {fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
         }).then(() => {

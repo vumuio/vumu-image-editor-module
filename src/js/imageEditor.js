@@ -1435,7 +1435,7 @@ k   * @param {number} id - object id
     const { fontFamily } = this;
     const canvas = this.getCanvasInstance();
     canvas.discardActiveObject();
-    await this.addText('Double Click', {
+    await this.addText('New Text', {
       styles: {
         fill,
         fontSize,

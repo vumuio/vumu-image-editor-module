@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 1.0.17
+ * @version 1.0.18
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -52669,7 +52669,7 @@ var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
             underline = _this13$ui$text.underline;
         var fontFamily = _this13.fontFamily;
 
-        _this13.addText('Double Click', {
+        _this13.addText('New Text', {
           position: pos.originPosition,
           styles: {
             fill: fill,
@@ -63673,7 +63673,7 @@ var ImageEditor = /*#__PURE__*/function () {
                 canvas = this.getCanvasInstance();
                 canvas.discardActiveObject();
                 _context6.next = 6;
-                return this.addText('Double Click', {
+                return this.addText('New Text', {
                   styles: {
                     fill: fill,
                     fontSize: fontSize,

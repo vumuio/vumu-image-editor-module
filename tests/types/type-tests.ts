@@ -306,7 +306,7 @@ imageEditor.toDataURL();
 imageEditor.undo();
 
 imageEditor.on('addText', (pos) => {
-  imageEditor.addText('Double Click', {
+  imageEditor.addText('New Text', {
     position: pos.originPosition,
   });
 
