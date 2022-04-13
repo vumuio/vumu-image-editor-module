@@ -223,7 +223,6 @@ export default class Shape extends Component {
   add(type, options) {
     return new Promise((resolve) => {
       const canvas = this.getCanvas();
-      debugger;
       const extendOption = this._extendOptions(options);
       const shapeObj = this._createInstance(type, extendOption);
       const objectProperties = this.graphics.createObjectProperties(shapeObj);

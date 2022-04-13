@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 1.0.16
+ * @version 1.0.17
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -42216,14 +42216,26 @@ var url_default = /*#__PURE__*/__webpack_require__.n(url);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/fill.js
 var instance_fill = __webpack_require__(4494);
 var fill_default = /*#__PURE__*/__webpack_require__.n(instance_fill);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/keys.js
+var object_keys = __webpack_require__(6902);
+var keys_default = /*#__PURE__*/__webpack_require__.n(object_keys);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-symbols.js
+var get_own_property_symbols = __webpack_require__(4310);
+var get_own_property_symbols_default = /*#__PURE__*/__webpack_require__.n(get_own_property_symbols);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
+var filter = __webpack_require__(116);
+var filter_default = /*#__PURE__*/__webpack_require__.n(filter);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor.js
+var get_own_property_descriptor = __webpack_require__(4074);
+var get_own_property_descriptor_default = /*#__PURE__*/__webpack_require__.n(get_own_property_descriptor);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors.js
+var get_own_property_descriptors = __webpack_require__(9649);
+var get_own_property_descriptors_default = /*#__PURE__*/__webpack_require__.n(get_own_property_descriptors);
 // EXTERNAL MODULE: external {"commonjs":"tui-code-snippet","commonjs2":"tui-code-snippet","amd":"tui-code-snippet","root":["tui","util"]}
 var external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_ = __webpack_require__(624);
 var external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_);
 // EXTERNAL MODULE: ./node_modules/fabric/dist/fabric.js
 var fabric = __webpack_require__(2777);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/keys.js
-var object_keys = __webpack_require__(6902);
-var keys_default = /*#__PURE__*/__webpack_require__.n(object_keys);
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime-corejs3/helpers/esm/arrayWithHoles.js
 
 function _arrayWithHoles(arr) {
@@ -43991,7 +44003,7 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
       loadButtonStyle = _ref.loadButtonStyle,
       downloadButtonStyle = _ref.downloadButtonStyle,
       submenuStyle = _ref.submenuStyle;
-  return concat_default()(_context = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n    \n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-main\">\n                <div class=\"flex items-center breadcrumbs-area\">\n                  <ul class=\"breadcrumbs list-none flex items-center\">\n                    <li class=\"active\"><a href=\"#\" id=\"personalized-dashboard\">Personalized Dashboard</a></li>\n                    <li><input type=\"text\" id=\"project-title-input\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                    </li>\n                  </ul>\n                  <div class=\"buttons-area\">\n                      <ul class=\"tui-image-editor-help-menu top\"></ul>\n                      <button class=\"btn-primary relative setBgButton\">\n                        ")).call(_context, locale.localize('Set Background'), "\n                        <input type=\"file\" class=\"tui-image-editor-load-btn\" id=\"setBg\" />\n                      </button>\n                      <button class=\"btn-primary tui-image-editor-save-btn pointer\">Save & Next <img src=\"https://pcontent.vumu.io/assets/next-arrow.svg\" alt=\"#\" /> </button>\n                  </div>\n                </div>\n                <div class=\"editor-area\">\n                  <div class=\"tui-image-editor-wrap\">\n                    <div class=\"tui-image-editor-size-wrap\">\n                    <div class=\"tui-image-editor-align-wrap\">\n                      <div class=\"tui-image-editor\">\n                      </div>\n                    </div>\n                      </div>\n                    </div>\n                  <div class=\"tui-image-editor-submenu\"></div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
+  return concat_default()(_context = " \n    <div class=\"tui-image-editor-main-container\" style=\"".concat(commonStyle, "\">\n    \n      <div class=\"page-container\">\n        <div id=\"content\">\n          <div class=\"main-container\">\n              <div class=\"tui-image-editor-main\">\n                <div class=\"flex items-center breadcrumbs-area\">\n                  <ul class=\"breadcrumbs list-none flex items-center\">\n                    <li class=\"active\"><a href=\"#\" id=\"personalized-dashboard\">Personalized Dashboard</a></li>\n                    <li><input type=\"text\" id=\"project-title-input\" placeholder=\"Enter project title here...\" class=\"project-title\" />\n                    </li>\n                  </ul>\n                  <div class=\"buttons-area\">\n                      <div class=\"pan-holder\">\n                        <ul class=\"tui-image-editor-help-menu top\"></ul>\n                      </div>\n                      <button class=\"btn-primary relative setBgButton\">\n                        ")).call(_context, locale.localize('Set Background'), "\n                        <input type=\"file\" class=\"tui-image-editor-load-btn\" id=\"setBg\" />\n                      </button>\n                      <button class=\"btn-primary tui-image-editor-save-btn pointer\">Save & Next <img src=\"https://pcontent.vumu.io/assets/next-arrow.svg\" alt=\"#\" /> </button>\n                  </div>\n                </div>\n                <div class=\"editor-area\">\n                  <div class=\"tui-image-editor-wrap\">\n                    <div class=\"tui-image-editor-size-wrap\">\n                    <div class=\"tui-image-editor-align-wrap\">\n                      <div class=\"tui-image-editor\">\n                      </div>\n                    </div>\n                      </div>\n                    </div>\n                  <div class=\"tui-image-editor-submenu\"></div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n    </div>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/template/controls.js
 
@@ -44544,18 +44556,6 @@ var Theme = /*#__PURE__*/function () {
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/reflect/construct.js
 var construct = __webpack_require__(1068);
 var construct_default = /*#__PURE__*/__webpack_require__.n(construct);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-symbols.js
-var get_own_property_symbols = __webpack_require__(4310);
-var get_own_property_symbols_default = /*#__PURE__*/__webpack_require__.n(get_own_property_symbols);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
-var filter = __webpack_require__(116);
-var filter_default = /*#__PURE__*/__webpack_require__.n(filter);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptor.js
-var get_own_property_descriptor = __webpack_require__(4074);
-var get_own_property_descriptor_default = /*#__PURE__*/__webpack_require__.n(get_own_property_descriptor);
-// EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js-stable/object/get-own-property-descriptors.js
-var get_own_property_descriptors = __webpack_require__(9649);
-var get_own_property_descriptors_default = /*#__PURE__*/__webpack_require__.n(get_own_property_descriptors);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js/object/create.js
 var object_create = __webpack_require__(189);
 // EXTERNAL MODULE: ./node_modules/@babel/runtime-corejs3/core-js/object/set-prototype-of.js
@@ -47931,7 +47931,9 @@ var image_Image = /*#__PURE__*/function (_Submenu) {
       };
       this.actions = actions;
 
-      this._els.maskImageButton.addEventListener('change', loadMaskFile);
+      this._els.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
+
+      this._els.maskImageButton.addEventListener('click', this._changeInputValue.bind(this));
 
       this._els.imageShape.addEventListener('click', imageShapeTypeSelected);
 
@@ -48024,7 +48026,14 @@ var image_Image = /*#__PURE__*/function (_Submenu) {
     value: function _removeEvent() {
       this._els.maskImageButton.removeEventListener('change', this.eventHandler.loadMaskFile);
 
+      this._els.maskImageButton.removeEventListener('click', this._changeInputValue.bind(this));
+
       this._els.imageShape.removeEventListener('change', this.eventHandler.imageShapeTypeSelected);
+    }
+  }, {
+    key: "_changeInputValue",
+    value: function _changeInputValue(event) {
+      event.target.value = null;
     }
     /**
      * Load image file
@@ -57395,8 +57404,6 @@ var shape_Shape = /*#__PURE__*/function (_Component) {
       return new (core_js_stable_promise_default())(function (resolve) {
         var canvas = _this2.getCanvas();
 
-        debugger;
-
         var extendOption = _this2._extendOptions(options);
 
         var shapeObj = _this2._createInstance(type, extendOption);
@@ -62032,6 +62039,16 @@ graphics_CustomEvents.mixin(Graphics);
 
 
 
+function imageEditor_ownKeys(object, enumerableOnly) { var keys = keys_default()(object); if ((get_own_property_symbols_default())) { var symbols = get_own_property_symbols_default()(object); enumerableOnly && (symbols = filter_default()(symbols).call(symbols, function (sym) { return get_own_property_descriptor_default()(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function imageEditor_objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? imageEditor_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : (get_own_property_descriptors_default()) ? Object.defineProperties(target, get_own_property_descriptors_default()(source)) : imageEditor_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, get_own_property_descriptor_default()(source, key)); }); } return target; }
+
+
+
+
+
+
+
 
 
 
@@ -64383,43 +64400,68 @@ var ImageEditor = /*#__PURE__*/function () {
 
       var activeObj = canvas.getActiveObject();
       canvas.discardActiveObject();
-      activeObj.clone(function (clonedObj) {
-        canvas.discardActiveObject();
-        clonedObj.set({
-          left: clonedObj.left + 20,
-          top: clonedObj.top + 20,
-          evented: true
-        }); // this only support text obj rightnow
 
-        var fill = fill_default()(clonedObj),
-            fontFamily = clonedObj.fontFamily,
-            fontSize = clonedObj.fontSize,
-            fontStyle = clonedObj.fontStyle,
-            fontWeight = clonedObj.fontWeight,
-            textAlign = clonedObj.textAlign,
-            textDecoration = clonedObj.textDecoration,
-            left = clonedObj.left,
-            top = clonedObj.top,
-            autofocus = clonedObj.autofocus,
-            text = clonedObj.text;
+      if (['text', 'i-text'].indexOf(activeObj.type) >= 0) {
+        activeObj.clone(function (clonedObj) {
+          canvas.discardActiveObject();
+          clonedObj.set({
+            left: clonedObj.left + 20,
+            top: clonedObj.top + 20,
+            evented: true
+          }); // this only support text obj rightnow
 
-        _this8.addText(text, {
-          styles: {
-            fill: fill,
-            fontFamily: fontFamily,
-            fontSize: fontSize,
-            fontStyle: fontStyle,
-            fontWeight: fontWeight,
-            textAlign: textAlign,
-            textDecoration: textDecoration
-          },
-          position: {
-            x: left,
-            y: top
-          },
-          autofocus: false
+          var fill = fill_default()(clonedObj),
+              fontFamily = clonedObj.fontFamily,
+              fontSize = clonedObj.fontSize,
+              fontStyle = clonedObj.fontStyle,
+              fontWeight = clonedObj.fontWeight,
+              textAlign = clonedObj.textAlign,
+              textDecoration = clonedObj.textDecoration,
+              left = clonedObj.left,
+              top = clonedObj.top,
+              autofocus = clonedObj.autofocus,
+              text = clonedObj.text;
+
+          _this8.addText(text, {
+            styles: {
+              fill: fill,
+              fontFamily: fontFamily,
+              fontSize: fontSize,
+              fontStyle: fontStyle,
+              fontWeight: fontWeight,
+              textAlign: textAlign,
+              textDecoration: textDecoration
+            },
+            position: {
+              x: left,
+              y: top
+            },
+            autofocus: false
+          });
         });
-      });
+      } else if (['circle', 'rect', 'triangle'].indexOf(activeObj.type) >= 0) {
+        activeObj.clone(function (clonedObj) {
+          canvas.discardActiveObject();
+          clonedObj.set({
+            left: clonedObj.left + 20,
+            top: clonedObj.top + 20,
+            evented: true
+          });
+
+          _this8.addShape(clonedObj.type, imageEditor_objectSpread({}, clonedObj));
+        });
+      } else if (['image'].indexOf(activeObj.type) >= 0) {
+        activeObj.clone(function (clonedObj) {
+          canvas.discardActiveObject();
+          clonedObj.set({
+            left: clonedObj.left + 20,
+            top: clonedObj.top + 20,
+            evented: true
+          });
+
+          _this8.addImageObject(clonedObj.src);
+        });
+      }
     }
   }]);
 

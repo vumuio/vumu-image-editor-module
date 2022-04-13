@@ -86,7 +86,8 @@ class Image extends Submenu {
     };
 
     this.actions = actions;
-    this._els.maskImageButton.addEventListener('change', loadMaskFile);
+    this._els.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
+    this._els.maskImageButton.addEventListener('click', this._changeInputValue.bind(this));
     this._els.imageShape.addEventListener('click', imageShapeTypeSelected);
     this._els.imageWidth.on('change', this._changeInputWidthHandler.bind(this));
     this._els.imageHeight.on('change', this._changeInputHeightHandler.bind(this));
@@ -168,7 +169,11 @@ class Image extends Submenu {
    */
   _removeEvent() {
     this._els.maskImageButton.removeEventListener('change', this.eventHandler.loadMaskFile);
+    this._els.maskImageButton.removeEventListener('click', this._changeInputValue.bind(this));
     this._els.imageShape.removeEventListener('change', this.eventHandler.imageShapeTypeSelected);
+  }
+  _changeInputValue(event) {
+    event.target.value = null;
   }
 
   /**

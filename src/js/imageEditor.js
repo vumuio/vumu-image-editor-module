@@ -2012,29 +2012,16 @@ k   * @param {number} id - object id
     const canvas = this._graphics.getCanvas();
     const activeObj = canvas.getActiveObject();
     canvas.discardActiveObject();
-    activeObj.clone((clonedObj) => {
-      canvas.discardActiveObject();
-      clonedObj.set({
-        left: clonedObj.left + 20,
-        top: clonedObj.top + 20,
-        evented: true,
-      });
-      // this only support text obj rightnow
-      const {
-        fill,
-        fontFamily,
-        fontSize,
-        fontStyle,
-        fontWeight,
-        textAlign,
-        textDecoration,
-        left,
-        top,
-        autofocus,
-        text,
-      } = clonedObj;
-      this.addText(text, {
-        styles: {
+    if (['text', 'i-text'].indexOf(activeObj.type) >= 0) {
+      activeObj.clone((clonedObj) => {
+        canvas.discardActiveObject();
+        clonedObj.set({
+          left: clonedObj.left + 20,
+          top: clonedObj.top + 20,
+          evented: true,
+        });
+        // this only support text obj rightnow
+        const {
           fill,
           fontFamily,
           fontSize,
@@ -2042,14 +2029,49 @@ k   * @param {number} id - object id
           fontWeight,
           textAlign,
           textDecoration,
-        },
-        position: {
-          x: left,
-          y: top,
-        },
-        autofocus: false,
+          left,
+          top,
+          autofocus,
+          text,
+        } = clonedObj;
+        this.addText(text, {
+          styles: {
+            fill,
+            fontFamily,
+            fontSize,
+            fontStyle,
+            fontWeight,
+            textAlign,
+            textDecoration,
+          },
+          position: {
+            x: left,
+            y: top,
+          },
+          autofocus: false,
+        });
       });
-    });
+    } else if (['circle', 'rect', 'triangle'].indexOf(activeObj.type) >= 0) {
+      activeObj.clone((clonedObj) => {
+        canvas.discardActiveObject();
+        clonedObj.set({
+          left: clonedObj.left + 20,
+          top: clonedObj.top + 20,
+          evented: true,
+        });
+        this.addShape(clonedObj.type, { ...clonedObj });
+      });
+    } else if (['image'].indexOf(activeObj.type) >= 0) {
+      activeObj.clone((clonedObj) => {
+        canvas.discardActiveObject();
+        clonedObj.set({
+          left: clonedObj.left + 20,
+          top: clonedObj.top + 20,
+          evented: true,
+        });
+        this.addImageObject(clonedObj.src);
+      });
+    }
   }
 }
 
