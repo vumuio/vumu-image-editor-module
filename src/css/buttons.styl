@@ -175,7 +175,25 @@
 .buttons-area
     display: flex;
 .tui-image-editor-help-menu li
-    margin-left:25px !important;
+    margin-left:7px !important;
+    z-index: 1;
+.tui-image-editor-help-menu li.tie-btn-undo
+    margin-left:20px !important;
+.tui-image-editor-help-menu li.tie-btn-undo:after
+    width: 1px;
+    height: 23px;
+    position: absolute;
+    content: '';
+    left: -12px !important;
+    top: 8px !important;
+    background: #C4C4C4;
+.tui-image-editor-help-menu li.tie-btn-preview
+    margin: -3px 0 0 29px !important;
+    height: 44px;
+.tui-image-editor-help-menu li.tie-btn-zoomOut
+    opacity: 0.5 !important;
+.tui-image-editor-help-menu li.tie-btn-zoomOut:hover
+    opacity: 1 !important;
 .tui-image-editor-help-menu use
     stroke: none !important;
 .tui-image-editor-help-menu
@@ -363,3 +381,14 @@ li.tie-btn-hand.on svg
 //.tie-image-shape-rect, .active {
 //    border: 1px solid #1d5db8
 //}
+.pan-holder
+    position: relative;
+.pan-holder:after
+    position: absolute;
+    content: '';
+    top: 0;
+    right: 76px;
+    border: 1px solid #c4c4c4;
+    width: calc(100% - 76px);
+    height: 44px;
+    border-radius: 5px;

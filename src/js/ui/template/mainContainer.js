@@ -19,7 +19,9 @@ export default ({
                     </li>
                   </ul>
                   <div class="buttons-area">
-                      <ul class="tui-image-editor-help-menu top"></ul>
+                      <div class="pan-holder">
+                        <ul class="tui-image-editor-help-menu top"></ul>
+                      </div>
                       <button class="btn-primary relative setBgButton">
                         ${locale.localize('Set Background')}
                         <input type="file" class="tui-image-editor-load-btn" id="setBg" />
