@@ -149,10 +149,8 @@
         overflow-y: scroll;
         & li.font-family-item
             display: block;
-            max-height: 30px;
             margin-top: 0 !important;
             text-align: center;
-            line-height: 30px;
             &:hover
                 background lightgrey;
         &::-webkit-scrollbar
@@ -228,6 +226,13 @@
 .pointer
     cursor:pointer;
 
+.tui-image-editor-container.right .tui-image-editor-submenu {
+    width: 300px !important;
+    height: 590px !important;
+    border: 1px solid #e7eef9 !important;
+    background: #F9F9F9 !important;
+}
+
 .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-submenu-item li,
 .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-submenu-item li
     margin-top:10px;
@@ -239,6 +244,15 @@
 .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition,
 .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition
     width: 86%;
+
+.tui-image-editor-container.right .tui-image-editor-submenu > div
+    vertical-align : top;
+
+.tui-right-panel-heading
+    width: 100%;
+    padding: 1rem 1rem 0 !important;
+.tui-heading-text
+    text-align: left;
 
 .tui-image-editor-menu-text label,
 .tui-image-editor-menu-text span

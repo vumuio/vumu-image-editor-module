@@ -38,8 +38,6 @@ const SHAPE_INIT_OPTIONS = extend(
     fill: '#ffffff',
     width: 1,
     height: 1,
-    rx: 0,
-    ry: 0,
     skewX: 0,
     skewY: 0,
   },
@@ -225,8 +223,8 @@ export default class Shape extends Component {
   add(type, options) {
     return new Promise((resolve) => {
       const canvas = this.getCanvas();
+      debugger;
       const extendOption = this._extendOptions(options);
-
       const shapeObj = this._createInstance(type, extendOption);
       const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
@@ -335,14 +333,7 @@ export default class Shape extends Component {
         instance = new fabric.Rect(options);
         break;
       case 'circle':
-        instance = new fabric.Ellipse(
-          extend(
-            {
-              type: 'circle',
-            },
-            options
-          )
-        );
+        instance = new fabric.Circle(options);
         break;
       case 'triangle':
         instance = new fabric.Triangle(options);

@@ -6,6 +6,12 @@
  */
 export default ({ locale, makeSvgIcon }) => `
     <ul class="tui-image-editor-submenu-item">
+        <li class="tui-right-panel-heading">
+            <div class="tui-heading-text">Shapes Settings</div>
+        </li>
+        <li class="tui-image-editor-partition">
+            <div></div>
+        </li>
         <li class="tie-shape-button">
             <div class="tui-image-editor-button rect">
                 <div>

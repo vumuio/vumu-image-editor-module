@@ -1436,7 +1436,16 @@ k   * @param {number} id - object id
     const canvas = this.getCanvasInstance();
     canvas.discardActiveObject();
     await this.addText('Double Click', {
-      styles: { fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
+      styles: {
+        fill,
+        fontSize,
+        fontFamily,
+        fontStyle,
+        fontWeight,
+        underline,
+      },
+      originX: 'center',
+      originY: 'center',
       autofocus: false,
     }).then((newText) => {
       // const { left, top, width, height } = newText;

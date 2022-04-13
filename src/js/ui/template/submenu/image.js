@@ -6,6 +6,12 @@
  */
 export default ({ locale, makeSvgIcon }) => `
     <ul class="tui-image-editor-submenu-item">
+        <li class="tui-right-panel-heading">
+            <div class="tui-heading-text">Image Settings</div>
+        </li>
+        <li class="tui-image-editor-partition">
+            <div></div>
+        </li>
         <li style="width:86%; margin: 0 auto" class="tui-image-editor-newline tui-image-editor-number-input-wrap">
             <div class="number-input-row">
                 <span class="font-centered-class ">Width</span>  

@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 1.0.9
+ * @version 1.0.16
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -232,8 +232,8 @@ var DIMENSION_KEYS = {
     h: 'height'
   },
   circle: {
-    w: 'rx',
-    h: 'ry'
+    w: 'width',
+    h: 'height'
   },
   triangle: {
     w: 'width',
@@ -357,6 +357,11 @@ function adjustDimensionOnScaling(shape) {
   };
   options[dimensionKeys.w] = width;
   options[dimensionKeys.h] = height;
+
+  if (type = 'circle') {
+    options['radius'] = width / 2;
+  }
+
   shape.set(options);
 }
 /**
@@ -45495,7 +45500,7 @@ external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snipp
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'shape-rectangle', true), "\n                </div>\n                <label> ")).call(_context8, locale.localize('Rectangle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    ")).call(_context7, makeSvgIcon(['normal', 'active'], 'shape-circle', true), "\n                </div>\n                <label> ")).call(_context6, locale.localize('Circle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    ")).call(_context5, makeSvgIcon(['normal', 'active'], 'shape-triangle', true), "\n                </div>\n                <label> ")).call(_context4, locale.localize('Triangle'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-shape-color-button\">\n            <div class=\"tie-color-fill\" title=\"")).call(_context3, locale.localize('Background Color'), "\"></div>\n            <div class=\"tie-color-stroke\" title=\"")).call(_context2, locale.localize('Border Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Stroke'), "</label>\n            <div class=\"tie-stroke-range\"></div>\n            <input class=\"tie-stroke-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Stroke Width</span>\n        </li>\n         <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">X</span>        \n            <div class=\"tie-skewx-shape-range\"></div>\n            <input class=\"tie-skewx-shape-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-shape-range\"></div>\n            <input class=\"tie-skewy-shape-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Skew</span>\n        </li>\n    </ul>\n");
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tui-right-panel-heading\">\n            <div class=\"tui-heading-text\">Shapes Settings</div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'shape-rectangle', true), "\n                </div>\n                <label> ")).call(_context8, locale.localize('Rectangle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    ")).call(_context7, makeSvgIcon(['normal', 'active'], 'shape-circle', true), "\n                </div>\n                <label> ")).call(_context6, locale.localize('Circle'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    ")).call(_context5, makeSvgIcon(['normal', 'active'], 'shape-triangle', true), "\n                </div>\n                <label> ")).call(_context4, locale.localize('Triangle'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-shape-color-button\">\n            <div class=\"tie-color-fill\" title=\"")).call(_context3, locale.localize('Background Color'), "\"></div>\n            <div class=\"tie-color-stroke\" title=\"")).call(_context2, locale.localize('Border Color'), "\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">")).call(_context, locale.localize('Stroke'), "</label>\n            <div class=\"tie-stroke-range\"></div>\n            <input class=\"tie-stroke-range-value tui-image-editor-range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Stroke Width</span>\n        </li>\n         <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">X</span>        \n            <div class=\"tie-skewx-shape-range\"></div>\n            <input class=\"tie-skewx-shape-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-shape-range\"></div>\n            <input class=\"tie-skewy-shape-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Skew</span>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/shape.js
 
@@ -45535,7 +45540,8 @@ var SHAPE_DEFAULT_OPTION = {
   scaleX: 1,
   scaleY: 1,
   skewY: 0,
-  skewX: 0
+  skewX: 0,
+  isRegular: false
 };
 /**
  * Shape ui class
@@ -45712,7 +45718,7 @@ var Shape = /*#__PURE__*/function (_Submenu) {
       this._els.skewX.value = skewX;
       this._els.skewY.value = skewY;
       this._els.strokeColorpicker.color = strokeColor;
-      this._els.fillColorpicker.color = fillColor;
+      this._els.fillColorpicker.color = fillColor.color;
       this.options.stroke = strokeColor;
       this.options.fill = fillColor;
       this.options.strokeWidth = strokeWidth;
@@ -45817,8 +45823,7 @@ var Shape = /*#__PURE__*/function (_Submenu) {
         var shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
         this.type = shapeType;
         this.actions.addNewShape(shapeType, shapeType === 'circle' ? _objectSpread(_objectSpread({}, SHAPE_DEFAULT_OPTION), {}, {
-          rx: 100,
-          ry: 100
+          radius: 100
         }) : SHAPE_DEFAULT_OPTION);
         return; // this.actions.stopDrawingMode();
         // this.actions.discardSelection();
@@ -46786,7 +46791,7 @@ var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context10, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <div class=\"font-family-wrapper\">\n              <select class=\"tie-font-family-select\"></select>\n              <div class=\"selected-font\">Select Font</div>\n              <div class=\"font-family-list\">\n                <ul>\n                ")).call(_context9, map_default()(displayFonts).call(displayFonts, function (fontName) {
+  return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = "\n    <ul class=\"tui-image-editor-submenu-item\">\n     <li class=\"tui-right-panel-heading\">\n            <div class=\"tui-heading-text\">Text Settings</div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    ".concat(makeSvgIcon(['normal', 'active'], 'text-bold', true), "\n                </div>\n                <label> ")).call(_context14, locale.localize('Bold'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    ")).call(_context13, makeSvgIcon(['normal', 'active'], 'text-italic', true), "\n                </div>\n                <label> ")).call(_context12, locale.localize('Italic'), " </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    ")).call(_context11, makeSvgIcon(['normal', 'active'], 'text-underline', true), "\n                </div>\n                <label> ")).call(_context10, locale.localize('Underline'), " </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tie-font-family-button\">\n          <div class=\"tie-font-family-container\">\n            <svg width=\"7\" height=\"6\" viewBox=\"0 0 7 6\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M7 0.5H0L3.5 5.5L7 0.5Z\" fill=\"#C4C4C4\"/></svg>\n            <div class=\"font-family-wrapper\">\n              <select class=\"tie-font-family-select\"></select>\n              <div class=\"selected-font\">Select Font</div>\n              <div class=\"font-family-list\">\n                <ul>\n                ")).call(_context9, map_default()(displayFonts).call(displayFonts, function (fontName) {
     var _context15, _context16;
 
     return concat_default()(_context15 = concat_default()(_context16 = "<li class=\"font-family-item\" style=\"font-family: ".concat(fontName, "\" data-value=\"")).call(_context16, fontName, "\">")).call(_context15, fontName, "</li>");
@@ -47510,7 +47515,7 @@ var Mask = /*#__PURE__*/function (_Submenu) {
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li style=\"width:86%; margin: 0 auto\" class=\"tui-image-editor-newline tui-image-editor-number-input-wrap\">\n            <div class=\"number-input-row\">\n                <span class=\"font-centered-class \">Width</span>  \n                <div class=\"number-input-align-right\">\n                    <div class=\"tie-width-input-increase\">+</div>\n                    <input  class=\"tie-number-input-width-value\" value=\"0\" />\n                    <div class=\"tie-width-input-decrease\">-</div>\n                </div>\n            </div>\n            <div class=\"number-input-row\">\n                <span class=\"font-centered-class\">Height</span>\n                <div class=\"number-input-align-right\">\n                    <div class=\"tie-height-input-increase\">+</div>\n                    <input  class=\"tie-number-input-height-value\" value=\"0\" />\n                    <div class=\"tie-height-input-decrease\">-</div>\n                </div>\n            </div>       \n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li style=\"width:86%; margin: 0 auto\" class=\"tui-image-editor-newline tui-image-editor-number-input-wrap\">\n            <div style=\"margin-top: 10px\" class=\"number-input-row\">\n                <span class=\"font-centered-class \">Image Style</span>  \n                <div class=\"number-input-align-right image-shape-button\">\n                    <div class=\"tie-image-shape rect active\"></div>\n                    <div class=\"tie-image-shape circle\"></div>\n                </div>\n            </div>\n            \n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">X</span>        \n            <div class=\"tie-skewx-image-range\"></div>\n            <input class=\"tie-skewx-image-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-image-range\"></div>\n            <input class=\"tie-skewy-image-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Skew</span>\n        </li>\n        <li class=\"submenu-buttons\">\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" class=\"tie-mask-image-file\">\n                    ".concat(makeSvgIcon(['normal', 'active'], 'image-load', true), "\n                </div>\n                <label> ")).call(_context, locale.localize('Add New Image'), " </label>\n            </div>\n        </li>\n    </ul>\n");
+  return concat_default()(_context = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tui-right-panel-heading\">\n            <div class=\"tui-heading-text\">Image Settings</div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li style=\"width:86%; margin: 0 auto\" class=\"tui-image-editor-newline tui-image-editor-number-input-wrap\">\n            <div class=\"number-input-row\">\n                <span class=\"font-centered-class \">Width</span>  \n                <div class=\"number-input-align-right\">\n                    <div class=\"tie-width-input-increase\">+</div>\n                    <input  class=\"tie-number-input-width-value\" value=\"0\" />\n                    <div class=\"tie-width-input-decrease\">-</div>\n                </div>\n            </div>\n            <div class=\"number-input-row\">\n                <span class=\"font-centered-class\">Height</span>\n                <div class=\"number-input-align-right\">\n                    <div class=\"tie-height-input-increase\">+</div>\n                    <input  class=\"tie-number-input-height-value\" value=\"0\" />\n                    <div class=\"tie-height-input-decrease\">-</div>\n                </div>\n            </div>       \n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li style=\"width:86%; margin: 0 auto\" class=\"tui-image-editor-newline tui-image-editor-number-input-wrap\">\n            <div style=\"margin-top: 10px\" class=\"number-input-row\">\n                <span class=\"font-centered-class \">Image Style</span>  \n                <div class=\"number-input-align-right image-shape-button\">\n                    <div class=\"tie-image-shape rect active\"></div>\n                    <div class=\"tie-image-shape circle\"></div>\n                </div>\n            </div>\n            \n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <span class=\"font-centered-class \">X</span>        \n            <div class=\"tie-skewx-image-range\"></div>\n            <input class=\"tie-skewx-image-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n            <br/>\n            <span class=\"font-centered-class\">Y</span>\n            <div class=\"tie-skewy-image-range\"></div>\n            <input class=\"tie-skewy-image-range-value tui-image-editor-range-value range-value\" value=\"0\" />\n        </li>\n        <li>\n            <span class=\"font-centered-class \">Skew</span>\n        </li>\n        <li class=\"submenu-buttons\">\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" class=\"tie-mask-image-file\">\n                    ".concat(makeSvgIcon(['normal', 'active'], 'image-load', true), "\n                </div>\n                <label> ")).call(_context, locale.localize('Add New Image'), " </label>\n            </div>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/tools/numberInput.js
 
@@ -48064,7 +48069,7 @@ var image_Image = /*#__PURE__*/function (_Submenu) {
 
   var locale = _ref.locale,
       makeSvgIcon = _ref.makeSvgIcon;
-  return concat_default()(_context = "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li>\n            <div class=\"tui-image-editor-button\">\n                <div class=\"tie-insert-logo\">\n                    ".concat(makeSvgIcon(['normal', 'active'], 'logo-load', true), "\n                </div>\n                <label> ")).call(_context, locale.localize('Insert Logo'), " </label>\n            </div>\n        </li>\n    </ul>\n");
+  return concat_default()(_context = "\n    <ul class=\"tui-image-editor-submenu-item\">\n         <li class=\"tui-right-panel-heading\">\n            <div class=\"tui-heading-text\">Logo Settings</div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tui-image-editor-button\">\n                <div class=\"tie-insert-logo\">\n                    ".concat(makeSvgIcon(['normal', 'active'], 'logo-load', true), "\n                </div>\n                <label> ")).call(_context, locale.localize('Insert Logo'), " </label>\n            </div>\n        </li>\n    </ul>\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/logo.js
 
@@ -55266,8 +55271,8 @@ var text_Text = /*#__PURE__*/function (_Component) {
 
         newText = new fabric.fabric.IText(text, styles);
         selectionStyle = external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({}, selectionStyle, {
-          originX: 'left',
-          originY: 'top'
+          originX: 'center',
+          originY: 'center'
         });
         newText.set(selectionStyle);
         newText.on({
@@ -57188,8 +57193,6 @@ var SHAPE_INIT_OPTIONS = (0,external_commonjs_tui_code_snippet_commonjs2_tui_cod
   fill: '#ffffff',
   width: 1,
   height: 1,
-  rx: 0,
-  ry: 0,
   skewX: 0,
   skewY: 0
 }, SHAPE_DEFAULT_OPTIONS);
@@ -57392,6 +57395,8 @@ var shape_Shape = /*#__PURE__*/function (_Component) {
       return new (core_js_stable_promise_default())(function (resolve) {
         var canvas = _this2.getCanvas();
 
+        debugger;
+
         var extendOption = _this2._extendOptions(options);
 
         var shapeObj = _this2._createInstance(type, extendOption);
@@ -57512,9 +57517,7 @@ var shape_Shape = /*#__PURE__*/function (_Component) {
           break;
 
         case 'circle':
-          instance = new fabric.fabric.Ellipse((0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
-            type: 'circle'
-          }, options));
+          instance = new fabric.fabric.Circle(options);
           break;
 
         case 'triangle':
@@ -61769,7 +61772,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "createObjectProperties",
     value: function createObjectProperties(obj) {
-      var predefinedKeys = ['left', 'top', 'width', 'height', 'fill', 'stroke', 'strokeWidth', 'opacity', 'angle', 'skewX', 'skewY', 'scaleX', 'scaleY', 'clipPath'];
+      var predefinedKeys = ['left', 'top', 'width', 'height', 'fill', 'stroke', 'strokeWidth', 'opacity', 'angle', 'skewX', 'skewY', 'scaleX', 'scaleY', 'clipPath', 'radius'];
       var props = {
         id: stamp(obj),
         type: obj.type
@@ -63662,6 +63665,8 @@ var ImageEditor = /*#__PURE__*/function () {
                     fontWeight: fontWeight,
                     underline: underline
                   },
+                  originX: 'center',
+                  originY: 'center',
                   autofocus: false
                 }).then(function (newText) {
                   // const { left, top, width, height } = newText;

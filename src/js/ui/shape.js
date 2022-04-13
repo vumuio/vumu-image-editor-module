@@ -21,6 +21,7 @@ const SHAPE_DEFAULT_OPTION = {
   scaleY: 1,
   skewY: 0,
   skewX: 0,
+  isRegular: false,
 };
 
 /**
@@ -170,7 +171,7 @@ class Shape extends Submenu {
     this._els.skewX.value = skewX;
     this._els.skewY.value = skewY;
     this._els.strokeColorpicker.color = strokeColor;
-    this._els.fillColorpicker.color = fillColor;
+    this._els.fillColorpicker.color = fillColor.color;
     this.options.stroke = strokeColor;
     this.options.fill = fillColor;
     this.options.strokeWidth = strokeWidth;
@@ -249,9 +250,7 @@ class Shape extends Submenu {
       this.type = shapeType;
       this.actions.addNewShape(
         shapeType,
-        shapeType === 'circle'
-          ? { ...SHAPE_DEFAULT_OPTION, rx: 100, ry: 100 }
-          : SHAPE_DEFAULT_OPTION
+        shapeType === 'circle' ? { ...SHAPE_DEFAULT_OPTION, radius: 100 } : SHAPE_DEFAULT_OPTION
       );
       return;
       // this.actions.stopDrawingMode();

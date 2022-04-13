@@ -13,8 +13,8 @@ const DIMENSION_KEYS = {
     h: 'height',
   },
   circle: {
-    w: 'rx',
-    h: 'ry',
+    w: 'width',
+    h: 'height',
   },
   triangle: {
     w: 'width',
@@ -114,7 +114,7 @@ function adjustOriginByMovingPointer(pointer, shape) {
  * @ignore
  */
 function adjustDimensionOnScaling(shape) {
-  const { type, scaleX, scaleY } = shape;
+  let { type, scaleX, scaleY } = shape;
   const dimensionKeys = DIMENSION_KEYS[type];
   let width = shape[dimensionKeys.w] * scaleX;
   let height = shape[dimensionKeys.h] * scaleY;
@@ -135,7 +135,9 @@ function adjustDimensionOnScaling(shape) {
 
   options[dimensionKeys.w] = width;
   options[dimensionKeys.h] = height;
-
+  if ((type = 'circle')) {
+    options['radius'] = width / 2;
+  }
   shape.set(options);
 }
 

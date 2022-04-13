@@ -1386,6 +1386,7 @@ class Graphics {
       'scaleX',
       'scaleY',
       'clipPath',
+      'radius',
     ];
     const props = {
       id: stamp(obj),

@@ -713,7 +713,7 @@ export default {
 
         this.addText('Double Click', {
           position: pos.originPosition,
-          styles: { fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
+          styles: {fill, fontSize, fontFamily, fontStyle, fontWeight, underline },
         }).then(() => {
           this.changeCursor('default');
         });

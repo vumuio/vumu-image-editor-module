@@ -359,9 +359,9 @@ input.project-title::placeholder {
   cursor: pointer;
 }
 
-ul.tui-image-editor-submenu-item {
-  padding: 30px 0;
-}
+/*ul.tui-image-editor-submenu-item {*/
+/*  padding: 30px 0;*/
+/*}*/
 
 .tui-image-editor-controls {
   top: 50% !important;
