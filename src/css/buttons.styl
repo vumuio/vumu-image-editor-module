@@ -373,9 +373,11 @@ li.tie-btn-hand.on svg
 //.tie-image-shape-rect, .active {
 //    border: 1px solid #1d5db8
 //}
-.pan-holder
+.pan-holder ul
     position: relative;
-.pan-holder:after
+    left: -6px !important;
+    top: 0 !important;
+.pan-holder ul:after
     position: absolute;
     content: '';
     top: 0;
@@ -385,13 +387,14 @@ li.tie-btn-hand.on svg
     min-width: 258px;
     height: 44px;
     border-radius: 5px;
-.pan-holder:before
+.pan-holder ul:before
     width: 1px;
     height: 23px;
     position: absolute;
     content: '';
     right: 190px !important;
-    top: 10px !important;
+    top: 12px !important;
     background: #c4c4c4;
 .tie-btn-hand use
     fill: #fff !important;
+
